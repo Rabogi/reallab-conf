@@ -1,0 +1,6 @@
+{
+    "data_db_location" : "./data/data.db",
+    "users_db_location" : "./data/users.db",
+    "host" : "localhost",
+    "port" : 8000
+}
