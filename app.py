@@ -3,6 +3,7 @@ import uvicorn
 import sqlite3
 import json
 from os import path
+import sysconf
 
 app = FastAPI()
 
@@ -10,9 +11,9 @@ app = FastAPI()
 def read_root():
     return {"Hello": "World"}
 
-# @app.get("/status"):
-# def read_status:
-#     return {"conn status": conn.}
+@app.get("/interfaces")
+def get_interfaces():
+    return json.dumps(sysconf.list_interfaces())
 
 if __name__ == "__main__":
     config = json.loads(open("./config.json",).read())
