@@ -21,7 +21,7 @@ def read_root():
     return response
 
 @app.get("/content/images/{item_name}")
-async def get_content(item_name: str, q: str | None = None):
+async def get_content(item_name: str):
     return responses.FileResponse(config["content_folder"]+"/images/"+item_name)
     
 
