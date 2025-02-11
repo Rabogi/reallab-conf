@@ -1,7 +1,7 @@
 def replace_tags(input: str,tags: dict):
     f = list(tags.keys())
     for tag in f:
-        input = input.replace("%" + tag + "%", tags[tag])
+        input = input.replace("%" + tag + "%", str(tags[tag]))
     return input
 
 def test_replace_tags():
@@ -13,4 +13,4 @@ def test_replace_tags():
     
     print(replace_tags(test,d))
     
-test_replace_tags()
+# test_replace_tags()
