@@ -1,3 +1,5 @@
+from os import path
+
 def replace_tags(input: str,tags: dict):
     f = list(tags.keys())
     for tag in f:
@@ -14,3 +16,6 @@ def test_replace_tags():
     print(replace_tags(test,d))
     
 # test_replace_tags()
+
+def exists(filename):
+    return path.exists(filename)

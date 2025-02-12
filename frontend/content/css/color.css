@@ -1,0 +1,15 @@
+/* class that contain color definitions */
+.main-color-bg{
+    background-color: rgba(79, 81, 106, 1);;
+}
+
+.main-color-bg-50{
+    background-color: rgba(79, 81, 106, 0.5); ;
+}
+
+.sec-color-bg{
+    background-color: rgba(52, 53, 66, 1);;
+}
+.sec-color-bg-50{
+    background-color: rgba(52, 53, 66, 0.5);;
+}
