@@ -48,12 +48,23 @@ def user_db_add_user(db: sqlite3.Connection, userdata = {str:object}) :
         if len(temp.keys()) == 0:
             userdata["additional_info"] = "NULL"
     try:
-        cursor = db.cursor()        
-        cursor.execute('''
-            INSERT INTO users (username, password, additional_info)
-            VALUES (?, ?, ?);
-            ''', (userdata['username'], userdata['password'], userdata['additional_info']))
+        cursor = db.cursor()
+        query = "INSERT INTO users (username, password, additional_info) VALUES (?, ?, ?);" 
+        cursor.execute(query, (userdata['username'], userdata['password'], userdata['additional_info']))
         db.commit()
+    except sqlite3.Error as e:
+        return f"An error occurred: {e}"
+    finally:
+        return cursor.fetchall()
+    
+def user_db_remove_user(db:sqlite3.Connection, username):
+    try:
+        cursor = db.cursor()        
+        query = "DELETE FROM users WHERE username = ?"
+        cursor.execute(query, (username,))
+        db.commit()
+    except sqlite3.Error as e:
+        return f"An error occurred: {e}"
     finally:
         return cursor.fetchall()
     
@@ -63,4 +74,5 @@ user = {
     "password":"test",
     "additional_info" : {"data_db_location": "./data/data.db", "users_db_location": "./data/users.db", "host": "localhost", "port": 8000, "content_folder": "./frontend/content"}
 }
-print(user_db_add_user(db,user))
+# print(user_db_add_user(db,user))
+print(user_db_remove_user(db,"test2"))
