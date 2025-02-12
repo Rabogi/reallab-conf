@@ -67,7 +67,42 @@ def user_db_remove_user(db:sqlite3.Connection, username):
         return f"An error occurred: {e}"
     finally:
         return cursor.fetchall()
+
+def user_db_update_user(db:sqlite3.Connection, userdata = {str:str}):
+    if type(userdata["additional_info"]) == dict:
+        userdata["additional_info"] = json.dumps(userdata["additional_info"])
+    if type(userdata["additional_info"]) == str:
+        temp = json.loads(userdata["additional_info"],object_hook=dict[str,str])
+        if len(temp.keys()) == 0:
+            userdata["additional_info"] = "NULL"
+    try:
+        cursor = db.cursor()
+        query = "UPDATE users SET username = ?, password = ?, additional_info = ? where user_id = ?;" 
+        cursor.execute(query, (userdata['username'], userdata['password'], userdata['additional_info'],userdata["id"]))
+        db.commit()
+    except sqlite3.Error as e:
+        return f"An error occurred: {e}"
+    finally:
+        return cursor.fetchall()
     
+def user_db_get_user(db:sqlite3.Connection, username):
+    try:
+        cursor = db.cursor()        
+        query = "SELECT * FROM users WHERE username = ?"
+        cursor.execute(query, (username,))
+        db.commit()
+    except sqlite3.Error as e:
+        return f"An error occurred: {e}"
+    finally:
+        data = list(cursor.fetchall()[0])
+        user = {
+            "id" : data[0],
+            "username": data[1],
+            "password": data[2],
+            "additional_info" : data[3]
+        }
+        return user
+
 db = connect("data/data.db")
 user = {
     "username":"test2",
@@ -75,4 +110,6 @@ user = {
     "additional_info" : {"data_db_location": "./data/data.db", "users_db_location": "./data/users.db", "host": "localhost", "port": 8000, "content_folder": "./frontend/content"}
 }
 # print(user_db_add_user(db,user))
-print(user_db_remove_user(db,"test2"))
+user = user_db_get_user(db,"admin")
+user["username"] = "super"
+print(user_db_update_user(db,user))
