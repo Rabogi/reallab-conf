@@ -51,4 +51,3 @@ if __name__ == "__main__":
     user_db = db_handler.connect()
     db_handler.init_user_table()
 
-    
