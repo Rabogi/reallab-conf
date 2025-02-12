@@ -28,10 +28,18 @@ async def get_content(item_name: str):
 @app.get("/content/css/{item_name}")
 async def get_content(item_name: str):
     return responses.FileResponse(config["content_folder"]+"/css/"+item_name)
+
+@app.get("/content/js/{item_name}")
+async def get_content(item_name: str):
+    return responses.FileResponse(config["content_folder"]+"/js/"+item_name)
     
 @app.get("/interfaces")
 def get_interfaces():
     return json.dumps(sys_conf.list_interfaces())
+
+@app.get("/time")
+def get_time():
+    return sys_conf.get_sys_time()
 
 if __name__ == "__main__":
     uvicorn.run("app:app" ,host=config["host"], port=config["port"], reload= True)

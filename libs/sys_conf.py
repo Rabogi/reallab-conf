@@ -1,5 +1,6 @@
 import subprocess
 import json
+import time
 
 def call_shell(command):
     response = subprocess.getoutput(command)
@@ -25,3 +26,6 @@ def recreate_default_conf(path):
     "content_folder" : "./frontend/content"
     }
     open(path, "w").write(json.dumps(conf))
+    
+def get_sys_time():
+    return time.ctime(time.time())
