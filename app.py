@@ -6,48 +6,81 @@ import libs.utils as utils
 import libs.sys_conf as sys_conf
 import libs.db_handler as db_handler
 
-app = FastAPI()
+# Init
+
+app = FastAPI(docs_url=None, redoc_url=None)
+
+
 if utils.exists("./config.json") == False:
     sys_conf.recreate_default_conf("./config.json")
-config = json.loads(open("./config.json",).read())
-status = {str:str}
+config = json.loads(
+    open(
+        "./config.json",
+    ).read()
+)
+
+# Trying to connect to DB
+# Checking if db file exist at set location
+
+
+if utils.exists(config["data_db_location"]) == False:
+    open(config["data_db_location"], "w").close()
+
+db = db_handler.connect(config["data_db_location"])
+
+db_handler.init_user_table(db)
+db_handler.init_auth_table(db)
+
+if db_handler.row_count(db, "users") == 0:
+    t = {"username": "admin", "password": "123", "additional_info": {"level": 0}}
+    db_handler.user_db_add_user(db, t)
+
+
+status = {str: str}
 
 # {"data_db_location": "./data/data.db", "users_db_location": "./data/users.db", "host": "localhost", "port": 8000, "content_folder": "./frontend/content"}
 
+# Page handlers
+
+
 @app.get("/")
 def read_root():
-    root_page = open("frontend/index.html","r")
-    response = responses.HTMLResponse(utils.replace_tags(root_page.read(),config))
+    root_page = open("frontend/index.html", "r")
+    response = responses.HTMLResponse(utils.replace_tags(root_page.read(), config))
     root_page.close()
     return response
 
+
+# Content handlers
+
+
 @app.get("/content/images/{item_name}")
 async def get_content(item_name: str):
-    return responses.FileResponse(config["content_folder"]+"/images/"+item_name)
+    return responses.FileResponse(config["content_folder"] + "/images/" + item_name)
+
 
 @app.get("/content/css/{item_name}")
 async def get_content(item_name: str):
-    return responses.FileResponse(config["content_folder"]+"/css/"+item_name)
+    return responses.FileResponse(config["content_folder"] + "/css/" + item_name)
+
 
 @app.get("/content/js/{item_name}")
 async def get_content(item_name: str):
-    return responses.FileResponse(config["content_folder"]+"/js/"+item_name)
-    
+    return responses.FileResponse(config["content_folder"] + "/js/" + item_name)
+
+
+# Generics
+
+
 @app.get("/interfaces")
 def get_interfaces():
     return json.dumps(sys_conf.list_interfaces())
+
 
 @app.get("/time")
 def get_time():
     return sys_conf.get_sys_time()
 
-if __name__ == "__main__":
-    uvicorn.run("app:app" ,host=config["host"], port=config["port"], reload= True)
-    # Trying to connect to DB
-    # Checking if db file exist at set location
-    if utils.exists(config["user_db_location"]) == False:
-        open(config["user_db_location"],"w").close()
-    
-    user_db = db_handler.connect()
-    db_handler.init_user_table()
 
+if __name__ == "__main__":
+    uvicorn.run("app:app", host=config["host"], port=config["port"], reload=True)

@@ -2,9 +2,11 @@ import subprocess
 import json
 import time
 
+
 def call_shell(command):
     response = subprocess.getoutput(command)
     return response
+
 
 def list_interfaces():
     data = call_shell("ip --brief address show").split("\n")
@@ -17,15 +19,16 @@ def list_interfaces():
             interfaces[t[0]] = "None"
     return interfaces
 
+
 def recreate_default_conf(path):
     conf = {
-    "data_db_location" : "./data/data.db",
-    "users_db_location" : "./data/users.db",
-    "host" : "localhost",
-    "port" : 8000,
-    "content_folder" : "./frontend/content"
+        "data_db_location": "./data/data.db",
+        "host": "localhost",
+        "port": 8000,
+        "content_folder": "./frontend/content",
     }
     open(path, "w").write(json.dumps(conf))
-    
+
+
 def get_sys_time():
     return time.ctime(time.time())
