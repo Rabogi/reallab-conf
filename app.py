@@ -74,8 +74,17 @@ async def get_content(item_name: str):
 
 @app.get("/interfaces")
 def get_interfaces():
-    return json.dumps(sys_conf.list_interfaces())
+    # return sys_conf.list_interfaces()
+    return responses.JSONResponse(json.dumps(sys_conf.list_interfaces()))
 
+@app.get("/eth_interfaces")
+def get_eth_interfaces():
+    data = sys_conf.list_interfaces()
+    output = ""
+    for i in data.keys():
+        if data[i].startswith("127") == False and data[i] != "None":
+            output += i + ":" + data[i] + ""
+    return responses.PlainTextResponse(output)
 
 @app.get("/time")
 def get_time():

@@ -54,6 +54,5 @@ async function initializeTime() {
     // Update the time every second
     setInterval(updateTime, 1000);
 }
-
 // Initialize the time
 initializeTime();
