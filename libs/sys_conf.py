@@ -1,6 +1,6 @@
 import subprocess
 import json
-import time
+from datetime import datetime
 
 
 def call_shell(command):
@@ -31,4 +31,5 @@ def recreate_default_conf(path):
 
 
 def get_sys_time():
-    return time.ctime(time.time())
+    now = datetime.now()
+    return now.strftime("%H:%M:%S")

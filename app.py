@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi import responses
+from fastapi import Body
 import uvicorn
 import json
 import libs.utils as utils
@@ -27,6 +28,7 @@ if utils.exists(config["data_db_location"]) == False:
     open(config["data_db_location"], "w").close()
 
 db = db_handler.connect(config["data_db_location"])
+cursor = db.cursor()
 
 db_handler.init_user_table(db)
 db_handler.init_auth_table(db)
@@ -35,13 +37,13 @@ if db_handler.row_count(db, "users") == 0:
     t = {"username": "admin", "password": "123", "additional_info": {"level": 0}}
     db_handler.user_db_add_user(db, t)
 
+db.close()
 
 status = {str: str}
 
 # {"data_db_location": "./data/data.db", "users_db_location": "./data/users.db", "host": "localhost", "port": 8000, "content_folder": "./frontend/content"}
 
 # Page handlers
-
 
 @app.get("/")
 def read_root():
@@ -50,7 +52,12 @@ def read_root():
     root_page.close()
     return response
 
-
+@app.get("/test/{test}")
+def test(test : str):
+    db = db_handler.connect(config["data_db_location"])
+    result = db_handler.auth_db_return_session(db,test)
+    db.close()
+    return result
 # Content handlers
 
 
@@ -89,7 +96,16 @@ def get_eth_interfaces():
 @app.get("/time")
 def get_time():
     return sys_conf.get_sys_time()
+    # return "00:00:00"
+    # return "23:59:59"
 
+
+# Auth handlers
+
+@app.post("/login")
+def auth(data : dict = Body()):
+    db = db_handler.connect(config["data_db_location"])
+    return db_handler.auth_db_auth(db, data,30)
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host=config["host"], port=config["port"], reload=True)

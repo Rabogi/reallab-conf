@@ -1,3 +1,4 @@
+import hashlib
 from os import path
 
 def replace_tags(input: str,tags: dict):
@@ -19,3 +20,6 @@ def test_replace_tags():
 
 def exists(filename):
     return path.exists(filename)
+
+def sha256(input: str):
+    return hashlib.sha256((input).encode("utf-8")).hexdigest()

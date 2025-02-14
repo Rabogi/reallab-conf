@@ -1,58 +1,76 @@
-// Function to fetch time from the API
-async function fetchTime() {
-    try {
-        const response = await fetch('/time'); // Call your API endpoint
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+function startUpdatingTime() {
+    // Function to fetch the initial time from the API
+    function fetchInitialTime() {
+        fetch('/time')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(time => {
+                // Remove extra double quotes from the API response
+                time = time.replace(/^"|"$/g, '');
+
+                // Validate the time format (HH:MM:SS)
+                if (!/^\d{2}:\d{2}:\d{2}$/.test(time)) {
+                    throw new Error('Invalid time format received from API');
+                }
+
+                // Update the time display
+                document.getElementById('time').textContent = time;
+
+                // Start updating the time locally
+                startUpdatingTimeLocally(time);
+            })
+            .catch(error => {
+                console.error('Error fetching or parsing time:', error);
+                document.getElementById('time').textContent = 'Error: Unable to load time';
+            });
+    }
+
+    // Function to start updating the time locally
+    function startUpdatingTimeLocally(initialTime) {
+        let timeParts = initialTime.split(':');
+        let hours = parseInt(timeParts[0], 10);
+        let minutes = parseInt(timeParts[1], 10);
+        let seconds = parseInt(timeParts[2], 10);
+
+        // Validate parsed values
+        if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
+            console.error('Invalid time values:', hours, minutes, seconds);
+            return;
         }
-        const data = await response.text(); // Get the response as text
-        return data; // Return the time string (e.g., "Wed Feb 12 11:39:24 2025")
-    } catch (error) {
-        console.error('Error fetching time:', error);
-        return null;
-    }
-}
 
-// Function to extract time from the API response and start updating it
-async function initializeTime() {
-    const timeString = await fetchTime(); // Fetch the initial time
-    if (!timeString) {
-        document.getElementById('time').textContent = 'Failed to load time.';
-        return;
-    }
-
-    // Extract the time portion (e.g., "11:39:24")
-    const timePart = timeString.split(' ')[3];
-
-    // Parse the time into hours, minutes, and seconds
-    let [hours, minutes, seconds] = timePart.split(':').map(Number);
-
-    // Function to update the time every second
-    function updateTime() {
-        seconds++;
-        if (seconds >= 60) {
-            seconds = 0;
-            minutes++;
-            if (minutes >= 60) {
-                minutes = 0;
-                hours++;
-                if (hours >= 24) {
-                    hours = 0;
+        // Update the time every second
+        setInterval(() => {
+            seconds++;
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes >= 60) {
+                    minutes = 0;
+                    hours++;
+                    if (hours >= 24) {
+                        hours = 0;
+                    }
                 }
             }
-        }
 
-        // Format the time as HH:MM:SS
-        const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            // Format the time as HH:MM:SS
+            const formattedTime = 
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
 
-        // Update the HTML
-        document.getElementById('time').textContent = formattedTime;
+            // Update the time display
+            document.getElementById('time').textContent = formattedTime;
+        }, 1000);
     }
-    // Update the time immediately
-    updateTime();
 
-    // Update the time every second
-    setInterval(updateTime, 1000);
+    // Fetch the initial time from the API
+    fetchInitialTime();
 }
-// Initialize the time
-initializeTime();
+
+// Start the time update process
+startUpdatingTime();
