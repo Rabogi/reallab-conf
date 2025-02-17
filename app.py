@@ -120,9 +120,12 @@ def get_time():
 # Auth handlers
 
 
-@app.post("/login")
+# @app.post("/login")
+# def auth(data: dict = Body()):
+#     return db_handler.auth_db_auth(db, data, 30)
+
+@app.post("/auth")
 def auth(data: dict = Body()):
-    db = db_handler.connect(config["data_db_location"])
     return db_handler.auth_db_auth(db, data, 30)
 
 

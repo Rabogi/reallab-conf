@@ -1,3 +1,37 @@
 <div>
-    test
+    <section class="radient-custom" id="loginForm">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card main-color-bg text-white" style="border-radius: 1rem;">
+                        <div class="card-body text-center">
+
+                            <div class="mb-md-5 mt-md-4">
+
+                                <h2 class="mb-2 text-uppercase">Login</h2>
+
+                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                    <input type="text" id="username" class="form-control form-control-lg" />
+                                    <label class="form-label" for="username">Username</label>
+                                </div>
+
+                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                    <input type="password" id="password" class="form-control form-control-lg" />
+                                    <label class="form-label" for="password">Password</label>
+                                </div>
+
+                                <button id="loginButton" data-mdb-button-init data-mdb-ripple-init
+                                    class="btn btn-outline-light btn-lg px-5" type="button">Login</button>
+
+                                <p id="message"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+<script src="/content/js/login.js"></script>
+
