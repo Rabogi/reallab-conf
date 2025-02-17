@@ -3,6 +3,7 @@ import json
 import time
 import libs.utils as utils
 import libs.sys_conf as sys_conf
+import random
 from datetime import datetime
 from datetime import timedelta
 
@@ -19,7 +20,7 @@ def db_execute(db: sqlite3.Connection, query):
 
 
 def connect(path):
-    db = sqlite3.connect(path)
+    db = sqlite3.connect(path,check_same_thread=False)
     return db
 
 
@@ -190,7 +191,7 @@ def user_db_get_user(db: sqlite3.Connection, q: str | int):
 
 
 def auth_db_gen_session(db: sqlite3.Connection, userdata: str, t):
-    session_token = utils.sha256(userdata + str(t))
+    session_token = utils.sha256(userdata + str(t)+str(random.random()))
     if auth_db_return_session(db, session_token) == None:
         return session_token
     else:
@@ -220,6 +221,7 @@ def auth_db_auth(db: sqlite3.Connection, provided: dict, time_valid: int):
             "valid_until": time_to_str(valid_until),
             "level": level,
         }
+        auth_db_purge_sessions(db, userdata["user_id"])
         if auth_db_add_session(db, session) == []:
             return session
         return {"error": "Auth error"}
@@ -282,6 +284,16 @@ def auth_db_add_session(db: sqlite3.Connection, session: dict):
         else:
             return error
 
+def auth_db_login(db: sqlite3.Connection,session_token,time):
+    try:
+        session = auth_db_return_session(db,session_token)
+        if auth_db_check_session_valid(session):
+            auth_db_update_session(db,session_token,30)
+            return True
+        else:
+            return False
+    except:
+        return False
 
 def auth_db_update_session(db: sqlite3.Connection, session_token, time):
     session = auth_db_return_session(db, session_token)
@@ -329,6 +341,10 @@ def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
             return error
 
 # db = sqlite3.connect("./data/data.db")
+
+# session = auth_db_auth(db,{"username" : "admin","password" : "122"},30)
+# print(auth_db_login(db, session["session_token"],30))
+
 # auth_db_purge_sessions(db,user_db_get_user(db,"admin")["user_id"])
 # session = auth_db_return_session(db,"80e676a2c90f598511ac93074e8b8ec577ebd2cb2925f53eef392158b80b4e1c")
 # print(session["valid_until"])

@@ -38,8 +38,6 @@ if db_handler.row_count(db, "users") == 0:
     t = {"username": "admin", "password": "123", "additional_info": {"level": 0}}
     db_handler.user_db_add_user(db, t)
 
-db.close()
-
 status = {str: str}
 
 # {"data_db_location": "./data/data.db", "users_db_location": "./data/users.db", "host": "localhost", "port": 8000, "content_folder": "./frontend/content"}
@@ -50,17 +48,29 @@ status = {str: str}
 @app.get("/")
 def read_root():
     root_page = open("frontend/index.html", "r")
-    response = responses.HTMLResponse(utils.replace_tags(root_page.read(), config))
+    page = root_page.read()
     root_page.close()
+    with open("frontend/content/pages/login.html") as f:
+        content = f.read()
+    page = utils.embed_in_template(page,content)
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
 
-@app.get("/test/{test}")
-def test(test: str):
-    db = db_handler.connect(config["data_db_location"])
-    result = db_handler.auth_db_return_session(db, test)
-    db.close()
-    return result
+# @app.get("/app")
+# def read_app(data: dict = Body()):
+#     if "session_token" in list(data.keys()):
+#         if db_handler.auth_db_login(db, data["session_token"], 30):
+#             root_page = open("frontend/index.html", "r")
+#             response = responses.HTMLResponse(
+#                 utils.replace_tags(root_page.read(), config)
+#             )
+#             root_page.close()
+#             return response
+#         else:
+#             response = responses.RedirectResponse("/", 307)
+#     else:
+#         responses.RedirectResponse("/", 307)
 
 
 # Content handlers

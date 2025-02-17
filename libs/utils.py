@@ -16,6 +16,23 @@ def test_replace_tags():
     
     print(replace_tags(test,d))
     
+def embed_in_template(template, content, scripts=None):
+
+    main_content_marker = '<!-- MAIN_CONTENT -->'
+    script_marker = '<!-- SCRIPTS -->'
+
+    if main_content_marker not in template:
+        raise ValueError("Template missing MAIN_CONTENT marker")
+
+    template = template.replace(main_content_marker, content)
+
+    if scripts:
+        script_tags = '\n'.join(f'<script src="{script}"></script>' for script in scripts)
+        if script_marker in template:
+            template = template.replace(script_marker, script_tags)
+        else:
+            template += f'\n{script_tags}'
+    return template
 # test_replace_tags()
 
 def exists(filename):
