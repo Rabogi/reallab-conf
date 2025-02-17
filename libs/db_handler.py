@@ -4,6 +4,7 @@ import time
 import libs.utils as utils
 import libs.sys_conf as sys_conf
 from datetime import datetime
+from datetime import timedelta
 
 
 def db_execute(db: sqlite3.Connection, query):
@@ -197,9 +198,6 @@ def auth_db_gen_session(db: sqlite3.Connection, userdata: str, t):
 
 
 def auth_db_auth(db: sqlite3.Connection, provided: dict, time_valid: int):
-    # if list(provided.keys()).contains(["username", "password"]):
-    print(list(provided.keys()))
-    # if ["username", "password"] in list(provided.keys()):
     if "username" in list(provided.keys()) and "password" in list(provided.keys()):
         userdata = user_db_get_user(db, provided["username"])
         if userdata is None:
@@ -209,8 +207,7 @@ def auth_db_auth(db: sqlite3.Connection, provided: dict, time_valid: int):
         # User if found
         # Generating session data
         now = datetime.now()
-        # TODO retrun timedelta
-        valid_until = now
+        valid_until = now + timedelta(minutes=time_valid)
         session_token = auth_db_gen_session(
             db, userdata["username"], str(datetime.now())
         )
@@ -229,7 +226,7 @@ def auth_db_auth(db: sqlite3.Connection, provided: dict, time_valid: int):
             return session
         return {"error": "Auth error"}
     else:
-        return None
+        return {"error": "Malformed data"}
 
 
 def auth_db_return_session(db: sqlite3.Connection, session: str):
