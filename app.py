@@ -23,12 +23,13 @@ config = json.loads(
 # Trying to connect to DB
 # Checking if db file exist at set location
 
-
 if utils.exists(config["data_db_location"]) == False:
     open(config["data_db_location"], "w").close()
 
 db = db_handler.connect(config["data_db_location"])
 cursor = db.cursor()
+
+# DB regeneration
 
 db_handler.init_user_table(db)
 db_handler.init_auth_table(db)
@@ -45,6 +46,7 @@ status = {str: str}
 
 # Page handlers
 
+
 @app.get("/")
 def read_root():
     root_page = open("frontend/index.html", "r")
@@ -52,12 +54,15 @@ def read_root():
     root_page.close()
     return response
 
+
 @app.get("/test/{test}")
-def test(test : str):
+def test(test: str):
     db = db_handler.connect(config["data_db_location"])
-    result = db_handler.auth_db_return_session(db,test)
+    result = db_handler.auth_db_return_session(db, test)
     db.close()
     return result
+
+
 # Content handlers
 
 
@@ -84,6 +89,7 @@ def get_interfaces():
     # return sys_conf.list_interfaces()
     return responses.JSONResponse(json.dumps(sys_conf.list_interfaces()))
 
+
 @app.get("/eth_interfaces")
 def get_eth_interfaces():
     data = sys_conf.list_interfaces()
@@ -92,6 +98,7 @@ def get_eth_interfaces():
         if data[i].startswith("127") == False and data[i] != "None":
             output += i + ":" + data[i] + ""
     return responses.PlainTextResponse(output)
+
 
 @app.get("/time")
 def get_time():
@@ -102,10 +109,12 @@ def get_time():
 
 # Auth handlers
 
+
 @app.post("/login")
-def auth(data : dict = Body()):
+def auth(data: dict = Body()):
     db = db_handler.connect(config["data_db_location"])
-    return db_handler.auth_db_auth(db, data,30)
+    return db_handler.auth_db_auth(db, data, 30)
+
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host=config["host"], port=config["port"], reload=True)

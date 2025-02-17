@@ -85,7 +85,7 @@ def row_count(db: sqlite3.Connection, table: str):
 # user db spec
 
 
-def user_db_add_user(db: sqlite3.Connection, userdata : dict):
+def user_db_add_user(db: sqlite3.Connection, userdata: dict):
     # "user_id","username","password","additional_info"
     if type(userdata["additional_info"]) == dict:
         userdata["additional_info"] = json.dumps(userdata["additional_info"])
@@ -176,7 +176,7 @@ def user_db_get_user(db: sqlite3.Connection, q: str | int):
         if len(data) > 0:
             data = list(data[0])
             user = {
-                "id": data[0],
+                "user_id": data[0],
                 "username": data[1],
                 "password": data[2],
                 "additional_info": data[3],
@@ -191,7 +191,7 @@ def user_db_get_user(db: sqlite3.Connection, q: str | int):
 
 def auth_db_gen_session(db: sqlite3.Connection, userdata: str, t):
     session_token = utils.sha256(userdata + str(t))
-    if auth_db_return_session(db,session_token) == None:
+    if auth_db_return_session(db, session_token) == None:
         return session_token
     else:
         return None
@@ -208,21 +208,19 @@ def auth_db_auth(db: sqlite3.Connection, provided: dict, time_valid: int):
         # Generating session data
         now = datetime.now()
         valid_until = now + timedelta(minutes=time_valid)
-        session_token = auth_db_gen_session(
-            db, userdata["username"], str(datetime.now())
-        )
+        session_token = auth_db_gen_session(db, userdata["username"], time_to_str(now))
         user_info = json.loads(userdata["additional_info"])
         if user_info["level"] != None:
             level = user_info["level"]
         else:
             level = 100
         session = {
-            "session_token":session_token,
-            "user_id":userdata["id"],
-            "valid_until":valid_until,
-            "level":level,
+            "session_token": session_token,
+            "user_id": userdata["user_id"],
+            "valid_until": time_to_str(valid_until),
+            "level": level,
         }
-        if auth_db_add_session(db,session) == []:
+        if auth_db_add_session(db, session) == []:
             return session
         return {"error": "Auth error"}
     else:
@@ -239,17 +237,33 @@ def auth_db_return_session(db: sqlite3.Connection, session: str):
         "session_id": result[0][0],
         "session_token": result[0][1],
         "user_id": result[0][2],
-        "level": result[0][3],
+        "valid_until": result[0][3],
+        "level": result[0][4],
     }
     return result
+
+
+def str_to_time(t_string):
+    return datetime.strptime(t_string, "%Y-%m-%d %H:%M:%S.%f")
+
+
+def time_to_str(t_obj):
+    return datetime.strftime(t_obj, "%Y-%m-%d %H:%M:%S.%f")
+
+
+def auth_db_check_session_valid(session):
+    now = datetime.now()
+    if str_to_time(session["valid_until"]) > now:
+        return True
+    else:
+        return False
+
 
 def auth_db_add_session(db: sqlite3.Connection, session: dict):
     error = "None"
     try:
         cursor = db.cursor()
-        query = (
-            "INSERT INTO auth (session_token, user_id, valid_until, level) VALUES (?, ?, ?, ?);"
-        )
+        query = "INSERT INTO auth (session_token, user_id, valid_until, level) VALUES (?, ?, ?, ?);"
         cursor.execute(
             query,
             (
@@ -267,4 +281,58 @@ def auth_db_add_session(db: sqlite3.Connection, session: dict):
             return cursor.fetchall()
         else:
             return error
+
+
+def auth_db_update_session(db: sqlite3.Connection, session_token, time):
+    session = auth_db_return_session(db, session_token)
+    session["valid_until"] = time_to_str(datetime.now()+timedelta(minutes=time))
+    error = "None"
+    try:
+        cursor = db.cursor()
+        query = "UPDATE auth SET user_id = ?, valid_until = ? , level = ? where session_token = ?;"
+        cursor.execute(
+            query,
+            (
+                session["user_id"],
+                session["valid_until"],
+                session["level"],
+                session["session_token"],
+            ),
+        )
+        db.commit()
+    except sqlite3.Error as e:
+        error = f"An error occurred: {e}"
+    finally:
+        if error == "None":
+            return cursor.fetchall()
+        else:
+            return error
+
+def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
+    error = "None"
+    try:
+        cursor = db.cursor()
+        query = "DELETE FROM auth WHERE user_id = ?;"
+        cursor.execute(
+            query,
+            (
+                user_id,
+            ),
+        )
+        db.commit()
+    except sqlite3.Error as e:
+        error = f"An error occurred: {e}"
+    finally:
+        if error == "None":
+            return cursor.fetchall()
+        else:
+            return error
+
 # db = sqlite3.connect("./data/data.db")
+# auth_db_purge_sessions(db,user_db_get_user(db,"admin")["user_id"])
+# session = auth_db_return_session(db,"80e676a2c90f598511ac93074e8b8ec577ebd2cb2925f53eef392158b80b4e1c")
+# print(session["valid_until"])
+
+# auth_db_update_session(db,session["session_token"],30)
+# session = auth_db_return_session(db,"80e676a2c90f598511ac93074e8b8ec577ebd2cb2925f53eef392158b80b4e1c")
+# print(session["valid_until"])
