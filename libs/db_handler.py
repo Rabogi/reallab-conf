@@ -20,7 +20,7 @@ def db_execute(db: sqlite3.Connection, query):
 
 
 def connect(path):
-    db = sqlite3.connect(path,check_same_thread=False)
+    db = sqlite3.connect(path, check_same_thread=False)
     return db
 
 
@@ -191,7 +191,7 @@ def user_db_get_user(db: sqlite3.Connection, q: str | int):
 
 
 def auth_db_gen_session(db: sqlite3.Connection, userdata: str, t):
-    session_token = utils.sha256(userdata + str(t)+str(random.random()))
+    session_token = utils.sha256(userdata + str(t) + str(random.random()))
     if auth_db_return_session(db, session_token) == None:
         return session_token
     else:
@@ -284,20 +284,22 @@ def auth_db_add_session(db: sqlite3.Connection, session: dict):
         else:
             return error
 
-def auth_db_login(db: sqlite3.Connection,session_token,time):
+
+def auth_db_login(db: sqlite3.Connection, session_token, time):
     try:
-        session = auth_db_return_session(db,session_token)
+        session = auth_db_return_session(db, session_token)
         if auth_db_check_session_valid(session):
-            auth_db_update_session(db,session_token,30)
+            auth_db_update_session(db, session_token, 30)
             return True
         else:
             return False
     except:
         return False
 
+
 def auth_db_update_session(db: sqlite3.Connection, session_token, time):
     session = auth_db_return_session(db, session_token)
-    session["valid_until"] = time_to_str(datetime.now()+timedelta(minutes=time))
+    session["valid_until"] = time_to_str(datetime.now() + timedelta(minutes=time))
     error = "None"
     try:
         cursor = db.cursor()
@@ -320,6 +322,7 @@ def auth_db_update_session(db: sqlite3.Connection, session_token, time):
         else:
             return error
 
+
 def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
     error = "None"
     try:
@@ -327,9 +330,7 @@ def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
         query = "DELETE FROM auth WHERE user_id = ?;"
         cursor.execute(
             query,
-            (
-                user_id,
-            ),
+            (user_id,),
         )
         db.commit()
     except sqlite3.Error as e:
@@ -339,6 +340,7 @@ def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
             return cursor.fetchall()
         else:
             return error
+
 
 # db = sqlite3.connect("./data/data.db")
 

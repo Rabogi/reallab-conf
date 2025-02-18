@@ -27,7 +27,6 @@ if utils.exists(config["data_db_location"]) == False:
     open(config["data_db_location"], "w").close()
 
 db = db_handler.connect(config["data_db_location"])
-cursor = db.cursor()
 
 # DB regeneration
 
@@ -52,12 +51,25 @@ def read_root():
     root_page.close()
     with open("frontend/content/pages/login.html") as f:
         content = f.read()
+        f.close()
+    page = utils.embed_in_template(page,content)
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
+
+@app.get("/dashboard")
+def read_dashboard():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/dashboard.html") as f:
+        content = f.read()
+        f.close()
     page = utils.embed_in_template(page,content)
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
 
-# @app.get("/app")
+# @app.get("/app")S
 # def read_app(data: dict = Body()):
 #     if "session_token" in list(data.keys()):
 #         if db_handler.auth_db_login(db, data["session_token"], 30):
@@ -127,6 +139,13 @@ def get_time():
 @app.post("/auth")
 def auth(data: dict = Body()):
     return db_handler.auth_db_auth(db, data, 30)
+
+@app.post("/login")
+def login(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db,data["session_token"], 30):
+            return {"status":"Success"}
+    return {"status":"Fail"}
 
 
 if __name__ == "__main__":
