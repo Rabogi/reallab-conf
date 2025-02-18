@@ -10,7 +10,7 @@ function startUpdatingTime() {
             })
             .then(time => {
                 // Remove extra double quotes from the API response
-                time = time.replace(/^"|"$/g, '');
+                time = time.replaceAll(/^"|"$/g, '');
 
                 // Validate the time format (HH:MM:SS)
                 if (!/^\d{2}:\d{2}:\d{2}$/.test(time)) {

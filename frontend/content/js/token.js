@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Check if the current page is the root
     if (window.location.pathname === '/') {
         console.log('This is the root page.');
@@ -14,27 +14,55 @@ document.addEventListener('DOMContentLoaded', function() {
                 session_token: session_token,
             })
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Token failed');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status) {
-                if (data.status == "Fail"){
-                    console.error('Error:', error);
-                    console.error('Status', data.status);
-                    window.location.href = '/';
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Token failed');
                 }
-            } else {
-                throw new Error('No token received');
-            }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status) {
+                    if (data.status == "Fail") {
+                        console.error('Error:', error);
+                        console.error('Status', data.status);
+                        window.location.href = '/';
+                    }
+                } else {
+                    throw new Error('No token received');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // console.error('Status', data.status);
+                window.location.href = '/';
+            });
+        fetch('/session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                session_token: session_token,
+            })
         })
-        .catch(error => {
-            console.error('Error:', error);
-            // console.error('Status', data.status);
-            window.location.href = '/';
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Token failed');
+                }
+                return response.json();
+            })
+            .then(session => {
+                if (session.username) {
+                    document.getElementById('navbar-username').textContent = session.username;
+                } else {
+                    document.getElementById('navbar-username').textContent = "Failed to load username";
+                    throw new Error('No token received');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // console.error('Status', data.status);
+
+            });
     }
 });

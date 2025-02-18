@@ -147,6 +147,15 @@ def login(data: dict = Body()):
             return {"status":"Success"}
     return {"status":"Fail"}
 
+@app.post("/session")
+def session(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db,data["session_token"], 30):
+            user = db_handler.auth_db_return_session(db,data["session_token"])
+            username = db_handler.user_db_get_user(db,int(user["user_id"]))["username"]
+            user["username"] = username
+            dump = json.dumps(user)
+            return user
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host=config["host"], port=config["port"], reload=True)
