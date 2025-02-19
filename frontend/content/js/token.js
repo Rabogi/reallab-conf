@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(session => {
                 if (session.username) {
                     document.getElementById('navbar-username').textContent = session.username;
+                    document.getElementById('navbar-username').style.display = "block";
                 } else {
                     document.getElementById('navbar-username').textContent = "Failed to load username";
                     throw new Error('No token received');

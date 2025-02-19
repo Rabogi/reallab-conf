@@ -7,6 +7,10 @@
     background-color: rgba(79, 81, 106, 0.5); ;
 }
 
+.main-color-bg-75{
+    background-color: rgba(79, 81, 106, 0.75); ;
+}
+
 .sec-color-bg{
     background-color: rgba(52, 53, 66, 1);;
 }
