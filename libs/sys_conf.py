@@ -19,6 +19,8 @@ def list_interfaces():
             interfaces[t[0]] = "None"
     return interfaces
 
+def get_temp():
+    return round(int(call_shell("cat /sys/class/thermal/thermal_zone0/temp"))/1000,1)
 
 def recreate_default_conf(path):
     conf = {

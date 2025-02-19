@@ -51,7 +51,7 @@ def read_root():
     with open("frontend/content/pages/login.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content)
+    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT -->')
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
@@ -63,7 +63,15 @@ def read_dashboard():
     with open("frontend/content/pages/dashboard.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content)
+    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT -->')
+    with open("frontend/content/pages/temps.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page,content,'<!-- TEMPS  -->')
+    with open("frontend/content/pages/time.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page,content,'<!-- TIME  -->')
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
@@ -103,6 +111,11 @@ def get_eth_interfaces():
             output += i + ":" + data[i] + ""
     return responses.PlainTextResponse(output)
 
+
+@app.get("/temperature")
+def get_temperature():
+    return sys_conf.get_temp()
+    
 
 @app.get("/time")
 def get_time():
