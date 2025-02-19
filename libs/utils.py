@@ -40,3 +40,6 @@ def exists(filename):
 
 def sha256(input: str):
     return hashlib.sha256((input).encode("utf-8")).hexdigest()
+
+def sha512(input: str):
+    return hashlib.sha512((input).encode("utf-8")).hexdigest()

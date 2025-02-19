@@ -35,6 +35,7 @@ db_handler.init_auth_table(db)
 
 if db_handler.row_count(db, "users") == 0:
     t = {"username": "admin", "password": "123", "additional_info": {"level": 0}}
+    t["password"] = utils.sha512(t["password"])
     db_handler.user_db_add_user(db, t)
 
 status = {str: str}
