@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi import responses
 from fastapi import Body
 from fastapi.middleware.cors import CORSMiddleware
+import pathlib
 import os
 import uvicorn
 import json
@@ -37,8 +38,19 @@ config = json.loads(
 # Trying to connect to DB
 # Checking if db file exist at set location
 
-if utils.exists(config["data_db_location"]) == False:
-    open(config["data_db_location"], "w").close()
+def gen_folders(path):
+    head,tail = os.path.split(path)
+    pathlib.Path(head).mkdir(parents=True,exist_ok=True)
+
+def regenerate(path,file):
+    if utils.exists(path) == False:
+        gen_folders(path)
+        if file:
+            open(path, "w").close()
+
+regenerate(config["data_db_location"],True)
+regenerate(config["cert_file"],False)
+regenerate(config["cert_key_file"],False)
 
 db = db_handler.connect(config["data_db_location"])
 
@@ -55,7 +67,6 @@ if db_handler.row_count(db, "users") == 0:
 status = {str: str}
 
 # Page handlers
-
 
 @app.get("/")
 def read_root():

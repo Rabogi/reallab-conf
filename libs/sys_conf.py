@@ -19,8 +19,10 @@ def list_interfaces():
             interfaces[t[0]] = "None"
     return interfaces
 
+
 def get_temp():
-    return round(int(call_shell("cat /sys/class/thermal/thermal_zone0/temp"))/1000,1)
+    return round(int(call_shell("cat /sys/class/thermal/thermal_zone0/temp")) / 1000, 1)
+
 
 def recreate_default_conf(path):
     conf = {
@@ -28,6 +30,8 @@ def recreate_default_conf(path):
         "host": "localhost",
         "port": 8000,
         "content_folder": "./frontend/content",
+        "cert_file": "./ssl/cert.pem",
+        "cert_key_file": "./ssl/key.pem",
     }
     open(path, "w").write(json.dumps(conf))
 
