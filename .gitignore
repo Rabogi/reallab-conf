@@ -171,3 +171,5 @@ cython_debug/
 .pypirc
 /data/data.db
 /config.json
+/ssl/*
+/ssl/*.pem

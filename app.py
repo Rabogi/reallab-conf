@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi import responses
 from fastapi import Body
 from fastapi.middleware.cors import CORSMiddleware
+import os
 import uvicorn
 import json
 import libs.utils as utils
@@ -64,9 +65,10 @@ def read_root():
     with open("frontend/content/pages/login.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT  -->')
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
+
 
 @app.get("/dashboard")
 def read_dashboard():
@@ -76,17 +78,18 @@ def read_dashboard():
     with open("frontend/content/pages/dashboard.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT  -->')
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
     with open("frontend/content/pages/temps.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content,'<!-- TEMPS  -->')
+    page = utils.embed_in_template(page, content, "<!-- TEMPS  -->")
     with open("frontend/content/pages/time.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content,'<!-- TIME  -->')
+    page = utils.embed_in_template(page, content, "<!-- TIME  -->")
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
+
 
 # Content handlers
 
@@ -128,7 +131,7 @@ def get_eth_interfaces():
 @app.get("/temperature")
 def get_temperature():
     return sys_conf.get_temp()
-    
+
 
 @app.get("/time")
 def get_time():
@@ -139,26 +142,37 @@ def get_time():
 
 # Auth handlers
 
+
 @app.post("/auth")
 def auth(data: dict = Body()):
     return db_handler.auth_db_auth(db, data, 30)
 
+
 @app.post("/login")
 def login(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db,data["session_token"], 30):
-            return {"status":"Success"}
-    return {"status":"Fail"}
+        if db_handler.auth_db_login(db, data["session_token"], 30):
+            return {"status": "Success"}
+    return {"status": "Fail"}
+
 
 @app.post("/session")
 def session(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db,data["session_token"], 30):
-            user = db_handler.auth_db_return_session(db,data["session_token"])
-            username = db_handler.user_db_get_user(db,int(user["user_id"]))["username"]
+        if db_handler.auth_db_login(db, data["session_token"], 30):
+            user = db_handler.auth_db_return_session(db, data["session_token"])
+            username = db_handler.user_db_get_user(db, int(user["user_id"]))["username"]
             user["username"] = username
             dump = json.dumps(user)
             return user
 
+
 if __name__ == "__main__":
-    uvicorn.run("app:app", host=config["host"], port=config["port"], reload=True)
+    uvicorn.run(
+        "app:app",
+        host=config["host"],
+        port=config["port"],
+        ssl_keyfile=os.path.realpath(config["cert_key_file"]),
+        ssl_certfile=os.path.realpath(config["cert_file"]),
+        reload=True,
+    )
