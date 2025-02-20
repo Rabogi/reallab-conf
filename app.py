@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi import responses
 from fastapi import Body
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import json
 import libs.utils as utils
@@ -11,6 +12,18 @@ import libs.db_handler as db_handler
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
+cors = CORSMiddleware(
+    app,
+    allow_origins=(),
+    allow_methods=("GET",),
+    allow_headers=(),
+    allow_credentials=False,
+    allow_origin_regex=None,
+    expose_headers=(),
+    max_age=600,
+)
+
+app.middleware = cors
 
 if utils.exists("./config.json") == False:
     sys_conf.recreate_default_conf("./config.json")
