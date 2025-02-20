@@ -160,7 +160,7 @@ def user_db_update_user(db: sqlite3.Connection, userdata: dict):
             return error
 
 
-def user_db_get_user(db: sqlite3.Connection, q: str | int):
+def user_db_get_user(db: sqlite3.Connection, q):
     try:
         cursor = db.cursor()
         query = ""
