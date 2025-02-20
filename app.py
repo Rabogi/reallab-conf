@@ -51,7 +51,7 @@ def read_root():
     with open("frontend/content/pages/login.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT -->')
+    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT  -->')
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
@@ -63,7 +63,7 @@ def read_dashboard():
     with open("frontend/content/pages/dashboard.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT -->')
+    page = utils.embed_in_template(page,content,'<!-- MAIN_CONTENT  -->')
     with open("frontend/content/pages/temps.html") as f:
         content = f.read()
         f.close()
