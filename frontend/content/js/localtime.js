@@ -18,14 +18,14 @@ function startUpdatingTime() {
                 }
 
                 // Update the time display
-                document.getElementById('time').textContent = time;
+                document.getElementById('cur-time').textContent = time;
 
                 // Start updating the time locally
                 startUpdatingTimeLocally(time);
             })
             .catch(error => {
                 console.error('Error fetching or parsing time:', error);
-                document.getElementById('time').textContent = 'Error: Unable to load time';
+                document.getElementById('cur-time').textContent = 'Error: Unable to load time';
             });
     }
 
@@ -64,7 +64,7 @@ function startUpdatingTime() {
                 String(seconds).padStart(2, '0');
 
             // Update the time display
-            document.getElementById('time').textContent = formattedTime;
+            document.getElementById('cur-time').textContent = formattedTime;
         }, 1000);
     }
 

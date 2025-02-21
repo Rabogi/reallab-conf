@@ -14,7 +14,7 @@
 
     <style>
         .navbar-brand img {
-            height: 40px;
+            height: 30px;
             /* Adjust the height of your logo */
         }
         /* Custom CSS for the status bar */
@@ -41,7 +41,7 @@
 
 <body class="sec-color-bg">
     <!-- Top Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark main-color-bg text-white">
+    <nav class="navbar navbar-expand-lg sticky-top navbar-dark main-color-bg text-white" style="border-radius: 10px; border-bottom: inset; border-bottom-color: #1f2feb63;">
         <div class="container-fluid">
             <div class="btn-group navbar-brand text-white">
                 <button type="button" class="btn sec-color-bg text-white btn-no-hover">Reallab conf <img
@@ -67,8 +67,8 @@
 </body>
 <footer>
     <div style="position: fixed;  bottom: 0;left: 0; width: 100%;">
-        <div class="status-bar main-color-bg-75">
-            <a id="time" style="padding: auto;">Loading time</a>
+        <div class="status-bar main-color-bg-75" style="border-style:solid; border-width: 3px; border-color: #1f2feb63;">
+            <a id="cur-time" style="padding: auto;">Loading time</a>
             <a id="address" style="padding: auto;">Loading address</a>
         </div>
     </div>
