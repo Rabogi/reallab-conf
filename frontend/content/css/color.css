@@ -1,23 +1,33 @@
 /* class that contain color definitions */
-.main-color-bg{
-    background-color: rgba(79, 81, 106, 1);;
+.colors {
+    --main-bg-color: rgba(79, 81, 106, 1);
+    --main-color-bg-50: rgba(79, 81, 106, 0.5);
+    --main-color-bg-75: rgba(79, 81, 106, 0.75);
+    --sec-bg-color: rgba(52, 53, 66, 1);
+    --sec-color-bg-50: rgba(52, 53, 66, 0.5);
 }
 
-.main-color-bg-50{
-    background-color: rgba(79, 81, 106, 0.5); ;
+.main-color-bg {
+    background-color: var(--main-bg-color);
 }
 
-.main-color-bg-75{
-    background-color: rgba(79, 81, 106, 0.75); ;
+.main-color-bg-50 {
+    background-color: var(--main-color-bg-50);
 }
 
-.sec-color-bg{
-    background-color: rgba(52, 53, 66, 1);;
-}
-.sec-color-bg-50{
-    background-color: rgba(52, 53, 66, 0.5);;
+.main-color-bg-75 {
+    background-color: var(--main-color-bg-75);
 }
 
-.thi-border{
-    border-color: rgb(111, 114, 160);;
+.sec-color-bg {
+    background-color: var(--sec-bg-color);
+}
+
+.sec-color-bg-50 {
+    background-color: var(--sec-color-bg-50);
+}
+
+.thi-border {
+    border-color: rgb(111, 114, 160);
+    ;
 }
