@@ -13,10 +13,19 @@
         crossorigin="anonymous"></script>
 
     <style>
+        body {
+            padding-top: 56px;
+        }
+
+        .navbar {
+            transition: top 0.3s;
+        }
+
         .navbar-brand img {
             height: 30px;
             /* Adjust the height of your logo */
         }
+
         /* Custom CSS for the status bar */
         .status-bar {
             display: flex;
@@ -29,23 +38,27 @@
             justify-content: space-between;
             flex-wrap: nowrap;
         }
+
         .btn-no-hover:hover {
             background-color: rgba(52, 53, 66, 1);
             ;
         }
-        .list-item-active{
-            --bs-dropdown-link-active-bg: rgba(79, 81, 106, 1);;
+
+        .list-item-active {
+            --bs-dropdown-link-active-bg: rgba(79, 81, 106, 1);
+            ;
         }
     </style>
 </head>
 
 <body class="sec-color-bg colors">
     <!-- Top Bar -->
-    <nav class="navbar navbar-expand-lg sticky-top navbar-dark main-color-bg text-white" style="border-radius: 10px; border-bottom: inset; border-bottom-color: #1f2feb63;">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark main-color-bg text-white"
+        style="border-radius: 10px; border-bottom: inset; border-bottom-color: var(--main-shadow);">
         <div class="container-fluid">
             <div class="btn-group navbar-brand text-white">
-                <button type="button" class="btn sec-color-bg text-white btn-no-hover">Reallab conf <img
-                        src="/content/images/cat.jpg" alt="Your Logo" style="border-radius: 45px;"></button>
+                <a type="button" class="btn sec-color-bg text-white btn-no-hover" href="/dashboard">Reallab conf <img
+                        src="/content/images/cat.jpg" alt="Your Logo" style="border-radius: 45px;"></a>
                 <button type="button" class="btn sec-color-bg dropdown-toggle dropdown-toggle-split btn-no-hover"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
@@ -67,7 +80,8 @@
 </body>
 <footer>
     <div style="position: fixed;  bottom: 0;left: 0; width: 100%;">
-        <div class="status-bar main-color-bg-75" style="border-style:solid; border-width: 3px; border-color: #1f2feb63;">
+        <div class="status-bar main-color-bg-75"
+            style="border-style:solid; border-width: 3px; border-color: var(--main-shadow);">
             <a id="cur-time" style="padding: auto;">Loading time</a>
             <a id="address" style="padding: auto;">Loading address</a>
         </div>
@@ -77,4 +91,22 @@
 <script src="/content/js/token.js"></script>
 <script src="/content/js/localtime.js"> </script>
 <script src="/content/js/address.js"> </script>
+<script>
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar');
+
+    window.addEventListener('scroll', function () {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > lastScrollTop) {
+            // Scrolling down
+            navbar.style.top = '-73px'; // Hide the navbar (adjust height if needed)
+        } else {
+            // Scrolling up
+            navbar.style.top = '0'; // Show the navbar
+        }
+
+        lastScrollTop = scrollTop;
+    });
+</script>
 <!-- SCRIPTS -->

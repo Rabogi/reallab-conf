@@ -1,15 +1,35 @@
-<div class="card main-color-bg" style="border-radius: 15px; height: 100%;" id="time">
-    <div class="container-fluid text-white m-2" style="height: 100%;">
-        <h1 class="h1">Time</h1>
-        <div style="height: 100%;">
-            <div style="height: 50%;">
-
-            </div>
-            <div>
+<div class="card main-color-bg container-fluid text-white m-2 colors" style="border-radius: 10px; border-bottom: inset; border-bottom-color: var(--main-shadow);height: 100%;" id="time">
+    <h1 class="h1">Time</h1>
+    <style>
+        .indicator{
+            background-color: var(--sec-bg-color);
+            border-radius: 15px;
+            color : white;
+            font-size: larger;
+            padding: 10px;
+        }
+    </style>
+    <div
+        style="height: 100%;display: flex;flex-direction: column;justify-content: flex-start;align-content: space-between;align-items: stretch;flex-wrap: nowrap;">
+        <div style="display: flex;justify-content: space-between;flex-wrap: nowrap;">
+            <span class="indicator">Current local time : (<span id="current-local-time">00:00</span>)</span>
+            <span class="indicator">Current TZ : <span id="current-TZ">Europe/Moscow</span></span>
+            <span class="indicator">Time setting space</span>
+        </div>
+        <hr class="hr" />
+        <div style="display: flex;justify-content: space-between;flex-wrap: nowrap;">
+            <span class="indicator">UTC time</span>
+            <span class="indicator">RTC time</span>
+        </div>
+        <hr class="hr" />
+        <div style="display: flex;justify-content: space-between;flex-wrap: nowrap;">
+            <span class="indicator">Current TZ</span>
+            <div style="display: block;">
                 <input type="text" id="inputField" placeholder="Timezone" class="form-control form-control-sm">
                 <div id="suggestions" class="dropdown-menu"></div>
             </div>
         </div>
+        <hr class="hr" />
     </div>
 </div>
 
@@ -26,7 +46,7 @@
     }
 
     .suggestion-item:hover {
-        background-color:var(--main-bg-color);
+        background-color: var(--main-bg-color);
         color: white;
     }
 </style>
