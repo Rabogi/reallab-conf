@@ -65,7 +65,7 @@ if db_handler.row_count(db, "users") == 0:
     db_handler.user_db_add_user(db, t)
 
 status = {str: str}
-
+timezones = sys_conf.call_shell("timedatectl list-timezones").split("\n")
 # Page handlers
 
 @app.get("/")
@@ -150,7 +150,9 @@ def get_time():
     # return "00:00:00"
     # return "23:59:59"
 
-
+@app.get("/timezones")
+def get_timezones():
+    return timezones
 # Auth handlers
 
 
