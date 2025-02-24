@@ -1,5 +1,5 @@
 function update_time(time) {
-    let timeParts = initialTime.split(':');
+    let timeParts = time.split(':');
     let hours = parseInt(timeParts[0], 10);
     let minutes = parseInt(timeParts[1], 10);
     let seconds = parseInt(timeParts[2], 10);
@@ -26,6 +26,8 @@ function update_time(time) {
         String(hours).padStart(2, '0') + ':' +
         String(minutes).padStart(2, '0') + ':' +
         String(seconds).padStart(2, '0');
+
+    return formattedTime;
 }
 
 session_token = localStorage.getItem("real_lab_conf");
@@ -46,10 +48,16 @@ fetch('/timedatectl', {
     })
     .then(data => {
         if (data.local) {
+            document.getElementById("timecard-local-time").textContent = data.local;
+            document.getElementById("timecard-UTC-time").textContent = data.utc;
+            document.getElementById("timecard-RTC-time").textContent = data.rtc;
             setInterval(() => {
-                
+                document.getElementById("timecard-local-time").textContent = update_time(document.getElementById("timecard-local-time").textContent);
+                document.getElementById("timecard-UTC-time").textContent = update_time(document.getElementById("timecard-UTC-time").textContent);
+                document.getElementById("timecard-RTC-time").textContent = update_time(document.getElementById("timecard-RTC-time").textContent);
             }, 1000);
-        } else {
+        }
+        else {
             throw new Error('No timedata received');
         }
     })

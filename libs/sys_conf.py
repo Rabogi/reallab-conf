@@ -43,10 +43,12 @@ def get_sys_time():
 def get_time_data_ctl():
     data = call_shell("timedatectl")
     data = data.split("\n")
+    for i in range(len(data)):
+        data[i] = data[i].strip()
     return {
-        "local" : data[0].split(":")[1].split(" ")[2],
-        "utc" : data[1].split(":")[1].split(" ")[2],
-        "rtc" : data[2].split(":")[1].split(" ")[2],
+        "local" : data[0].split(" ")[4],
+        "utc" : data[1].split(" ")[4],
+        "rtc" : data[2].split(" ")[4],
         "timezone" : data[3].split(":")[1].split(" ")[1],
         "sys_clock_sync" : data[4].split(":")[1].replace(" ",""),
         "ntp" : data[5].split(":")[1].replace(" ",""),
