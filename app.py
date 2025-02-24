@@ -90,14 +90,26 @@ def read_dashboard():
         content = f.read()
         f.close()
     page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
-    with open("frontend/content/pages/temps.html") as f:
+    with open("frontend/content/pages/micropages/temps.html") as f:
         content = f.read()
         f.close()
     page = utils.embed_in_template(page, content, "<!-- TEMPS  -->")
-    with open("frontend/content/pages/time.html") as f:
+    with open("frontend/content/pages/micropages/time.html") as f:
         content = f.read()
         f.close()
     page = utils.embed_in_template(page, content, "<!-- TIME  -->")
+    with open("frontend/content/pages/micropages/host.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- HOST  -->")
+    with open("frontend/content/pages/micropages/users.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- USERS  -->")
+    with open("frontend/content/pages/micropages/fetchdump.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- FETCH  -->")
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
@@ -126,7 +138,7 @@ async def get_content(item_name: str):
 @app.get("/interfaces")
 def get_interfaces():
     # return sys_conf.list_interfaces()
-    return responses.JSONResponse(json.dumps(sys_conf.list_interfaces()))
+    return responses.JSONResponse(sys_conf.list_interfaces())
 
 
 @app.get("/eth_interfaces")
@@ -178,6 +190,13 @@ def session(data: dict = Body()):
             user["username"] = username
             dump = json.dumps(user)
             return user
+        
+@app.post("/timedatectl")
+def get_timedatectl(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], 30):
+            return sys_conf.get_time_data_ctl()
+    return {"status": "Fail"}
 
 
 if __name__ == "__main__":

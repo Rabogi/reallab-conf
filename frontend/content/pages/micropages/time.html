@@ -1,0 +1,64 @@
+<div class="card main-color-bg container-fluid text-white p-2 colors"
+    style="border-radius: 10px; border-bottom: inset; border-bottom-color: var(--main-shadow);height: 100%;" id="time">
+    <h1>Time</h1>
+    <style>
+        .indicator {
+            background-color: var(--sec-bg-color);
+            border-radius: 15px;
+            color: white;
+            font-size: larger;
+            padding: 10px;
+        }
+
+        /* .time-wrapper {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* grid-template-rows: repeat(2,1rf);*/
+        /* grid-auto-rows: 50%; 
+        }
+        */
+        /* .time-box1 {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 1;
+        }
+        .time-box2 {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 2;
+            grid-row-end: 2;
+        }
+        .time-box3 {
+            grid-column-start: 2;
+            grid-column-end: 2;
+            grid-row-start: 2;
+            grid-row-end: 2;
+        }  */
+    </style>
+    <div class="" style="
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: space-between;
+    align-items: stretch;
+    font-size: large;
+">
+        <div class="p-2"
+            style="display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: space-between;align-content: center;align-items: baseline;">
+            <span class="indicator" id="time-card-timezone">Europe/Moscow</span>
+            <span class="indicator" id="time-card-time">00:00:00</span>
+        </div>
+        <div class="p-2"
+            style="display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: space-between;align-content: center;align-items: baseline;">
+            <span class="indicator" id="time-card-timezone">UTC</span>
+            <span class="indicator" id="time-card-time">00:00:00</span>
+        </div>
+        <div class="p-2" style="display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: space-between;align-content: center;align-items: baseline;">
+            <span class="indicator" id="time-card-timezone">RTC</span>
+            <span class="indicator" id="time-card-time">00:00:00</span>
+        </div>
+    </div>
+</div>
+
+<script scr="/content/js/micropages/timecard.js"></script>

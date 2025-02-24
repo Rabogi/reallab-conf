@@ -39,3 +39,16 @@ def recreate_default_conf(path):
 def get_sys_time():
     now = datetime.now()
     return now.strftime("%H:%M:%S")
+
+def get_time_data_ctl():
+    data = call_shell("timedatectl")
+    data = data.split("\n")
+    return {
+        "local" : data[0].split(":")[1].split(" ")[2],
+        "utc" : data[1].split(":")[1].split(" ")[2],
+        "rtc" : data[2].split(":")[1].split(" ")[2],
+        "timezone" : data[3].split(":")[1].split(" ")[1],
+        "sys_clock_sync" : data[4].split(":")[1].replace(" ",""),
+        "ntp" : data[5].split(":")[1].replace(" ",""),
+        "rtc_equal_tz" : data[6].split(":")[1].replace(" ",""),
+    }
