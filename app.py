@@ -38,19 +38,22 @@ config = json.loads(
 # Trying to connect to DB
 # Checking if db file exist at set location
 
-def gen_folders(path):
-    head,tail = os.path.split(path)
-    pathlib.Path(head).mkdir(parents=True,exist_ok=True)
 
-def regenerate(path,file):
+def gen_folders(path):
+    head, tail = os.path.split(path)
+    pathlib.Path(head).mkdir(parents=True, exist_ok=True)
+
+
+def regenerate(path, file):
     if utils.exists(path) == False:
         gen_folders(path)
         if file:
             open(path, "w").close()
 
-regenerate(config["data_db_location"],True)
-regenerate(config["cert_file"],False)
-regenerate(config["cert_key_file"],False)
+
+regenerate(config["data_db_location"], True)
+regenerate(config["cert_file"], False)
+regenerate(config["cert_key_file"], False)
 
 db = db_handler.connect(config["data_db_location"])
 
@@ -67,6 +70,7 @@ if db_handler.row_count(db, "users") == 0:
 status = {str: str}
 timezones = sys_conf.call_shell("timedatectl list-timezones").split("\n")
 # Page handlers
+
 
 @app.get("/")
 def read_root():
@@ -132,6 +136,11 @@ async def get_content(item_name: str):
     return responses.FileResponse(config["content_folder"] + "/js/" + item_name)
 
 
+@app.get("/content/icons/{item_name}")
+async def get_content(item_name: str):
+    return responses.FileResponse(config["content_folder"] + "/icons/" + item_name)
+
+
 # Generics
 
 
@@ -162,9 +171,12 @@ def get_time():
     # return "00:00:00"
     # return "23:59:59"
 
+
 @app.get("/timezones")
 def get_timezones():
     return timezones
+
+
 # Auth handlers
 
 
@@ -190,7 +202,8 @@ def session(data: dict = Body()):
             user["username"] = username
             dump = json.dumps(user)
             return user
-        
+
+
 @app.post("/timedatectl")
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
