@@ -54,3 +54,34 @@ def get_time_data_ctl():
         "ntp" : data[5].split(":")[1].replace(" ",""),
         "rtc_equal_tz" : data[6].split(":")[1].replace(" ",""),
     }
+    
+def get_memory():
+    data = call_shell("free -m | grep Mem:")
+    data = ' '.join(data.split()).split(" ")
+    data = {
+        "total":data[1],
+        "used":data[2],
+        "free":data[3],
+        "shared":data[4],
+        "buff/cache":data[5],
+        "available":data[6],
+    }
+    return data
+
+def get_load():
+    data = call_shell("cat /proc/loadavg")
+    data = data.split(" ")
+    return {
+        "load1":data[0],
+        "load5":data[1],
+        "load15":data[2],
+        "procs":data[3],
+        "active_procs":data[3].split("/")[0],
+        "all_procs":data[3],
+    }
+    
+def get_temps():
+    data = call_shell("cat /sys/class/thermal/thermal_zone0/temp")
+    return {
+        "temp" : round(int(data)/1000,1)
+    }

@@ -1,3 +1,86 @@
-<div class="card main-color-bg container-fluid text-white p-2 colors" style="border-radius: 10px; border-bottom: inset; border-bottom-color: var(--main-shadow);height: 100%;" id="temps">
-    <h1>Temps</h1>
+<div class="card main-color-bg container-fluid text-white p-2 colors"
+    style="border-radius: 10px; border-bottom: inset; border-bottom-color: var(--main-shadow);height: 100%;" id="temps">
+    <div style="
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    ;">
+        <h1>Resources and temps</h1>
+        <a class="btn btn-outline-light" type="button" style="    padding: unset;
+    border-radius: 45px; border-color: var(--main-bg-color);"><img class="svg_inverse" src="/content/icons/gear.svg"
+                height="48" width="48"></a>
+    </div>
+    <style>
+        .svg_inverse {
+            /* safari 6.0 - 9.0 */
+            filter: invert(100%);
+        }
+
+        .svg_inverse:hover {
+            /* safari 6.0 - 9.0 */
+            filter: invert(0%);
+        }
+
+        .res-indicator {
+            min-width: 300px;
+            display: flex;
+            background-color: var(--sec-bg-color);
+            border-radius: 15px;
+            color: white;
+            font-size: larger;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+    <div style="
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 100%;
+">
+        <div class="" style="height: 100%;">
+            <div class="res-indicator m-2 p-2">
+                <span id="">
+                    Processes
+                </span>
+                <span id="rescard-processes">
+                    1/200
+                </span>
+            </div>
+            <div class="res-indicator m-2 p-2">
+                <span id=""">
+                    Load
+                </span>
+                <span id="rescard-load">
+                    1.0
+                </span>
+            </div>
+            <div class="res-indicator m-2 p-2">
+                <span>
+                    Temperature
+                </span>
+                <span id="rescard-temps">
+                    333°C
+                </span>
+            </div>
+            <div class="res-indicator m-2 p-2">
+                <span>
+                    RAM(MB)
+                </span>
+                <span id="rescard-ram">
+                    500/1000
+                </span>
+            </div>
+        </div>
+        <div style="height: 100%;">
+            b
+        </div>
+    </div>
 </div>

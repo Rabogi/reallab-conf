@@ -211,6 +211,34 @@ def get_timedatectl(data: dict = Body()):
             return sys_conf.get_time_data_ctl()
     return {"status": "Fail"}
 
+@app.post("/meminfo")
+def get_timedatectl(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], 30):
+            return sys_conf.get_memory()
+    return {"status": "Fail"}
+
+@app.post("/loadinfo")
+def get_timedatectl(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], 30):
+            return sys_conf.get_load()
+    return {"status": "Fail"}
+
+@app.post("/temperature")
+def get_timedatectl(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], 30):
+            return sys_conf.get_temp()
+    return {"status": "Fail"}
+
+@app.post("/resources")
+def get_resinfo(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], 30):
+            return dict(list(sys_conf.get_memory().items())+list(sys_conf.get_load().items())+list(sys_conf.get_temps().items()))
+    return {"status": "Fail"}
+
 
 if __name__ == "__main__":
     uvicorn.run(
