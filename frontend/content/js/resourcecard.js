@@ -57,19 +57,19 @@ var chart = new CanvasJS.Chart("temp-graph", {
     animationEnabled: true,
     backgroundColor: "#343542",
     title: {
-        text: "CPU temperature",
+        text: "Температура ЦПУ",
         fontColor: "#ffffff"
     },
     axisX: {
-        title: "Time",
+        title: "Время",
         fontColor: "#ffffff"
     },
     axisY: {
-        title: "Temperature (°C)",
+        title: "Температура (°C)",
         fontColor: "#ffffff"
     },
     data: [{
-        name: "CPU temp",
+        name: "CPU температура",
         showInLegend: true,
         type: "spline",
         color: "#ff0000",
@@ -84,20 +84,20 @@ var chart2 = new CanvasJS.Chart("load-graph", {
     animationEnabled: true,
     backgroundColor: "#343542",
     title: {
-        text: "CPU usage",
+        text: "Нагрузка на ЦПУ",
         fontColor: "#ffffff"
     },
     axisX: {
-        title: "Time",
+        title: "Время",
         fontColor: "#ffffff"
     },
     axisY: {
-        title: "Load",
+        title: "Нагрузка",
         fontColor: "#ffffff"
     },
     data: [
         {
-            name: "Minute",
+            name: "За 1 минуту",
             showInLegend: true,
             type: "spline",
             color: "#ff0000",
@@ -105,7 +105,7 @@ var chart2 = new CanvasJS.Chart("load-graph", {
         }
         ,
         {
-            name: "Five",
+            name: "За 5 минут",
             showInLegend: true,
             type: "spline",
             color: "#00ff00",
@@ -113,7 +113,7 @@ var chart2 = new CanvasJS.Chart("load-graph", {
         }
         ,
         {
-            name: "Fifteen",
+            name: "За 15 минут",
             color: "#0000ff",
             showInLegend: true,
             type: "spline",

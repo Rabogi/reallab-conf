@@ -51,6 +51,7 @@ fetch('/timedatectl', {
             document.getElementById("timecard-local-time").textContent = data.local;
             document.getElementById("timecard-UTC-time").textContent = data.utc;
             document.getElementById("timecard-RTC-time").textContent = data.rtc;
+            document.getElementById("timecard-local-tz").textContent = data.timezone;
             setInterval(() => {
                 document.getElementById("timecard-local-time").textContent = update_time(document.getElementById("timecard-local-time").textContent);
                 document.getElementById("timecard-UTC-time").textContent = update_time(document.getElementById("timecard-UTC-time").textContent);
