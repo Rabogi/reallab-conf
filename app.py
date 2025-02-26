@@ -14,18 +14,28 @@ import libs.db_handler as db_handler
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
-cors = CORSMiddleware(
-    app,
-    allow_origins=(),
-    allow_methods=("GET",),
-    allow_headers=(),
-    allow_credentials=False,
-    allow_origin_regex=None,
-    expose_headers=(),
-    max_age=600,
+# cors = CORSMiddleware(
+#     app,
+#     allow_origins=(),
+#     allow_methods=("GET",),
+#     allow_headers=(),
+#     allow_credentials=False,
+#     allow_origin_regex=None,
+#     expose_headers=(),
+#     max_age=600,
+# )
+# app.middleware = cors
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-app.middleware = cors
 
 if utils.exists("./config.json") == False:
     sys_conf.recreate_default_conf("./config.json")
