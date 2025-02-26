@@ -45,18 +45,22 @@ var temp_data = new Array(temp_data_len).fill(null); // Initialize with null val
 var chart = new CanvasJS.Chart("temp-graph", {
     theme: "dark2",
     animationEnabled: true,
+    backgroundColor: "#343542",
     title: {
-        text: "CPU temperature"
+        text: "CPU temperature",
+        fontColor : "#ffffff"
     },
     axisX: {
-        title: "Time"
-        
+        title: "Time",
+        fontColor : "#ffffff"
     },
     axisY: {
-        title: "Temperature (°C)"
+        title: "Temperature (°C)",
+        fontColor : "#ffffff"
     },
     data: [{
         type: "line",
+        color: "#ff0000",
         dataPoints: labeled_createPairs(temp_data_axis_x, temp_data, temp_time_data) // Initial data points
     }]
 });
