@@ -3,7 +3,7 @@
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"> </script>
 <script type="module" src="/content/js/resourcecard.js"></script>
 
-<div class="card main-color-bg container-fluid text-white p-2 colors res-container-big" style="" id="temps">
+<div class="card main-color-bg container-fluid text-white p-2 colors res-container-big border-shadow" style="" id="temps">
     <div style="
     display: flex;
     flex-direction: row;
@@ -14,8 +14,8 @@
     ;">
         <h1>Ресурсы устройства</h1>
         <a class="btn btn-outline-light" type="button" style="    padding: unset;
-    border-radius: 45px; border-color: var(--main-bg-color);"><img class="svg_inverse" src="/content/icons/gear.svg"
-                height="48" width="48"></a>
+    border-radius: 45px; border-color: var(--main-bg-color);" href="/load"><img class="svg_inverse"
+                src="/content/icons/gear.svg" height="48" width="48"></a>
     </div>
     <style>
         .svg_inverse {
@@ -58,9 +58,7 @@
         }
 
         .res-container-big {
-            border-radius: 10px;
-            border-bottom: inset;
-            border-bottom-color: var(--main-shadow);
+            height: auto;
         }
 
         .graph-container {
@@ -93,9 +91,6 @@
             }
 
             .res-container-big {
-                border-radius: 10px;
-                border-bottom: inset;
-                border-bottom-color: var(--main-shadow);
                 height: 100%;
             }
         }

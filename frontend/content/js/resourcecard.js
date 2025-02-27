@@ -31,7 +31,7 @@ function createPairs(x, y) {
 
 // Create labeled pairs of { x, y , label}
 function labeled_createPairs(x, y, l) {
-    return x.map((value, index) => ({ x: value, y: y[index], label: l[index] }));
+    return x.map((value, index) => ({ x: value, y: y[index], label: String(l[index]) + " сек. "}));
 }
 
 // Constants
@@ -71,7 +71,7 @@ var chart = new CanvasJS.Chart("temp-graph", {
     data: [{
         name: "CPU температура",
         showInLegend: true,
-        type: "spline",
+        type: "line",
         color: "#ff0000",
         dataPoints: labeled_createPairs(temp_data_axis_x, temp_data, temp_time_data) // Initial data points
     }]

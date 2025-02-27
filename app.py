@@ -127,6 +127,18 @@ def read_dashboard():
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
+@app.get("/load")
+def read_root():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/load.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
+
 
 # Content handlers
 
