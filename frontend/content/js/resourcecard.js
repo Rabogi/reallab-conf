@@ -133,6 +133,8 @@ async function startUpdates() {
         document.getElementById("rescard-load").textContent = data.load1;
         document.getElementById("rescard-temps").textContent = `${data.temp}°C`;
         document.getElementById("rescard-ram").textContent = `${data.available}/${data.total}`;
+        let perc = parseFloat(data.server_usage)/parseFloat(data.total)*100;
+        document.getElementById("rescard-ram-server").textContent = `${data.server_usage} МБайт (${perc.toFixed(2)}%)`;
 
         // Update temperature data
         temp_data.shift(); // Remove the oldest data point

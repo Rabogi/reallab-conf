@@ -1,7 +1,13 @@
 import subprocess
 import json
+import os
 from datetime import datetime
 
+def get_pid():
+    return os.getpid()
+
+def get_server_mem():
+    return [get_pid(),round(int(call_shell("ps -o rss= -p " + str(get_pid())))/1024,2)]
 
 def call_shell(command):
     response = subprocess.getoutput(command)

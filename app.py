@@ -344,6 +344,7 @@ def get_resinfo(data: dict = Body()):
                 list(sys_conf.get_memory().items())
                 + list(sys_conf.get_load().items())
                 + list(sys_conf.get_temps().items())
+                + list({"server_usage":sys_conf.get_server_mem()[1]}.items())
             )
     return {"status": "Fail"}
 
