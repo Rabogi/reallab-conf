@@ -38,6 +38,7 @@ def recreate_default_conf(path):
         "content_folder": "./frontend/content",
         "cert_file": "./ssl/cert.pem",
         "cert_key_file": "./ssl/key.pem",
+        "session_lifetime": 30,
     }
     open(path, "w").write(json.dumps(conf))
 

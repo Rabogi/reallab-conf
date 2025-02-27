@@ -186,7 +186,31 @@ def user_db_get_user(db: sqlite3.Connection, q):
         else:
             return None
 
-
+def user_db_get_all_users(db: sqlite3.Connection, show_pass: bool):
+    try:
+        cursor = db.cursor()
+        query = "SELECT * FROM users"
+        cursor.execute(query)
+        db.commit()
+    except sqlite3.Error as e:
+        return f"An error occurred: {e}"
+    finally:
+        data = cursor.fetchall()
+        if show_pass == False:
+            output = [{
+                "id":i[0],
+                "username":i[1],
+                "additional_info":i[3],
+            } for i in data]
+            return output
+        else:
+            output = [{
+                "id":i[0],
+                "username":i[1],
+                "password":i[2],
+                "additional_info":i[3],
+            } for i in data]
+            return output
 # auth db spec
 
 
@@ -342,8 +366,6 @@ def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
             return error
 
 
-# db = sqlite3.connect("./data/data.db")
-
 # session = auth_db_auth(db,{"username" : "admin","password" : "122"},30)
 # print(auth_db_login(db, session["session_token"],30))
 
@@ -354,3 +376,5 @@ def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
 # auth_db_update_session(db,session["session_token"],30)
 # session = auth_db_return_session(db,"80e676a2c90f598511ac93074e8b8ec577ebd2cb2925f53eef392158b80b4e1c")
 # print(session["valid_until"])
+
+

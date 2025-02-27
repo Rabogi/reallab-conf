@@ -67,6 +67,8 @@ regenerate(config["cert_key_file"], False)
 
 db = db_handler.connect(config["data_db_location"])
 
+session_lifetime = config["session_lifetime"]
+
 # DB regeneration
 
 db_handler.init_user_table(db)
@@ -282,13 +284,13 @@ def get_timezones():
 
 @app.post("/auth")
 def auth(data: dict = Body()):
-    return db_handler.auth_db_auth(db, data, 30)
+    return db_handler.auth_db_auth(db, data, session_lifetime)
 
 
 @app.post("/login")
 def login(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db, data["session_token"], 30):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             return {"status": "Success"}
     return {"status": "Fail"}
 
@@ -296,18 +298,25 @@ def login(data: dict = Body()):
 @app.post("/session")
 def session(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db, data["session_token"], 30):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             user = db_handler.auth_db_return_session(db, data["session_token"])
             username = db_handler.user_db_get_user(db, int(user["user_id"]))["username"]
             user["username"] = username
             dump = json.dumps(user)
             return user
-
+        
+@app.post("/users")
+def users(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            output = []
+            pass_access = False
+            db_handler.user_db_get_user(db,data["session_token"])
 
 @app.post("/timedatectl")
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db, data["session_token"], 30):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             return sys_conf.get_time_data_ctl()
     return {"status": "Fail"}
 
@@ -315,7 +324,7 @@ def get_timedatectl(data: dict = Body()):
 @app.post("/meminfo")
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db, data["session_token"], 30):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             return sys_conf.get_memory()
     return {"status": "Fail"}
 
@@ -323,7 +332,7 @@ def get_timedatectl(data: dict = Body()):
 @app.post("/loadinfo")
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db, data["session_token"], 30):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             return sys_conf.get_load()
     return {"status": "Fail"}
 
@@ -331,7 +340,7 @@ def get_timedatectl(data: dict = Body()):
 @app.post("/temperature")
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db, data["session_token"], 30):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             return sys_conf.get_temp()
     return {"status": "Fail"}
 
@@ -339,7 +348,7 @@ def get_timedatectl(data: dict = Body()):
 @app.post("/resources")
 def get_resinfo(data: dict = Body()):
     if "session_token" in list(data.keys()):
-        if db_handler.auth_db_login(db, data["session_token"], 30):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             return dict(
                 list(sys_conf.get_memory().items())
                 + list(sys_conf.get_load().items())
@@ -358,3 +367,4 @@ if __name__ == "__main__":
         ssl_certfile=os.path.realpath(config["cert_file"]),
         reload=True,
     )
+
