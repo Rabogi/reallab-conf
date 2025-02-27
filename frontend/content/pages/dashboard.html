@@ -1,41 +1,68 @@
-<div class="text-white p-5 colors">
+<div class="text-white colors">
     <style>
         .wrapper {
-            display: grid;
-            grid-template-columns: repeat(9, 1fr);
-            grid-auto-rows: 120px;
+            padding: 1rem !important;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: center;
         }
 
-        .box1 {
-            grid-column-start: 1;
-            grid-column-end: 3;
-            grid-row-start: 1;
-            grid-row-end: 4;
-        }
+        .box1 {}
 
         .box2 {
-            grid-column-start: 3;
-            grid-column-end: 10;
-            grid-row-start: 1;
-            grid-row-end: 4;
+            height: min-content;
         }
-        .box3 {
-            grid-column-start: 1;
-            grid-column-end: 4;
-            grid-row-start: 4;
-            grid-row-end: 7;
-        }
-        .box4 {
-            grid-column-start: 4;
-            grid-column-end: 6;
-            grid-row-start: 4;
-            grid-row-end: 7;
-        }
-        .box5 {
-            grid-column-start: 6;
-            grid-column-end: 10;
-            grid-row-start: 4;
-            grid-row-end: 7;
+
+        .box3 {}
+
+        .box4 {}
+
+        .box5 {}
+
+        @media (min-width:1500px) {
+            .wrapper {
+                padding: 3rem !important;
+                display: grid;
+                grid-template-columns: repeat(9, 1fr);
+                grid-auto-rows: 120px;
+            }
+
+            .box1 {
+                grid-column-start: 1;
+                grid-column-end: 3;
+                grid-row-start: 1;
+                grid-row-end: 4;
+            }
+
+            .box2 {
+                grid-column-start: 3;
+                grid-column-end: 10;
+                grid-row-start: 1;
+                grid-row-end: 4;
+                height:auto;
+            }
+
+            .box3 {
+                grid-column-start: 1;
+                grid-column-end: 4;
+                grid-row-start: 4;
+                grid-row-end: 7;
+            }
+
+            .box4 {
+                grid-column-start: 4;
+                grid-column-end: 6;
+                grid-row-start: 4;
+                grid-row-end: 7;
+            }
+
+            .box5 {
+                grid-column-start: 6;
+                grid-column-end: 10;
+                grid-row-start: 4;
+                grid-row-end: 7;
+            }
         }
     </style>
     <div class="wrapper">

@@ -3,8 +3,7 @@
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"> </script>
 <script type="module" src="/content/js/resourcecard.js"></script>
 
-<div class="card main-color-bg container-fluid text-white p-2 colors"
-    style="border-radius: 10px; border-bottom: inset; border-bottom-color: var(--main-shadow);height: 100%;" id="temps">
+<div class="card main-color-bg container-fluid text-white p-2 colors res-container-big" style="" id="temps">
     <div style="
     display: flex;
     flex-direction: row;
@@ -29,8 +28,22 @@
             filter: invert(0%);
         }
 
+        .canvasjs-chart-credit {
+            display: none;
+        }
+
+        .res-container {
+            height: min-content;
+            height: min-content;
+            display: flex;
+            flex-direction: column;
+            /* align-content: center; */
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+
         .res-indicator {
-            min-width: 300px;
+            min-width: 100%;
             display: flex;
             background-color: var(--sec-bg-color);
             border-radius: 15px;
@@ -40,22 +53,56 @@
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
+            ;
+            margin-bottom: 0.5rem;
         }
 
-        .canvasjs-chart-credit{
-            display: none;
+        .res-container-big {
+            border-radius: 10px;
+            border-bottom: inset;
+            border-bottom-color: var(--main-shadow);
+        }
+
+        .graph-container {
+            min-width: 35%;
+            border-radius: 50px;
+            overflow: hidden;
+            border-width: 15px;
+            border-color: var(--sec-bg-color);
+            height: 400px;
+            min-height: min-content;
+        }
+
+        @media (min-width:1500px) {
+            .graph-container {
+                min-width: 35%;
+                border-radius: 50px;
+                overflow: hidden;
+                border-width: 15px;
+                border-color: var(--sec-bg-color);
+                height: 100%;
+            }
+
+            .res-container {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: flex-start;
+                height: 100%;
+            }
+
+            .res-container-big {
+                border-radius: 10px;
+                border-bottom: inset;
+                border-bottom-color: var(--main-shadow);
+                height: 100%;
+            }
         }
     </style>
-    <div style="
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    height: 100%;
-">
-        <div class="" style="height: 100%;">
-            <div class="res-indicator m-2 p-2">
+    <div class="res-container">
+        <div class="p-2" style="height: 100%; min-width: 30%">
+            <div class="res-indicator p-2">
                 <span id="">
                     Процессы
                 </span>
@@ -63,7 +110,7 @@
                     1/200
                 </span>
             </div>
-            <div class="res-indicator m-2 p-2">
+            <div class="res-indicator p-2">
                 <span id="">
                     Нагрузка
                 </span>
@@ -71,7 +118,7 @@
                     1.0
                 </span>
             </div>
-            <div class="res-indicator m-2 p-2">
+            <div class="res-indicator p-2">
                 <span>
                     Температура
                 </span>
@@ -79,7 +126,7 @@
                     333°C
                 </span>
             </div>
-            <div class="res-indicator m-2 p-2">
+            <div class="res-indicator p-2">
                 <span>
                     ОЗУ(МБайт)
                 </span>
@@ -88,7 +135,9 @@
                 </span>
             </div>
         </div>
-        <div id="load-graph" class="p-2" style="height: 100%;min-width: 35%;border-radius: 50px;overflow: hidden; border-width: 15px; border-color: var(--sec-bg-color);"></div>
-        <div id="temp-graph" class="p-2" style="height: 100%;min-width: 35%;border-radius: 50px;overflow: hidden; border-width: 15px; border-color: var(--sec-bg-color);"></div>
+        <div id="load-graph" class="p-2 graph-container" style="">
+        </div>
+        <div id="temp-graph" class="p-2 graph-container" style="">
+        </div>
     </div>
 </div>
