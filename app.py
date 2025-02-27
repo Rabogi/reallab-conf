@@ -311,7 +311,25 @@ def users(data: dict = Body()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             output = []
             pass_access = False
-            db_handler.user_db_get_user(db,data["session_token"])
+            return db_handler.user_db_get_all_users(db,False)
+        
+@app.post("/add_user")
+def add_user(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            print(data)
+            
+@app.post("/rem_user")
+def add_user(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            print(data)
+            
+@app.post("/alter_user")
+def add_user(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            print(data)
 
 @app.post("/timedatectl")
 def get_timedatectl(data: dict = Body()):
