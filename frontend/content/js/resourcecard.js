@@ -154,11 +154,6 @@ async function startUpdates() {
         let load_five_graphdata = labeled_createPairs(load_data_axis_x, load_five_data, load_time_data);
         let load_fifteen_graphdata = labeled_createPairs(load_data_axis_x, load_fifteen_data, load_time_data);
 
-        console.log("Minute Data:", load_minute_data);
-        console.log("Five Data:", load_five_data);
-        console.log("Fifteen Data:", load_fifteen_data);
-        console.log("Time Data:", load_time_data);
-
         chart2.options.data[0].dataPoints = load_minute_graphdata;
         chart2.options.data[1].dataPoints = load_five_graphdata;
         chart2.options.data[2].dataPoints = load_fifteen_graphdata;

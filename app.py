@@ -127,12 +127,90 @@ def read_dashboard():
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
-@app.get("/load")
-def read_root():
+
+@app.get("/settings/load")
+def read_settings_load():
     root_page = open("frontend/index.html", "r")
     page = root_page.read()
     root_page.close()
+    with open("frontend/content/pages/page_template.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    page = utils.embed_in_template(page, "Ресурсы устройства", "<!-- PageNAME  -->")
     with open("frontend/content/pages/load.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
+
+
+@app.get("/settings/users")
+def read_settings_users():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/page_template.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    page = utils.embed_in_template(page, "Пользователи", "<!-- PageNAME  -->")
+    with open("frontend/content/pages/users.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
+
+
+@app.get("/settings/host")
+def read_settings_host():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/page_template.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    page = utils.embed_in_template(page, "Сеть", "<!-- PageNAME  -->")
+    with open("frontend/content/pages/host.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
+
+
+@app.get("/settings/dump")
+def read_settings_dump():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/page_template.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    page = utils.embed_in_template(page, "Доп. информация", "<!-- PageNAME  -->")
+    with open("frontend/content/pages/fetchdump.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
+
+
+@app.get("/settings/time")
+def read_settings_time():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/page_template.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    page = utils.embed_in_template(page, "Время", "<!-- PageNAME  -->")
+    with open("frontend/content/pages/time.html") as f:
         content = f.read()
         f.close()
     page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
@@ -233,12 +311,14 @@ def get_timedatectl(data: dict = Body()):
             return sys_conf.get_time_data_ctl()
     return {"status": "Fail"}
 
+
 @app.post("/meminfo")
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], 30):
             return sys_conf.get_memory()
     return {"status": "Fail"}
+
 
 @app.post("/loadinfo")
 def get_timedatectl(data: dict = Body()):
@@ -247,6 +327,7 @@ def get_timedatectl(data: dict = Body()):
             return sys_conf.get_load()
     return {"status": "Fail"}
 
+
 @app.post("/temperature")
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
@@ -254,11 +335,16 @@ def get_timedatectl(data: dict = Body()):
             return sys_conf.get_temp()
     return {"status": "Fail"}
 
+
 @app.post("/resources")
 def get_resinfo(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], 30):
-            return dict(list(sys_conf.get_memory().items())+list(sys_conf.get_load().items())+list(sys_conf.get_temps().items()))
+            return dict(
+                list(sys_conf.get_memory().items())
+                + list(sys_conf.get_load().items())
+                + list(sys_conf.get_temps().items())
+            )
     return {"status": "Fail"}
 
 

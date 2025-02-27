@@ -1,0 +1,49 @@
+<div class="wrapper">
+    <style>
+        .svg_inverse {
+            /* safari 6.0 - 9.0 */
+            filter: invert(100%);
+        }
+
+        .svg_inverse:hover {
+            /* safari 6.0 - 9.0 */
+            filter: invert(0%);
+        }
+
+        .wrapper {
+            padding: 1rem !important;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: center;
+        }
+
+        @media (min-width:1500px) {
+            .wrapper {
+                padding: 1rem !important;
+                display: flex;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                align-content: center;
+            }
+        }
+    </style>
+    <div class="card main-color-bg text-white colors wrapper border-shadow m-2" style="min-height: 85vh;">
+        <div style="
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    ;">
+            <h1>
+                <!-- PageNAME  -->
+            </h1>
+            <a class="btn btn-outline-light" type="button" style="    padding: unset;
+        border-radius: 15px; border-color: var(--main-bg-color);" href="/dashboard"><img class="svg_inverse"
+                    src="/content/icons/arrow-up-left-square.svg" height="48" width="48"></a>
+        </div>
+        <!-- MAIN_CONTENT  -->
+    </div>
+</div>
