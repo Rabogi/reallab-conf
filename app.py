@@ -45,6 +45,12 @@ config = json.loads(
     ).read()
 )
 
+permissions = {
+    "add_user_error_message": "Добавлять пользователей запрещено с текущим уровнем доступа",
+    "add_user_success_message": "Пользователь добавлен",
+    "add_user": 0,
+}
+
 # Trying to connect to DB
 # Checking if db file exist at set location
 
@@ -66,6 +72,7 @@ regenerate(config["cert_file"], False)
 regenerate(config["cert_key_file"], False)
 
 db = db_handler.connect(config["data_db_location"])
+
 
 session_lifetime = config["session_lifetime"]
 
@@ -304,32 +311,75 @@ def session(data: dict = Body()):
             user["username"] = username
             dump = json.dumps(user)
             return user
-        
+
+
 @app.post("/users")
 def users(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             output = []
             pass_access = False
-            return db_handler.user_db_get_all_users(db,False)
-        
+            return db_handler.user_db_get_all_users(db, False)
+
+
 @app.post("/add_user")
 def add_user(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
-            print(data)
-            
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["add_user"]
+            ):
+                userdata = data["userdata"]
+                res = True  # Assume all elements in b are in a
+                for ele in ["username", "password", "additional_info"]:
+                    if ele not in list(userdata.keys()):
+                        res = False
+                        break
+                if res:
+                    if (
+                        db_handler.user_db_add_user(
+                            db,
+                            {
+                                "username": userdata["username"],
+                                "password": userdata["password"],
+                                "additional_info": userdata["additional_info"],
+                            },
+                        )
+                        == "An error occurred: UNIQUE constraint failed: users.username"
+                    ):
+                        return {"status": "Fail", "message": "Пользователь с таким именем уже существует"}
+                    else:
+                        return {
+                            "status": "Success",
+                            "message": permissions["add_user_success_message"],
+                        }
+                else:
+                    return {"status": "Fail", "message": "Данные не полные"}
+            else:
+                return {
+                    "status": "Fail",
+                    "message": permissions["add_user_error_message"],
+                }
+        else:
+            return {"status": "Fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "Fail", "message": "Токен не предоставлен"}
+
+
 @app.post("/rem_user")
 def add_user(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             print(data)
-            
+
+
 @app.post("/alter_user")
 def add_user(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             print(data)
+
 
 @app.post("/timedatectl")
 def get_timedatectl(data: dict = Body()):
@@ -371,7 +421,7 @@ def get_resinfo(data: dict = Body()):
                 list(sys_conf.get_memory().items())
                 + list(sys_conf.get_load().items())
                 + list(sys_conf.get_temps().items())
-                + list({"server_usage":sys_conf.get_server_mem()[1]}.items())
+                + list({"server_usage": sys_conf.get_server_mem()[1]}.items())
             )
     return {"status": "Fail"}
 
@@ -385,4 +435,3 @@ if __name__ == "__main__":
         ssl_certfile=os.path.realpath(config["cert_file"]),
         reload=True,
     )
-

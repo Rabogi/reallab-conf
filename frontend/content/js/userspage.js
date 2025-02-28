@@ -1,8 +1,9 @@
 const sessionKey = localStorage.getItem("real_lab_conf"); // Replace with your session key
-const delete_button_html = '<img class="svg_inverse" src = "/content/icons/trash.svg" height = "20" width = "20" ></a >'
-const save_button_html = '<img class="svg_inverse" src = "/content/icons/floppy.svg" height = "20" width = "20" ></a >'
-const edit_button_html = '<img class="svg_inverse" src = "/content/icons/pencil.svg" height = "20" width = "20" ></a >'
-const cancel_button_html = '<img class="svg_inverse" src = "/content/icons/x-lg.svg" height = "20" width = "20" ></a >'
+const delete_button_html = '<img class="svg_inverse" src="/content/icons/trash.svg" height="20" width="20"></a>';
+const save_button_html = '<img class="svg_inverse" src="/content/icons/floppy.svg" height="20" width="20"></a>';
+const edit_button_html = '<img class="svg_inverse" src="/content/icons/pencil.svg" height="20" width="20"></a>';
+const cancel_button_html = '<img class="svg_inverse" src="/content/icons/x-lg.svg" height="20" width="20"></a>';
+
 // Track the original state of the row during editing
 let originalRowState = null;
 
@@ -79,6 +80,13 @@ function validateAdditionalInfo(additional_info) {
     }
 }
 
+// Display server response in the server-response-block
+function displayServerResponse(status, message) {
+    const responseBlock = document.getElementById('server-response-block');
+    responseBlock.textContent = message; // Display the message
+    responseBlock.className = `alert ${status === 'success' ? 'alert-success' : 'alert-danger'}`; // Set the alert style
+}
+
 // Add a new user
 async function addUser() {
     const username = document.getElementById('username').value;
@@ -115,13 +123,15 @@ async function addUser() {
             }),
         });
 
-        if (response.ok) {
+        const result = await response.json();
+        displayServerResponse(result.status, result.message);
+
+        if (result.status === 'success') {
             fetchUsers(); // Refresh the table
-        } else {
-            console.error('Error adding user:', await response.text());
         }
     } catch (error) {
         console.error('Error adding user:', error);
+        displayServerResponse('error', 'Failed to add user. Please try again.');
     }
 }
 
@@ -139,13 +149,15 @@ async function deleteUser(userId) {
             }),
         });
 
-        if (response.ok) {
+        const result = await response.json();
+        displayServerResponse(result.status, result.message);
+
+        if (result.status === 'success') {
             fetchUsers(); // Refresh the table
-        } else {
-            console.error('Error deleting user:', await response.text());
         }
     } catch (error) {
         console.error('Error deleting user:', error);
+        displayServerResponse('error', 'Failed to delete user. Please try again.');
     }
 }
 
@@ -217,13 +229,15 @@ async function saveUser(row) {
             }),
         });
 
-        if (response.ok) {
+        const result = await response.json();
+        displayServerResponse(result.status, result.message);
+
+        if (result.status === 'success') {
             fetchUsers(); // Refresh the table
-        } else {
-            console.error('Error updating user:', await response.text());
         }
     } catch (error) {
         console.error('Error updating user:', error);
+        displayServerResponse('error', 'Failed to update user. Please try again.');
     }
 }
 
@@ -237,7 +251,7 @@ function cancelEdit(row) {
 
         // Change the Save link back to Edit
         const editLink = row.querySelector('a.btn-success');
-        editLink.innerHTML = save_button_html; // Change icon and text back
+        editLink.innerHTML = edit_button_html; // Change icon and text back
         editLink.className = 'btn btn-warning btn-sm m-1'; // Revert to the original style
         editLink.onclick = () => editUser(row);
 
