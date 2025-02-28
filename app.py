@@ -50,7 +50,7 @@ permissions = {
     "add_user_success_message": "Пользователь добавлен",
     "add_user": 0,
     #
-    "rem_user_error_message": "Удалять пользователей запрещено с таким уровнем доступа",
+    "rem_user_error_message": "Удалять пользователей запрещено с текущим уровнем доступа",
     "rem_user_success_message": "Пользователь удалён",
     "rem_user": 0,
 }
@@ -394,7 +394,13 @@ def add_user(data: dict = Body()):
             ):
                 userdata = data["userdata"]
                 if "id" in list(userdata.keys()):
-                    db_handler.user_db_remove_user(db,db_handler.user_db_get_user(db,userdata["id"])["username"])
+                    user = db_handler.user_db_get_user(db,userdata["id"])
+                    if json.loads(user["additional_info"])["level"] < db_handler.auth_db_return_session(db, data["session_token"])["level"]:
+                        return{
+                            "status":"Fail",
+                            "message":"Отказано в доступе",
+                        }
+                    db_handler.user_db_remove_user(db,user["username"])
                     return{
                         "status":"Success",
                         "message":permissions["rem_user_success_message"],
