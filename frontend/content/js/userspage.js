@@ -1,5 +1,8 @@
 const sessionKey = localStorage.getItem("real_lab_conf"); // Replace with your session key
-
+const delete_button_html = '<img class="svg_inverse" src = "/content/icons/trash.svg" height = "20" width = "20" ></a >'
+const save_button_html = '<img class="svg_inverse" src = "/content/icons/floppy.svg" height = "20" width = "20" ></a >'
+const edit_button_html = '<img class="svg_inverse" src = "/content/icons/pencil.svg" height = "20" width = "20" ></a >'
+const cancel_button_html = '<img class="svg_inverse" src = "/content/icons/x-lg.svg" height = "20" width = "20" ></a >'
 // Track the original state of the row during editing
 let originalRowState = null;
 
@@ -36,18 +39,23 @@ function populateTable(users) {
 
         // Add edit and delete buttons
         const actionCell = row.insertCell(4);
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Изменить';
-        editButton.className = 'btn btn-warning btn-sm me-2';
-        editButton.onclick = () => editUser(row);
-        actionCell.appendChild(editButton);
-        actionCell.className = 'action_cell'
+        actionCell.className = 'action_cell';
 
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Удалить';
-        deleteButton.className = 'btn btn-danger btn-sm';
-        deleteButton.onclick = () => deleteUser(user.id);
-        actionCell.appendChild(deleteButton);
+        // Edit link
+        const editLink = document.createElement('a');
+        editLink.href = '#';
+        editLink.innerHTML = edit_button_html; // Add your icon here
+        editLink.className = 'btn btn-warning btn-sm m-1';
+        editLink.onclick = () => editUser(row);
+        actionCell.appendChild(editLink);
+
+        // Delete link
+        const deleteLink = document.createElement('a');
+        deleteLink.href = '#';
+        deleteLink.innerHTML = delete_button_html; // Add your icon here
+        deleteLink.className = 'btn btn-danger btn-sm m-1';
+        deleteLink.onclick = () => deleteUser(user.id);
+        actionCell.appendChild(deleteLink);
     });
 }
 
@@ -141,109 +149,102 @@ async function deleteUser(userId) {
     }
 }
 
-// Edit a user
-async function editUser(row) {
+// Enable editing for a row
+function editUser(row) {
     const cells = row.cells;
-    const userId = cells[0].textContent; // Locked ID column
 
     // Save the original state of the row
-    if (!originalRowState) {
-        originalRowState = {
-            username: cells[1].textContent,
-            password: cells[2].textContent,
-            additional_info: cells[3].textContent,
-        };
-    }
+    originalRowState = {
+        username: cells[1].textContent,
+        password: cells[2].textContent,
+        additional_info: cells[3].textContent,
+    };
 
     // Toggle between text and input fields
     for (let i = 1; i < cells.length - 1; i++) {
         const cell = cells[i];
-        if (cell.querySelector('input')) {
-            // Save the value and switch back to text
-            const input = cell.querySelector('input');
-            cell.textContent = input.value;
-        } else {
-            // Switch to input field
-            const currentValue = cell.textContent;
-            cell.innerHTML = `<input type="text" class="editable-input" value="${currentValue.replace(/"/g, '&quot;')}">`;
-        }
+        const currentValue = cell.textContent;
+        cell.innerHTML = `<input type="text" class="editable-input" value="${currentValue.replace(/"/g, '&quot;')}">`;
     }
 
-    // Change the button text to "Save" or "Edit"
-    const editButton = row.querySelector('button');
-    if (editButton.textContent === 'Изменить') {
-        editButton.textContent = 'Сохранить';
+    // Change the Edit link to a Save link
+    const editLink = row.querySelector('a.btn-warning');
+    editLink.innerHTML = save_button_html; // Change icon and text
+    editLink.className = 'btn btn-success btn-sm m-1'; // Make the Save button green
+    editLink.onclick = () => saveUser(row);
 
-        // Add a "Drop Changes" button
-        const dropChangesButton = document.createElement('button');
-        dropChangesButton.textContent = 'Отмена';
-        dropChangesButton.className = 'btn btn-secondary btn-sm';
-        dropChangesButton.onclick = () => dropChanges(row);
-        row.cells[4].appendChild(dropChangesButton);
-    } else {
-        editButton.textContent = 'Изменить';
+    // Add a Cancel link
+    const cancelLink = document.createElement('a');
+    cancelLink.href = '#';
+    cancelLink.innerHTML = cancel_button_html; // Add your icon here
+    cancelLink.className = 'btn btn-secondary btn-sm m-1';
+    cancelLink.onclick = () => cancelEdit(row);
+    row.cells[4].appendChild(cancelLink);
+}
 
-        // Remove the "Drop Changes" button
-        const dropChangesButton = row.querySelector('button.btn-secondary');
-        if (dropChangesButton) {
-            dropChangesButton.remove();
+// Save changes for a row
+async function saveUser(row) {
+    const cells = row.cells;
+    const userId = cells[0].textContent; // Locked ID column
+
+    // Prepare updated user data
+    const updatedUser = {
+        id: userId,
+        username: cells[1].querySelector('input').value,
+        password: cells[2].querySelector('input').value === '***' ? '***' : CryptoJS.SHA512(cells[2].querySelector('input').value).toString(),
+        additional_info: cells[3].querySelector('input').value, // Treat additional_info as a string
+    };
+
+    // Validate additional_info
+    const validatedAdditionalInfo = validateAdditionalInfo(updatedUser.additional_info);
+    if (!validatedAdditionalInfo) {
+        return; // Stop if validation fails
+    }
+
+    // Update the additional_info with validated JSON
+    updatedUser.additional_info = JSON.stringify(validatedAdditionalInfo);
+
+    // Send the updated data to the server
+    try {
+        const response = await fetch('/alter_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                session_token: sessionKey,
+                userdata: updatedUser,
+            }),
+        });
+
+        if (response.ok) {
+            fetchUsers(); // Refresh the table
+        } else {
+            console.error('Error updating user:', await response.text());
         }
-
-        // Prepare updated user data
-        const updatedUser = {
-            id: userId,
-            username: cells[1].textContent,
-            password: cells[2].textContent === '***' ? '***' : CryptoJS.SHA512(cells[2].textContent).toString(),
-            additional_info: cells[3].textContent, // Treat additional_info as a string
-        };
-
-        // Validate additional_info
-        const validatedAdditionalInfo = validateAdditionalInfo(updatedUser.additional_info);
-        if (!validatedAdditionalInfo) {
-            return; // Stop if validation fails
-        }
-
-        // Update the additional_info with validated JSON
-        updatedUser.additional_info = JSON.stringify(validatedAdditionalInfo);
-
-        // Send the updated data to the server
-        try {
-            const response = await fetch('/alter_user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    session_token: sessionKey,
-                    userdata: updatedUser,
-                }),
-            });
-
-            if (!response.ok) {
-                console.error('Error updating user:', await response.text());
-            }
-        } catch (error) {
-            console.error('Error updating user:', error);
-        }
+    } catch (error) {
+        console.error('Error updating user:', error);
     }
 }
 
-// Drop unsaved changes and revert to the original state
-function dropChanges(row) {
+// Cancel editing and revert to the original state
+function cancelEdit(row) {
     if (originalRowState) {
         // Revert the row to its original state
         row.cells[1].textContent = originalRowState.username;
         row.cells[2].textContent = originalRowState.password;
         row.cells[3].textContent = originalRowState.additional_info;
 
-        // Change the "Save" button back to "Edit"
-        const editButton = row.querySelector('button.btn-warning');
-        editButton.textContent = 'Edit';
+        // Change the Save link back to Edit
+        const editLink = row.querySelector('a.btn-success');
+        editLink.innerHTML = save_button_html; // Change icon and text back
+        editLink.className = 'btn btn-warning btn-sm m-1'; // Revert to the original style
+        editLink.onclick = () => editUser(row);
 
-        // Remove the "Drop Changes" button
-        const dropChangesButton = row.querySelector('button.btn-secondary');
-        if (dropChangesButton) {
-            dropChangesButton.remove();
+        // Remove the Cancel link
+        const cancelLink = row.querySelector('a.btn-secondary');
+        if (cancelLink) {
+            cancelLink.remove();
         }
 
         // Reset the originalRowState
