@@ -388,8 +388,9 @@ def add_user(data: dict = Body()):
 def add_user(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            remover = db_handler.auth_db_return_session(db, data["session_token"])
             if (
-                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                remover["level"]
                 <= permissions["rem_user"]
             ):
                 userdata = data["userdata"]
@@ -399,6 +400,11 @@ def add_user(data: dict = Body()):
                         return{
                             "status":"Fail",
                             "message":"Отказано в доступе",
+                        }
+                    if user["username"] == db_handler.user_db_get_user(db,int(remover["user_id"]))["username"]:
+                        return{
+                            "status":"Fail",
+                            "message":"Удалить текущего пользователя нельзя",
                         }
                     db_handler.user_db_remove_user(db,user["username"])
                     return{
