@@ -7,7 +7,7 @@
     }
 
     .table-container {
-        max-height: 20vh;
+        max-height: 40vh;
         overflow-y: auto;
         border: 1px solid white;
         border-radius: 15px;
@@ -45,7 +45,7 @@
             <input type="text" id="username" class="form-control" placeholder="Имя пользователя">
             <input type="password" id="password" class="form-control mt-2" placeholder="Пароль">
             <input type="text" id="additional_info" class="form-control mt-2" placeholder="Доп.данные в JSON (Обязан иметь поле level)"
-                value="">
+                value='{"level":0}'>
         </div>
         <button class="btn btn-dark mt-2" onclick="addUser()">Добавить</button>
         <div id="server-response-block" class="alert"></div>

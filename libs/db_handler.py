@@ -28,7 +28,7 @@ def init_user_table(db: sqlite3.Connection):
     error = "None"
     try:
         cursor = db.cursor()
-        query = "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL UNIQUE,password TEXT NOT NULL,additional_info TEXT);"
+        query = "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL UNIQUE,password TEXT NOT NULL,additional_info TEXT NOT NULL);"
         cursor.execute(
             query,
             (),

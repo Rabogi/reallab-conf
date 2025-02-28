@@ -126,7 +126,7 @@ async function addUser() {
         const result = await response.json();
         displayServerResponse(result.status, result.message);
 
-        if (result.status === 'success') {
+        if (result.status === 'Success') {
             fetchUsers(); // Refresh the table
         }
     } catch (error) {
@@ -152,7 +152,7 @@ async function deleteUser(userId) {
         const result = await response.json();
         displayServerResponse(result.status, result.message);
 
-        if (result.status === 'success') {
+        if (result.status === 'Success') {
             fetchUsers(); // Refresh the table
         }
     } catch (error) {
@@ -232,7 +232,7 @@ async function saveUser(row) {
         const result = await response.json();
         displayServerResponse(result.status, result.message);
 
-        if (result.status === 'success') {
+        if (result.status === 'Success') {
             fetchUsers(); // Refresh the table
         }
     } catch (error) {
@@ -268,3 +268,4 @@ function cancelEdit(row) {
 
 // Fetch users when the page loads
 fetchUsers();
+// document.getElementById("additional_info").value = '{"level":0}'

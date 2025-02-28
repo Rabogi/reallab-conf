@@ -49,6 +49,10 @@ permissions = {
     "add_user_error_message": "Добавлять пользователей запрещено с текущим уровнем доступа",
     "add_user_success_message": "Пользователь добавлен",
     "add_user": 0,
+    #
+    "rem_user_error_message": "Удалять пользователей запрещено с таким уровнем доступа",
+    "rem_user_success_message": "Пользователь удалён",
+    "rem_user": 0,
 }
 
 # Trying to connect to DB
@@ -331,11 +335,21 @@ def add_user(data: dict = Body()):
                 <= permissions["add_user"]
             ):
                 userdata = data["userdata"]
-                res = True  # Assume all elements in b are in a
+                res = True
                 for ele in ["username", "password", "additional_info"]:
                     if ele not in list(userdata.keys()):
                         res = False
                         break
+                if (
+                    json.loads(userdata["additional_info"])["level"]
+                    < db_handler.auth_db_return_session(db, data["session_token"])[
+                        "level"
+                    ]
+                ):
+                    return {
+                        "status": "Fail",
+                        "message": "Нельзя создавать пользователя с таким уровнем доступа",
+                    }
                 if res:
                     if (
                         db_handler.user_db_add_user(
@@ -348,7 +362,10 @@ def add_user(data: dict = Body()):
                         )
                         == "An error occurred: UNIQUE constraint failed: users.username"
                     ):
-                        return {"status": "Fail", "message": "Пользователь с таким именем уже существует"}
+                        return {
+                            "status": "Fail",
+                            "message": "Пользователь с таким именем уже существует",
+                        }
                     else:
                         return {
                             "status": "Success",
@@ -371,7 +388,31 @@ def add_user(data: dict = Body()):
 def add_user(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
-            print(data)
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["rem_user"]
+            ):
+                userdata = data["userdata"]
+                if "id" in list(userdata.keys()):
+                    db_handler.user_db_remove_user(db,db_handler.user_db_get_user(db,userdata["id"])["username"])
+                    return{
+                        "status":"Success",
+                        "message":permissions["rem_user_success_message"],
+                    }
+                else:
+                    return {
+                        "status": "Fail",
+                        "message": "Нет ID",
+                    }
+            else:
+                return {
+                    "status": "Fail",
+                    "message": permissions["rem_user_error_message"],
+                }
+        else:
+            return {"status": "Fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "Fail", "message": "Токен не предоставлен"}
 
 
 @app.post("/alter_user")
