@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (session.username) {
                     document.getElementById('navbar-username').textContent = session.username;
                     document.getElementById('navbar-username').style.display = "block";
+                    document.getElementById('navbar-logout').style.display = "block";
                 } else {
                     document.getElementById('navbar-username').textContent = "Failed to load username";
                     throw new Error('No token received');
@@ -67,3 +68,18 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 });
+
+async function logout() {
+    sessionKey = window.localStorage.getItem("real_lab_conf");
+    const response = await fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            session_token: sessionKey,
+        }),
+    });
+}
+
+document.getElementById("navbar-logout").onclick = () => logout();

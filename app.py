@@ -318,6 +318,11 @@ def login(data: dict = Body()):
             return {"status": "Success"}
     return {"status": "Fail"}
 
+@app.post("/logout")
+def logout(data: dict = Body()):
+    user = db_handler.auth_db_return_session(db,data["session_token"])
+    db_handler.auth_db_purge_sessions(db,user["user_id"])
+
 
 @app.post("/session")
 def session(data: dict = Body()):

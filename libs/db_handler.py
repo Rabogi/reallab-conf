@@ -356,7 +356,6 @@ def auth_db_update_session(db: sqlite3.Connection, session_token, time):
         else:
             return error
 
-
 def auth_db_purge_sessions(db: sqlite3.Connection, user_id):
     error = "None"
     try:
