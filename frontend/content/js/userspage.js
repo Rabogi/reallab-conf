@@ -94,7 +94,7 @@ async function addUser() {
     const additional_info = document.getElementById('additional_info').value;
 
     if (!username || !password || !additional_info) {
-        alert('Please fill all fields!');
+        alert('Заполните все поля!');
         return;
     }
 
@@ -216,6 +216,11 @@ async function saveUser(row) {
     // Update the additional_info with validated JSON
     updatedUser.additional_info = JSON.stringify(validatedAdditionalInfo);
 
+    if (!updatedUser.username || updatedUser.password == 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e'  || !updatedUser.additional_info) {
+        alert('Пустые поля в данных не разрешены!');
+        return;
+    }
+
     // Send the updated data to the server
     try {
         const response = await fetch('/alter_user', {
@@ -231,6 +236,11 @@ async function saveUser(row) {
 
         const result = await response.json();
         displayServerResponse(result.status, result.message);
+
+        if (result.re_log === true) {
+            window.location.href = '/';
+            alert("Данные успешно изменены. Войдите заново.");
+        }
 
         if (result.status === 'Success') {
             fetchUsers(); // Refresh the table

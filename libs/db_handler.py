@@ -323,7 +323,7 @@ def auth_db_login(db: sqlite3.Connection, session_token, time):
     try:
         session = auth_db_return_session(db, session_token)
         if auth_db_check_session_valid(session):
-            auth_db_update_session(db, session_token, 30)
+            auth_db_update_session(db, session_token, time)
             return True
         else:
             return False

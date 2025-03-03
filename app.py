@@ -46,14 +46,27 @@ config = json.loads(
 )
 
 permissions = {
+    #add
     "add_user_error_message": "Добавлять пользователей запрещено с текущим уровнем доступа",
     "add_user_success_message": "Пользователь добавлен",
     "add_user": 0,
-    #
+    #rem
     "rem_user_error_message": "Удалять пользователей запрещено с текущим уровнем доступа",
     "rem_user_success_message": "Пользователь удалён",
     "rem_user": 0,
+    #edit self
+    "edit_self": 10,
+    "edit_others": 0,
+    "edit_other_success_message" : "Данные пользователя изменены",
+    "edit_other_fail_message" : "Изменять данные пользователей запрещено с текущим уровнем доступа" ,
+    "edit_self_success_message" : "Данные пользователя изменены",
+    "edit_self_fail_message" : "Отказано в доступе",
+    #
 }
+
+forbidden_hashes = [
+    "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+]
 
 # Trying to connect to DB
 # Checking if db file exist at set location
@@ -389,27 +402,34 @@ def add_user(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             remover = db_handler.auth_db_return_session(db, data["session_token"])
-            if (
-                remover["level"]
-                <= permissions["rem_user"]
-            ):
+            if remover["level"] <= permissions["rem_user"]:
                 userdata = data["userdata"]
                 if "id" in list(userdata.keys()):
-                    user = db_handler.user_db_get_user(db,userdata["id"])
-                    if json.loads(user["additional_info"])["level"] < db_handler.auth_db_return_session(db, data["session_token"])["level"]:
-                        return{
-                            "status":"Fail",
-                            "message":"Отказано в доступе",
+                    user = db_handler.user_db_get_user(db, userdata["id"])
+                    if (
+                        json.loads(user["additional_info"])["level"]
+                        < db_handler.auth_db_return_session(db, data["session_token"])[
+                            "level"
+                        ]
+                    ):
+                        return {
+                            "status": "Fail",
+                            "message": "Отказано в доступе",
                         }
-                    if user["username"] == db_handler.user_db_get_user(db,int(remover["user_id"]))["username"]:
-                        return{
-                            "status":"Fail",
-                            "message":"Удалить текущего пользователя нельзя",
+                    if (
+                        user["username"]
+                        == db_handler.user_db_get_user(db, int(remover["user_id"]))[
+                            "username"
+                        ]
+                    ):
+                        return {
+                            "status": "Fail",
+                            "message": "Удалить текущего пользователя нельзя",
                         }
-                    db_handler.user_db_remove_user(db,user["username"])
-                    return{
-                        "status":"Success",
-                        "message":permissions["rem_user_success_message"],
+                    db_handler.user_db_remove_user(db, user["username"])
+                    return {
+                        "status": "Success",
+                        "message": permissions["rem_user_success_message"],
                     }
                 else:
                     return {
@@ -431,7 +451,26 @@ def add_user(data: dict = Body()):
 def add_user(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
-            print(data)
+            editor = db_handler.auth_db_return_session(db, data["session_token"])
+            userdata = data["userdata"]
+            if editor["user_id"] == userdata["id"]:
+                if editor["level"] <= permissions["edit_self"]:
+                    db_handler.user_db_update_user(db,userdata)
+                    db_handler.auth_db_purge_sessions(db, userdata["id"])
+                    return {"status": "Success", "message": permissions["edit_self_success_message"],"re_log" : True}
+                else:
+                    return {"status": "Fail", "message": permissions["edit_self_fail_message"]}
+            else:
+                if editor["level"] <= permissions["edit_others"]:
+                    db_handler.user_db_update_user(db,userdata)
+                    db_handler.auth_db_purge_sessions(db, userdata["id"])
+                    return {"status": "Success", "message": permissions["edit_other_success_message"]}
+                else:
+                    return {"status": "Fail", "message": permissions["edit_other_fail_message"]}
+        else:
+            return {"status": "Fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "Fail", "message": "Токен не предоставлен"}
 
 
 @app.post("/timedatectl")
