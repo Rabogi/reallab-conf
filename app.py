@@ -61,6 +61,8 @@ permissions = {
     "edit_other_fail_message": "Изменять данные пользователей запрещено с текущим уровнем доступа",
     "edit_self_success_message": "Данные пользователя изменены",
     "edit_self_fail_message": "Отказано в доступе",
+    "edit_additional_info":0,
+    "edit_additional_info_fail":"Изменять доп. информацию запрещено с текущим уровнем доступа",
     #
 }
 
@@ -459,8 +461,12 @@ def add_user(data: dict = Body()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             editor = db_handler.auth_db_return_session(db, data["session_token"])
             userdata = data["userdata"]
+            unchanged = db_handler.user_db_get_user(db, int(userdata["id"]))
             if editor["user_id"] == userdata["id"]:
                 if editor["level"] <= permissions["edit_self"]:
+                    if userdata["additional_info"] != unchanged["additional_info"]:
+                        if editor["level"] > permissions["edit_additional_info"]:
+                            return {"status": "Fail","message": permissions["edit_additional_info_fail"],}  
                     db_handler.user_db_update_user(db, userdata)
                     db_handler.auth_db_purge_sessions(db, userdata["id"])
                     return {
@@ -475,6 +481,9 @@ def add_user(data: dict = Body()):
                     }
             else:
                 if editor["level"] <= permissions["edit_others"]:
+                    if userdata["additional_info"] != unchanged["additional_info"]:
+                        if editor["level"] > permissions["edit_additional_info"]:
+                            return {"status": "Fail","message": permissions["edit_additional_info_fail"],}  
                     db_handler.user_db_update_user(db, userdata)
                     db_handler.auth_db_purge_sessions(db, userdata["id"])
                     return {
