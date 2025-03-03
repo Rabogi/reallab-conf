@@ -46,21 +46,21 @@ config = json.loads(
 )
 
 permissions = {
-    #add
+    # add
     "add_user_error_message": "Добавлять пользователей запрещено с текущим уровнем доступа",
     "add_user_success_message": "Пользователь добавлен",
     "add_user": 0,
-    #rem
+    # rem
     "rem_user_error_message": "Удалять пользователей запрещено с текущим уровнем доступа",
     "rem_user_success_message": "Пользователь удалён",
     "rem_user": 0,
-    #edit self
+    # edit self
     "edit_self": 10,
     "edit_others": 0,
-    "edit_other_success_message" : "Данные пользователя изменены",
-    "edit_other_fail_message" : "Изменять данные пользователей запрещено с текущим уровнем доступа" ,
-    "edit_self_success_message" : "Данные пользователя изменены",
-    "edit_self_fail_message" : "Отказано в доступе",
+    "edit_other_success_message": "Данные пользователя изменены",
+    "edit_other_fail_message": "Изменять данные пользователей запрещено с текущим уровнем доступа",
+    "edit_self_success_message": "Данные пользователя изменены",
+    "edit_self_fail_message": "Отказано в доступе",
     #
 }
 
@@ -318,10 +318,11 @@ def login(data: dict = Body()):
             return {"status": "Success"}
     return {"status": "Fail"}
 
+
 @app.post("/logout")
 def logout(data: dict = Body()):
-    user = db_handler.auth_db_return_session(db,data["session_token"])
-    db_handler.auth_db_purge_sessions(db,user["user_id"])
+    user = db_handler.auth_db_return_session(db, data["session_token"])
+    db_handler.auth_db_purge_sessions(db, user["user_id"])
 
 
 @app.post("/session")
@@ -460,18 +461,31 @@ def add_user(data: dict = Body()):
             userdata = data["userdata"]
             if editor["user_id"] == userdata["id"]:
                 if editor["level"] <= permissions["edit_self"]:
-                    db_handler.user_db_update_user(db,userdata)
+                    db_handler.user_db_update_user(db, userdata)
                     db_handler.auth_db_purge_sessions(db, userdata["id"])
-                    return {"status": "Success", "message": permissions["edit_self_success_message"],"re_log" : True}
+                    return {
+                        "status": "Success",
+                        "message": permissions["edit_self_success_message"],
+                        "re_log": True,
+                    }
                 else:
-                    return {"status": "Fail", "message": permissions["edit_self_fail_message"]}
+                    return {
+                        "status": "Fail",
+                        "message": permissions["edit_self_fail_message"],
+                    }
             else:
                 if editor["level"] <= permissions["edit_others"]:
-                    db_handler.user_db_update_user(db,userdata)
+                    db_handler.user_db_update_user(db, userdata)
                     db_handler.auth_db_purge_sessions(db, userdata["id"])
-                    return {"status": "Success", "message": permissions["edit_other_success_message"]}
+                    return {
+                        "status": "Success",
+                        "message": permissions["edit_other_success_message"],
+                    }
                 else:
-                    return {"status": "Fail", "message": permissions["edit_other_fail_message"]}
+                    return {
+                        "status": "Fail",
+                        "message": permissions["edit_other_fail_message"],
+                    }
         else:
             return {"status": "Fail", "message": "Сессия истекла"}
     else:
