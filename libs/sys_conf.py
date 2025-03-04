@@ -53,6 +53,10 @@ def get_time_data_ctl():
     for i in range(len(data)):
         data[i] = data[i].strip()
     return {
+        "date" : data[0].split(" ")[3],
+        "day" : data[0].split(" ")[3].split("-")[2],
+        "month" : data[0].split(" ")[3].split("-")[1],
+        "year" : data[0].split(" ")[3].split("-")[0],
         "local" : data[0].split(" ")[4],
         "utc" : data[1].split(" ")[4],
         "rtc" : data[2].split(" ")[4],

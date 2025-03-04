@@ -64,6 +64,10 @@
                 <span>Время по RTC : </span>
                 <span id="RTC-time">00:00</span>
             </div>
+            <div class="indicator p-2">
+                <span>Дата : </span>
+                <span id="local-date">00.00.0000</span>
+            </div>
         </div>
     </div>
     <div class="box2">
@@ -76,6 +80,18 @@
                         <div class=" clock-belt">
                         <input type="text" id="inputField" placeholder="Часовой пояс" class="form-control">
                         <div id="suggestions" class="dropdown-menu"></div>
+                        </div>
+                    </div>
+                    <span id="timezone-change-message" style="display: none;"></span>
+                </div>
+            </div>
+            <div class="indicator p-2" style="flex-wrap: wrap;">
+                <span>Изменение местного времени и даты</span>
+                <div>
+                    <div style="display: flex;">
+                        <button type="button" class="btn btn-success">Сохранить</button>
+                        <div class=" clock-belt">
+                        <input type="text" id="timedate-change-field" placeholder="" class="form-control">
                         </div>
                     </div>
                     <span id="timezone-change-message" style="display: none;"></span>
@@ -214,6 +230,7 @@
                     document.getElementById("UTC-time").textContent = data.utc;
                     document.getElementById("RTC-time").textContent = data.rtc;
                     document.getElementById("local-TZ").textContent = data.timezone;
+                    document.getElementById("local-date").textContent = data.day + "." + data.month + "." + data.year;
                     setInterval(() => {
                         document.getElementById("local-time").textContent = update_time(document.getElementById("local-time").textContent);
                         document.getElementById("UTC-time").textContent = update_time(document.getElementById("UTC-time").textContent);
