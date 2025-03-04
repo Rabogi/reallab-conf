@@ -17,29 +17,119 @@
         .time-box {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-auto-rows: 10vh;
+            grid-auto-rows: 8vh;
         }
 
         .box1 {
             grid-column-start: 1;
-            grid-column-end: 2;
+            grid-column-end: 1;
             grid-row-start: 1;
-            grid-row-end: 5;
+            grid-row-end: 1;
             height: auto;
             margin: .5rem !important;
         }
 
         .box2 {
-            grid-column-start: 2;
-            grid-column-end: 4;
-            grid-row-start: 1;
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 2;
             grid-row-end: 2;
             height: auto;
             margin: .5rem !important;
         }
 
-        .clock-belt{
-            min-width: 600px;
+        .box3 {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 3;
+            grid-row-end: 4;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box4 {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 4;
+            grid-row-end: 5;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box5 {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 5;
+            grid-row-end: 5;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box6 {
+            grid-column-start: 2;
+            grid-column-end: 4;
+            grid-row-start: 1;
+            grid-row-end: 1;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box7 {
+            grid-column-start: 2;
+            grid-column-end: 4;
+            grid-row-start: 2;
+            grid-row-end: 2;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box8 {
+            grid-column-start: 2;
+            grid-column-end: 4;
+            grid-row-start: 3;
+            grid-row-end: 3;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box9 {
+            grid-column-start: 2;
+            grid-column-end: 2;
+            grid-row-start: 4;
+            grid-row-end: 4;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box10 {
+            grid-column-start: 3;
+            grid-column-end: 3;
+            grid-row-start: 4;
+            grid-row-end: 4;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box11 {
+            grid-column-start: 2;
+            grid-column-end: 2;
+            grid-row-start: 5;
+            grid-row-end: 5;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box12 {
+            grid-column-start: 3;
+            grid-column-end: 3;
+            grid-row-start: 5;
+            grid-row-end: 5;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .clock-belt {
+            min-width: 300px;
             max-width: 800px;
         }
     }
@@ -47,56 +137,109 @@
 
 <div class="time-box">
     <div class="box1">
-        <div>
-            <div class="indicator p-2">
-                <span>Местное время : </span>
-                <span id="local-time">00:00</span>
-            </div>
-            <div class="indicator p-2">
-                <span>Часовой пояс : </span>
-                <span id="local-TZ">Europe/Moscow</span>
-            </div>
-            <div class="indicator p-2">
-                <span>Время по UTC : </span>
-                <span id="UTC-time">00:00</span>
-            </div>
-            <div class="indicator p-2">
-                <span>Время по RTC : </span>
-                <span id="RTC-time">00:00</span>
-            </div>
-            <div class="indicator p-2">
-                <span>Дата : </span>
-                <span id="local-date">00.00.0000</span>
-            </div>
+        <div class="indicator p-2">
+            <span>Местное время : </span>
+            <span id="local-time">00:00</span>
         </div>
     </div>
     <div class="box2">
-        <div>
-            <div class="indicator p-2" style="flex-wrap: wrap;">
-                <span>Смена часового пояса</span>
-                <div>
-                    <div style="display: flex;">
-                        <button type="button" class="btn btn-success">Сохранить</button>
-                        <div class=" clock-belt">
-                        <input type="text" id="inputField" placeholder="Часовой пояс" class="form-control">
-                        <div id="suggestions" class="dropdown-menu"></div>
-                        </div>
+        <div class="indicator p-2">
+            <span>Часовой пояс : </span>
+            <span id="local-TZ">Europe/Moscow</span>
+        </div>
+    </div>
+    <div class="box6">
+        <div class="indicator p-2" style="flex-wrap: wrap;height: 100%;">
+            <span>Смена часового пояса</span>
+            <div>
+                <div style="display: flex;">
+                    <button type="button" class="btn btn-success">Сохранить</button>
+                    <div class=" clock-belt">
+                        <input type="text" id="timezone-change-field" placeholder="Часовой пояс" class="form-control" value="">
+                        <div id="suggestions" class="dropdown-menu" style="min-width: 200px;"></div>
                     </div>
-                    <span id="timezone-change-message" style="display: none;"></span>
                 </div>
+                <span id="timezone-change-message" style="display: none;"></span>
             </div>
-            <div class="indicator p-2" style="flex-wrap: wrap;">
-                <span>Изменение местного времени и даты</span>
-                <div>
-                    <div style="display: flex;">
-                        <button type="button" class="btn btn-success">Сохранить</button>
-                        <div class=" clock-belt">
-                        <input type="text" id="timedate-change-field" placeholder="" class="form-control">
-                        </div>
+        </div>
+    </div>
+    <div class="box3">
+        <div class="indicator p-2">
+            <span>Время по UTC : </span>
+            <span id="UTC-time">00:00</span>
+        </div>
+    </div>
+    <div class="box4">
+        <div class="indicator p-2">
+            <span>Время по RTC : </span>
+            <span id="RTC-time">00:00</span>
+        </div>
+    </div>
+    <div class="box5">
+        <div class="indicator p-2">
+            <span>Дата : </span>
+            <span id="local-date">00.00.0000</span>
+        </div>
+    </div>
+
+    <div class="box7">
+        <div class="indicator p-2" style="flex-wrap: wrap; height: 100%;">
+            <span>Изменение местного времени</span>
+            <div>
+                <div style="display: flex;">
+                    <button type="button" class="btn btn-success">Сохранить</button>
+                    <div class=" clock-belt">
+                        <input type="text" id="time-change-field" placeholder="ГГГГ-ММ-ДД ЧЧ:ММ" class="form-control"
+                            disabled="true">
                     </div>
-                    <span id="timezone-change-message" style="display: none;"></span>
                 </div>
+                <span id="timezone-change-message" style="display: none;"></span>
             </div>
+        </div>
+    </div>
+    <div class="box8">
+        <div class="indicator p-2" style="flex-wrap: wrap; height: 100%;">
+            <span>Изменение даты</span>
+            <div>
+                <div style="display: flex;">
+                    <button type="button" class="btn btn-success">Сохранить</button>
+                    <div class=" clock-belt">
+                        <input type="text" id="date-change-field" placeholder="ГГГГ-ММ-ДД" class="form-control"
+                            disabled="true">
+                    </div>
+                </div>
+                <span id="timezone-change-message" style="display: none;"></span>
+            </div>
+        </div>
+    </div>
+    <div class="box9">
+        <div class="indicator p-2">
+            <label class="form-check-label" for="time-recomeded">Рекомендованные настройки</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="time-recomeded" checked>
+            </div>
+        </div>
+    </div>
+    <div class="box10">
+        <div class="indicator p-2">
+            <label class="form-check-label" for="ntp-sync">Синхронизация с NTP</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="ntp-sync" disabled="true" checked>
+            </div>
+        </div>
+    </div>
+    <div class="box11">
+        <div class="indicator p-2">
+            <label class="form-check-label" for="local-rtc">RTC в локальном времени</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="local-rtc" disabled="true">
+            </div>
+        </div>
+    </div>
+    <div class="box12">
+        <div class="indicator p-2">
+                <span>Статус NTP : </span>
+                <span id="ntp-status">Active</span>
         </div>
     </div>
 </div>
@@ -115,133 +258,4 @@
     }
 </style>
 
-<script>
-    var suggestionsList;
-
-    fetch('/timezones')
-        .then(response => response.json())
-        .then(data => suggestionsList = data)
-        .catch(error => console.error('Error:', error));
-
-
-    // Get references to the input field and suggestions container
-    const inputField = document.getElementById('inputField');
-    const suggestionsContainer = document.getElementById('suggestions');
-
-    // Function to filter suggestions based on user input
-    function getSuggestions(input) {
-        return suggestionsList.filter(item =>
-            item.toLowerCase().startsWith(input.toLowerCase())
-        ).slice(0, 20);
-    }
-
-    // Function to display suggestions
-    function showSuggestions(suggestions) {
-        if (suggestions.length === 0) {
-            suggestionsContainer.style.display = 'none';
-            return;
-        }
-
-        const suggestionsHTML = suggestions.map(item =>
-            `<div class="suggestion-item">${item}</div>`
-        ).join('');
-
-        suggestionsContainer.innerHTML = suggestionsHTML;
-        suggestionsContainer.style.display = 'block';
-        suggestionsContainer.style.overflow = 'auto';
-        suggestionsContainer.style.maxHeight = '200px'
-    }
-
-    // Event listener for input field
-    inputField.addEventListener('input', function () {
-        const userInput = inputField.value;
-        const filteredSuggestions = getSuggestions(userInput);
-        showSuggestions(filteredSuggestions);
-    });
-
-    // Event listener for clicking on a suggestion
-    suggestionsContainer.addEventListener('click', function (e) {
-        if (e.target.classList.contains('suggestion-item')) {
-            inputField.value = e.target.textContent;
-            suggestionsContainer.style.display = 'none';
-        }
-    });
-
-    // Hide suggestions when clicking outside
-    document.addEventListener('click', function (e) {
-        if (e.target !== inputField) {
-            suggestionsContainer.style.display = 'none';
-        }
-    });
-
-    function update_time(time) {
-        let timeParts = time.split(':');
-        let hours = parseInt(timeParts[0], 10);
-        let minutes = parseInt(timeParts[1], 10);
-        let seconds = parseInt(timeParts[2], 10);
-
-        // Validate parsed values
-        if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
-            console.error('Invalid time values:', hours, minutes, seconds);
-            return;
-        }
-        seconds++;
-        if (seconds >= 60) {
-            seconds = 0;
-            minutes++;
-            if (minutes >= 60) {
-                minutes = 0;
-                hours++;
-                if (hours >= 24) {
-                    hours = 0;
-                }
-            }
-        }
-
-        const formattedTime =
-            String(hours).padStart(2, '0') + ':' +
-            String(minutes).padStart(2, '0') + ':' +
-            String(seconds).padStart(2, '0');
-
-        return formattedTime;
-    }
-
-    let session_token = localStorage.getItem("real_lab_conf");
-
-    function get_timedatectl() {
-        fetch('/timedatectl', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                session_token: session_token,
-            })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Token failed');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.local) {
-                    document.getElementById("local-time").textContent = data.local;
-                    document.getElementById("UTC-time").textContent = data.utc;
-                    document.getElementById("RTC-time").textContent = data.rtc;
-                    document.getElementById("local-TZ").textContent = data.timezone;
-                    document.getElementById("local-date").textContent = data.day + "." + data.month + "." + data.year;
-                    setInterval(() => {
-                        document.getElementById("local-time").textContent = update_time(document.getElementById("local-time").textContent);
-                        document.getElementById("UTC-time").textContent = update_time(document.getElementById("UTC-time").textContent);
-                        document.getElementById("RTC-time").textContent = update_time(document.getElementById("RTC-time").textContent);
-                    }, 1000);
-                }
-                else {
-                    throw new Error('No time data received');
-                }
-            })
-    }
-
-    get_timedatectl()
-</script>
+<script src="/content/js/timepage.js"></script>
