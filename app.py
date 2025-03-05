@@ -511,7 +511,7 @@ def get_timedatectl(data: dict = Body()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             output = sys_conf.get_time_data_ctl()
             if db_handler.auth_db_return_session(db,data["session_token"])["level"] <= permissions["time-change"]:
-                output["time-change"] = True
+                output["time_change"] = True
             return output
     return {"status": "Fail"}
 
@@ -552,10 +552,12 @@ def get_resinfo(data: dict = Body()):
             )
     return {"status": "Fail"}
 
-@app.get("/test")
-def get_test():
-    return sys_conf.call_shell("apt update")
-
+# changeable settings
+@app.post("/settings/value/ntp")
+def ntp(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            print(data["ntp_sync"])
 
 if __name__ == "__main__":
     uvicorn.run(
@@ -563,6 +565,6 @@ if __name__ == "__main__":
         host=config["host"].strip(),
         port=config["port"],
         ssl_keyfile=os.path.realpath(config["cert_key_file"]),
-        ssl_certfile=os.path.realpath(config["cert_file"]),
+        ssl_certfile=os.path.realpath(config["cert_file"s]),
         reload=True,
     )

@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('navbar-username').textContent = session.username;
                     document.getElementById('navbar-username').style.display = "block";
                     document.getElementById('navbar-logout').style.display = "block";
+                    document.getElementById('navbar-username-divider').style.display = "block";
+                    document.getElementById('navbar-username-header').style.display = "block";
                 } else {
                     document.getElementById('navbar-username').textContent = "Failed to load username";
                     throw new Error('No token received');
