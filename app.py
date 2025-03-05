@@ -45,6 +45,9 @@ config = json.loads(
     ).read()
 )
 
+if config["host"] == "auto":
+    config["host"] = sys_conf.call_shell("hostname -I")
+
 permissions = {
     # add
     "add_user_error_message": "Добавлять пользователей запрещено с текущим уровнем доступа",
@@ -64,6 +67,7 @@ permissions = {
     "edit_additional_info":0,
     "edit_additional_info_fail":"Изменять доп. информацию запрещено с текущим уровнем доступа",
     #
+    "time-change" : 0,
 }
 
 forbidden_hashes = [
@@ -505,7 +509,10 @@ def add_user(data: dict = Body()):
 def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
-            return sys_conf.get_time_data_ctl()
+            output = sys_conf.get_time_data_ctl()
+            if db_handler.auth_db_return_session(db,data["session_token"])["level"] <= permissions["time-change"]:
+                output["time-change"] = True
+            return output
     return {"status": "Fail"}
 
 
@@ -545,11 +552,15 @@ def get_resinfo(data: dict = Body()):
             )
     return {"status": "Fail"}
 
+@app.get("/test")
+def get_test():
+    return sys_conf.call_shell("apt update")
+
 
 if __name__ == "__main__":
     uvicorn.run(
         "app:app",
-        host=config["host"],
+        host=config["host"].strip(),
         port=config["port"],
         ssl_keyfile=os.path.realpath(config["cert_key_file"]),
         ssl_certfile=os.path.realpath(config["cert_file"]),

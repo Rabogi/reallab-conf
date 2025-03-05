@@ -89,6 +89,7 @@ function update_time(time) {
 }
 
 let session_token = localStorage.getItem("real_lab_conf");
+let time_change_perm = false;
 
 function get_timedatectl() {
     fetch('/timedatectl', {

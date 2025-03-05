@@ -33,7 +33,7 @@ def get_temp():
 def recreate_default_conf(path):
     conf = {
         "data_db_location": "./data/data.db",
-        "host": "localhost",
+        "host": "auto",
         "port": 8000,
         "content_folder": "./frontend/content",
         "cert_file": "./ssl/cert.pem",
