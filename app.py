@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi import responses
 from fastapi import Body
 from fastapi.middleware.cors import CORSMiddleware
+import datetime
 import pathlib
 import os
 import uvicorn
@@ -587,9 +588,27 @@ def ntp(data: dict = Body()):
                             else:
                                 return{"status" : "fail" , "message" : "Ошибка в данных (rtclocal)"}
                         # ///////////////////////////////////////////////////////////////////
+                        if "timezone" in list(settings.keys()):
+                            if settings["timezone"] in timezones:
+                                o = sys_conf.call_shell("timedatectl set-timezone " + settings["timezone"])
+                            else:
+                                return{"status" : "fail" , "message" : "Данный часовой пояс не разрешён"}
                         # ///////////////////////////////////////////////////////////////////
+                        if "localtime" in list(settings.keys()):
+                            try:
+                                datetime.strptime(settings["localtime"], '%H:%M')
+                            except ValueError:
+                                return{"status" : "fail" , "message" : "Ошибка в данных (ntp)"}
+                            finally:
+                                o = sys_conf.call_shell("timedatectl set-time " + settings["localtime"])
                         # ///////////////////////////////////////////////////////////////////
-                        # ///////////////////////////////////////////////////////////////////
+                        if "date" in list(settings.keys()):
+                            try:
+                                datetime.strptime(settings["date"], '%Y-%m-%d')
+                            except ValueError:
+                                return{"status" : "fail" , "message" : "Ошибка в данных (date)"}
+                            finally:
+                                o = sys_conf.call_shell("timedatectl set-time " + settings["date"])
                         # ///////////////////////////////////////////////////////////////////
                     except:
                         return {"status" : "fail" , "message" : "Ошибка"}

@@ -177,6 +177,34 @@ function update_settings(data) {
     }
 }
 
+const timezone_button = document.getElementById("button-save-timezone")
+const save_time_button = document.getElementById("button-save-localtime")
+const save_date_button = document.getElementById("button-save-date")
+
+timezone_button.addEventListener('click',async function () {
+    var input = document.getElementById("timezone-change-field").value;
+    await send_settings({
+        timezone: input,
+    })
+    get_timedatectl()
+});
+
+save_time_button.addEventListener('click',async function () {
+    var input = document.getElementById("time-change-field").value;
+    await send_settings({
+        localtime: input,
+    })
+    get_timedatectl()
+});
+
+save_date_button.addEventListener('click',async function () {
+    var input = document.getElementById("date-change-field").value;
+    await send_settings({
+        date: input,
+    })
+    get_timedatectl()
+});
+
 
 recommended_switch.addEventListener('click', async function () {
     if (recommended_switch.checked) {
