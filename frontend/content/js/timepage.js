@@ -111,9 +111,9 @@ let settings = {
     "date-button": document.getElementById("button-save-date"),
     "date-field": document.getElementById("date-change-field"),
     "switch-recommended": document.getElementById("time-recommended"),
-    "switch-time-sync": document.getElementById("ntp-sync"),
+    "switch-time-sync": document.getElementById("sync-status"),
     "switch-local-rtc": document.getElementById("local-rtc"),
-    "ntp-status": document.getElementById("ntp-status"),
+    "ntp-sync": document.getElementById("ntp-sync"),
 }
 
 function get_timedatectl() {
@@ -140,12 +140,8 @@ function get_timedatectl() {
                 document.getElementById("local-TZ").textContent = data.timezone;
                 document.getElementById("local-date").textContent = data.day + "." + data.month + "." + data.year;
                 document.getElementById("timezone-change-field").value = data.timezone;
-                document.getElementById("ntp-status").textContent = data.ntp;
-                setInterval(() => {
-                    document.getElementById("local-time").textContent = update_time(document.getElementById("local-time").textContent);
-                    document.getElementById("UTC-time").textContent = update_time(document.getElementById("UTC-time").textContent);
-                    document.getElementById("RTC-time").textContent = update_time(document.getElementById("RTC-time").textContent);
-                }, 1000);
+                document.getElementById("sync-status").textContent = data.sys_clock_sync;
+                
 
                 update_settings(data);
 
@@ -168,12 +164,16 @@ function update_settings(data) {
     time_settings["localtime"] = data.local;
     time_settings["timezone"] = data.timezone;
     time_settings["rtclocal"] = data.rtc_equal_tz
-    time_settings["ntp"] = data.sys_clock_sync;
-    settings["switch-local-rtc"].checked = time_settings["rtclocal"]
-    settings["switch-time-sync"].checked = time_settings["ntp"]
+    time_settings["ntp"] = data.ntp;
+    settings["switch-local-rtc"].checked = time_settings["rtclocal"];
+    settings["ntp-sync"].checked = time_settings["ntp"];
 
-    if (settings["switch-local-rtc"].checked == false & settings["switch-time-sync"].checked == true) {
+    if (time_settings["rtclocal"] == false & time_settings["ntp"] == true) {
         recommended_switch.checked = true;
+    }
+    else
+    {
+        recommended_switch.checked = false;
     }
 }
 
@@ -182,8 +182,11 @@ recommended_switch.addEventListener('click', async function () {
     if (recommended_switch.checked) {
         time_settings["rtclocal"] = false;
         time_settings["ntp"] = true;
-        settings["switch-local-rtc"].checked = time_settings["rtclocal"]
-        settings["switch-time-sync"].checked = time_settings["ntp"]
+        await send_settings({
+            ntp: time_settings["ntp"],
+            rtclocal: time_settings["rtclocal"],
+        })
+        get_timedatectl()
     } else {
     }
 });
@@ -191,48 +194,43 @@ recommended_switch.addEventListener('click', async function () {
 ntp_sync_switch.addEventListener('click', async function () {
     if (ntp_sync_switch.checked) {
         time_settings["ntp"] = true;
-        if (await send_ntp(time_settings["ntp"]) == true) {
-            settings["switch-time-sync"].checked = time_settings["ntp"]
-            if (rtclocal_switch.checked == false) {
-                recommended_switch.checked = true;
-            }
-        }
-        else{
-            ntp_sync_switch.checked = false;
-        }
-
+        await send_settings({
+            ntp: time_settings["ntp"],});
+        get_timedatectl()
     } else {
         time_settings["ntp"] = false;
-        if (await send_ntp(time_settings.ntp) == true) {
-            settings["switch-time-sync"].checked = time_settings["ntp"]
-            recommended_switch.checked = false;
-        }
-        else{
-            ntp_sync_switch.checked = true;
-        }
+        await send_settings({
+            ntp: time_settings["ntp"],});
+        get_timedatectl()
     }
 });
 
 rtclocal_switch.addEventListener('click', async function () {
     if (rtclocal_switch.checked) {
-        recommended_switch.checked = false;
+        time_settings["rtclocal"] = true;
+        await send_settings({
+            rtclocal: time_settings["rtclocal"],
+        })
+        get_timedatectl()
     } else {
-        if (ntp_sync_switch.checked == true) {
-            recommended_switch.checked = true;
-        }
+        time_settings["rtclocal"] = false;
+        await send_settings({
+            rtclocal: time_settings["rtclocal"],
+        })
+        get_timedatectl()
     }
 });
 
 
-async function send_ntp(data) {
-    const response = await fetch('/settings/value/ntp', {
+async function send_settings(data) {
+    const response = await fetch('/settings/time/values', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            session_token: sessionKey,
-            ntp_sync: data
+            session_token: session_token,
+            data : JSON.stringify(data)
         }),
     }).then(response => {
         if (!response.ok) {
@@ -241,12 +239,18 @@ async function send_ntp(data) {
         return response.json();
     })
         .then(r => {
-            if (r.response) {
-                return r.response;
+            if (r.status = "success") {
+                return r;
             }
             else {
                 throw new Error('No response received');
             }
         })
 }
+
 get_timedatectl()
+setInterval(() => {
+    document.getElementById("local-time").textContent = update_time(document.getElementById("local-time").textContent);
+    document.getElementById("UTC-time").textContent = update_time(document.getElementById("UTC-time").textContent);
+    document.getElementById("RTC-time").textContent = update_time(document.getElementById("RTC-time").textContent);
+}, 1000);

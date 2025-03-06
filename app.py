@@ -64,10 +64,10 @@ permissions = {
     "edit_other_fail_message": "Изменять данные пользователей запрещено с текущим уровнем доступа",
     "edit_self_success_message": "Данные пользователя изменены",
     "edit_self_fail_message": "Отказано в доступе",
-    "edit_additional_info":0,
-    "edit_additional_info_fail":"Изменять доп. информацию запрещено с текущим уровнем доступа",
+    "edit_additional_info": 0,
+    "edit_additional_info_fail": "Изменять доп. информацию запрещено с текущим уровнем доступа",
     #
-    "time-change" : 0,
+    "time-change": 0,
 }
 
 forbidden_hashes = [
@@ -470,7 +470,10 @@ def add_user(data: dict = Body()):
                 if editor["level"] <= permissions["edit_self"]:
                     if userdata["additional_info"] != unchanged["additional_info"]:
                         if editor["level"] > permissions["edit_additional_info"]:
-                            return {"status": "Fail","message": permissions["edit_additional_info_fail"],}  
+                            return {
+                                "status": "Fail",
+                                "message": permissions["edit_additional_info_fail"],
+                            }
                     db_handler.user_db_update_user(db, userdata)
                     db_handler.auth_db_purge_sessions(db, userdata["id"])
                     return {
@@ -487,7 +490,10 @@ def add_user(data: dict = Body()):
                 if editor["level"] <= permissions["edit_others"]:
                     if userdata["additional_info"] != unchanged["additional_info"]:
                         if editor["level"] > permissions["edit_additional_info"]:
-                            return {"status": "Fail","message": permissions["edit_additional_info_fail"],}  
+                            return {
+                                "status": "Fail",
+                                "message": permissions["edit_additional_info_fail"],
+                            }
                     db_handler.user_db_update_user(db, userdata)
                     db_handler.auth_db_purge_sessions(db, userdata["id"])
                     return {
@@ -510,7 +516,10 @@ def get_timedatectl(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             output = sys_conf.get_time_data_ctl()
-            if db_handler.auth_db_return_session(db,data["session_token"])["level"] <= permissions["time-change"]:
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["time-change"]
+            ):
                 output["time_change"] = True
             return output
     return {"status": "Fail"}
@@ -552,12 +561,49 @@ def get_resinfo(data: dict = Body()):
             )
     return {"status": "Fail"}
 
+
 # changeable settings
-@app.post("/settings/value/ntp")
+@app.post("/settings/time/values")
 def ntp(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
-            print(data["ntp_sync"])
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["time-change"]
+            ):
+                if "data" in list(data.keys()):
+                    try:
+                        settings = json.loads(data["data"])
+                        # ///////////////////////////////////////////////////////////////////
+                        if "ntp" in list(settings.keys()):
+                            if type(settings["ntp"]) == bool:
+                                o = sys_conf.call_shell("timedatectl set-ntp " + str(settings["ntp"]))
+                            else:
+                                return{"status" : "fail" , "message" : "Ошибка в данных (ntp)"}
+                        # ///////////////////////////////////////////////////////////////////
+                        if "rtclocal" in list(settings.keys()):
+                            if type(settings["rtclocal"]) == bool:
+                                o = sys_conf.call_shell("timedatectl set-local-rtc " + str(settings["rtclocal"]))
+                            else:
+                                return{"status" : "fail" , "message" : "Ошибка в данных (rtclocal)"}
+                        # ///////////////////////////////////////////////////////////////////
+                        # ///////////////////////////////////////////////////////////////////
+                        # ///////////////////////////////////////////////////////////////////
+                        # ///////////////////////////////////////////////////////////////////
+                        # ///////////////////////////////////////////////////////////////////
+                    except:
+                        return {"status" : "fail" , "message" : "Ошибка"}
+                    finally:
+                        return {"status" : "success", "message" : "Настройки успешно применены"}
+                else:
+                    return {"status" : "fail" , "message" : "Нет данных"}
+            else:
+                return {"status": "fail", "message": "Доступ запрещён"}
+        else:
+            return {"status": "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
+
 
 if __name__ == "__main__":
     uvicorn.run(
@@ -565,6 +611,6 @@ if __name__ == "__main__":
         host=config["host"].strip(),
         port=config["port"],
         ssl_keyfile=os.path.realpath(config["cert_key_file"]),
-        ssl_certfile=os.path.realpath(config["cert_file"s]),
+        ssl_certfile=os.path.realpath(config["cert_file"]),
         reload=True,
     )

@@ -52,6 +52,10 @@ def get_time_data_ctl():
     data = data.split("\n")
     for i in range(len(data)):
         data[i] = data[i].strip()
+    if data[5].split(":")[1].replace(" ","") == "active":
+        ntp = True
+    else:
+        ntp = False
     output = {
         "date" : data[0].split(" ")[3],
         "day" : data[0].split(" ")[3].split("-")[2],
@@ -62,7 +66,7 @@ def get_time_data_ctl():
         "rtc" : data[2].split(" ")[4],
         "timezone" : data[3].split(":")[1].split(" ")[1],
         "sys_clock_sync" : data[4].split(":")[1].replace(" ",""),
-        "ntp" : data[5].split(":")[1].replace(" ",""),
+        "ntp" : ntp,
         "rtc_equal_tz" : data[6].split(":")[1].replace(" ",""),
     }
     if output["sys_clock_sync"] == "yes":
