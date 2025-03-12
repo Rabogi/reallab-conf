@@ -1,3 +1,5 @@
+<script src="/content/js/hostcard.js"></script>
+
 <div class="card main-color-bg container-fluid text-white p-2 colors border-shadow" style="height: 100%;" id="Network">
     <div style="
     display: flex;
@@ -17,10 +19,42 @@
             /* safari 6.0 - 9.0 */
             filter: invert(100%);
         }
-
+        
         .svg_inverse:hover {
             /* safari 6.0 - 9.0 */
             filter: invert(0%);
         }
+
+        .hostcard-indicator {
+            min-width: 100%;
+            display: flex;
+            background-color: var(--sec-bg-color);
+            border-radius: 15px;
+            color: white;
+            font-size: larger;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            ;
+            margin-bottom: 0.5rem;
+        }
+
+        .hostcard-container {
+            overflow: auto;
+            height: 100%;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+            /* align-content: center; */
+            justify-content: flex-start;
+            align-items: stretch;
+        }
     </style>
+    <div class="hostcard-container p-2" id="hostcard-container-div">
+        <!-- <div class="hostcard-indicator p-2">
+            <span>Адрес:</span>
+            <span>1.1.1.1/1</span>
+        </div> -->
+    </div>
 </div>

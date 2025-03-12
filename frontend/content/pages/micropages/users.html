@@ -6,20 +6,19 @@
     justify-content: space-between;
     align-content: center;
     align-items: center;
-    ;">
+    ">
         <h1>Пользователи</h1>
-        <a class="btn btn-outline-light" type="button" style="    padding: unset;
-        border-radius: 45px; border-color: var(--main-bg-color);" href="/settings/users" title="Расширенные настройки пользователей"><img class="svg_inverse"
-                src="/content/icons/gear.svg" height="48" width="48"></a>
+        <a class="btn btn-outline-light" type="button" style="padding: unset;
+        border-radius: 45px; border-color: var(--main-bg-color);" href="/settings/users"
+            title="Расширенные настройки пользователей"><img class="svg_inverse" src="/content/icons/gear.svg"
+                height="48" width="48"></a>
     </div>
     <style>
         .svg_inverse {
-            /* safari 6.0 - 9.0 */
             filter: invert(100%);
         }
 
         .svg_inverse:hover {
-            /* safari 6.0 - 9.0 */
             filter: invert(0%);
         }
 
@@ -34,39 +33,38 @@
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            ;
             margin-bottom: 0.5rem;
         }
 
         .usercard-container {
-            height: min-content;
-            height: min-content;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            /* align-content: center; */
             justify-content: flex-start;
             align-items: stretch;
         }
     </style>
 
-    <div class="usercard-container">
-        <div class="usercard-indicator p-2"><span >Текущий пользователь</span></div>
+    <div class="usercard-container p-2">
+        <div class="usercard-indicator p-2"><span>Текущий пользователь</span></div>
         <div class="usercard-indicator p-2">
             <span>Имя пользователя:</span>
-            <span id="usercard-username">Username</span></div>
+            <span id="usercard-username">Username</span>
+        </div>
         <div class="usercard-indicator p-2">
             <span>Уровень доступа:</span>
-            <span id="usercard-level">Userlevel</span></div>
-        <div class="p-2">
-            <div style="display: flex
-            ;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                justify-content: center;">
-                <a id="logout-button" class="btn btn-outline-light" type="button"
-                    style="padding: unset; border-color: var(--main-bg-color);" href="/" title="Выйти из системы"><img
-                        class="svg_inverse" src="/content/icons/door-open.svg" height="48" width="48"></a>
-            </div>
+            <span id="usercard-level">Userlevel</span>
+        </div>
+        <div class="p-2" style="
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: center;">
+            <a id="logout-button" class="btn btn-outline-light" type="button"
+                style="padding: unset; border-color: var(--main-bg-color);" href="/" title="Выйти из системы"><img
+                    class="svg_inverse" src="/content/icons/arrow-bar-left.svg" height="48" width="48"></a>
         </div>
     </div>
 </div>
@@ -74,22 +72,23 @@
 <script>
     document.getElementById("logout-button").onclick = () => logout()
     get_session()
-    
-async function get_session() {
-    var session_token = window.localStorage.getItem("real_lab_conf")
-    try {
-        const response = await fetch('/session', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ session_token: session_token }),
-        });
-        const session = await response.json();
-        document.getElementById("usercard-username").textContent = session.username;
-        document.getElementById("usercard-level").textContent = session.level;
-    } catch (error) {
-        console.error('Error fetching users:', error);
+
+    async function get_session() 
+    {
+        var session_token = window.localStorage.getItem("real_lab_conf")
+        try {
+            const response = await fetch('/session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ session_token: session_token }),
+            });
+            const session = await response.json();
+            document.getElementById("usercard-username").textContent = session.username;
+            document.getElementById("usercard-level").textContent = session.level;
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
     }
-}
 </script>

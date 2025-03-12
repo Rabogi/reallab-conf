@@ -280,12 +280,12 @@ async def get_content(item_name: str):
 @app.get("/interfaces")
 def get_interfaces():
     # return sys_conf.list_interfaces()
-    return responses.JSONResponse(sys_conf.list_interfaces())
+    return responses.JSONResponse(sys_conf.list_interfaces(False))
 
 
 @app.get("/eth_interfaces")
 def get_eth_interfaces():
-    data = sys_conf.list_interfaces()
+    data = sys_conf.list_interfaces(False)
     output = ""
     for i in data.keys():
         if data[i].startswith("127") == False and data[i] != "None":
@@ -564,6 +564,8 @@ def get_resinfo(data: dict = Body()):
 
 
 # changeable settings
+
+
 @app.post("/settings/time/values")
 def ntp(data: dict = Body()):
     if "session_token" in list(data.keys()):
@@ -578,44 +580,73 @@ def ntp(data: dict = Body()):
                         # ///////////////////////////////////////////////////////////////////
                         if "ntp" in list(settings.keys()):
                             if type(settings["ntp"]) == bool:
-                                o = sys_conf.call_shell("timedatectl set-ntp " + str(settings["ntp"]))
+                                o = sys_conf.call_shell(
+                                    "timedatectl set-ntp " + str(settings["ntp"])
+                                )
                             else:
-                                return{"status" : "fail" , "message" : "Ошибка в данных (ntp)"}
+                                return {
+                                    "status": "fail",
+                                    "message": "Ошибка в данных (ntp)",
+                                }
                         # ///////////////////////////////////////////////////////////////////
                         if "rtclocal" in list(settings.keys()):
                             if type(settings["rtclocal"]) == bool:
-                                o = sys_conf.call_shell("timedatectl set-local-rtc " + str(settings["rtclocal"]))
+                                o = sys_conf.call_shell(
+                                    "timedatectl set-local-rtc "
+                                    + str(settings["rtclocal"])
+                                )
                             else:
-                                return{"status" : "fail" , "message" : "Ошибка в данных (rtclocal)"}
+                                return {
+                                    "status": "fail",
+                                    "message": "Ошибка в данных (rtclocal)",
+                                }
                         # ///////////////////////////////////////////////////////////////////
                         if "timezone" in list(settings.keys()):
                             if settings["timezone"] in timezones:
-                                o = sys_conf.call_shell("timedatectl set-timezone " + settings["timezone"])
+                                o = sys_conf.call_shell(
+                                    "timedatectl set-timezone " + settings["timezone"]
+                                )
                             else:
-                                return{"status" : "fail" , "message" : "Данный часовой пояс не разрешён"}
+                                return {
+                                    "status": "fail",
+                                    "message": "Данный часовой пояс не разрешён",
+                                }
                         # ///////////////////////////////////////////////////////////////////
                         if "localtime" in list(settings.keys()):
                             try:
-                                datetime.strptime(settings["localtime"], '%H:%M')
+                                datetime.strptime(settings["localtime"], "%H:%M")
                             except ValueError:
-                                return{"status" : "fail" , "message" : "Ошибка в данных (ntp)"}
+                                return {
+                                    "status": "fail",
+                                    "message": "Ошибка в данных (ntp)",
+                                }
                             finally:
-                                o = sys_conf.call_shell("timedatectl set-time " + settings["localtime"])
+                                o = sys_conf.call_shell(
+                                    "timedatectl set-time " + settings["localtime"]
+                                )
                         # ///////////////////////////////////////////////////////////////////
                         if "date" in list(settings.keys()):
                             try:
-                                datetime.strptime(settings["date"], '%Y-%m-%d')
+                                datetime.strptime(settings["date"], "%Y-%m-%d")
                             except ValueError:
-                                return{"status" : "fail" , "message" : "Ошибка в данных (date)"}
+                                return {
+                                    "status": "fail",
+                                    "message": "Ошибка в данных (date)",
+                                }
                             finally:
-                                o = sys_conf.call_shell("timedatectl set-time " + settings["date"])
+                                o = sys_conf.call_shell(
+                                    "timedatectl set-time " + settings["date"]
+                                )
                         # ///////////////////////////////////////////////////////////////////
                     except:
-                        return {"status" : "fail" , "message" : "Ошибка"}
+                        return {"status": "fail", "message": "Ошибка"}
                     finally:
-                        return {"status" : "success", "message" : "Настройки успешно применены"}
+                        return {
+                            "status": "success",
+                            "message": "Настройки успешно применены",
+                        }
                 else:
-                    return {"status" : "fail" , "message" : "Нет данных"}
+                    return {"status": "fail", "message": "Нет данных"}
             else:
                 return {"status": "fail", "message": "Доступ запрещён"}
         else:
@@ -633,3 +664,4 @@ if __name__ == "__main__":
         ssl_certfile=os.path.realpath(config["cert_file"]),
         reload=True,
     )
+    
