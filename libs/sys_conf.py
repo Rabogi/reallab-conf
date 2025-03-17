@@ -89,7 +89,7 @@ def get_memory():
         "used":data[2],
         "free":data[3],
         "shared":data[4],
-        "buff/cache":data[5],
+        "buff":data[5],
         "available":data[6],
     }
     return data

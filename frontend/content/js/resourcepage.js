@@ -35,7 +35,7 @@ function labeled_createPairs(x, y, l) {
 }
 
 // Constants
-var timeout = 5000; // 5 seconds
+var timeout = 1000; // 1 seconds
 // Temps constants
 var temp_data_len = 20;
 var temp_time_data = createDecreasingArray(0, timeout / 1000, temp_data_len);
@@ -48,6 +48,16 @@ var load_data_axis_x = [...Array(load_data_len).keys()];
 var load_minute_data = new Array(load_data_len).fill(null); // Initialize with null values
 var load_five_data = new Array(load_data_len).fill(null); // Initialize with null values
 var load_fifteen_data = new Array(load_data_len).fill(null); // Initialize with null values
+// Memory constants
+var memory_data_len = 20;
+var memory_time_data = createDecreasingArray(0, timeout / 1000, load_data_len);
+var memory_data_axis_x = [...Array(load_data_len).keys()];
+var memory_data_free = new Array(load_data_len).fill(null); // Initialize with null values
+var memory_data_used = new Array(load_data_len).fill(null); // Initialize with null values
+var memory_data_shared = new Array(load_data_len).fill(null); // Initialize with null values
+var memory_data_buff = new Array(load_data_len).fill(null); // Initialize with null values
+var memory_data_available = new Array(load_data_len).fill(null); // Initialize with null values
+
 
 
 
@@ -123,6 +133,67 @@ var chart2 = new CanvasJS.Chart("load-graph", {
 });
 chart2.render(); // Render the chart initially
 
+var chart3 = new CanvasJS.Chart("memory-graph", {
+    theme: "dark2",
+    animationEnabled: true,
+    backgroundColor: "#343542",
+    title: {
+        text: "Память",
+        fontColor: "#ffffff"
+    },
+    axisX: {
+        title: "Время",
+        fontColor: "#ffffff"
+    },
+    axisY: {
+        title: "МБ",
+        fontColor: "#ffffff"
+    },
+    data: [
+        {
+            name: "Свободно",
+            showInLegend: true,
+            type: "line",
+            color: "#00ff00",
+            dataPoints: labeled_createPairs(memory_data_axis_x, memory_data_free, memory_time_data) // Initial data points
+        }
+        ,
+        {
+            name: "Занято",
+            showInLegend: true,
+            type: "line",
+            color: "#ff0000",
+            dataPoints: labeled_createPairs(memory_data_axis_x, memory_data_used, memory_time_data) // Initial data points
+        }
+        ,
+        {
+            name: "Разделённая",
+            showInLegend: true,
+            type: "line",
+            color: "#ff00ff",
+            dataPoints: labeled_createPairs(memory_data_axis_x, memory_data_shared, memory_time_data) // Initial data points
+        }
+        ,
+        {
+            name: "Буфер",
+            showInLegend: true,
+            type: "line",
+            color: "#ffff00",
+            dataPoints: labeled_createPairs(memory_data_axis_x, memory_data_buff, memory_time_data) // Initial data points
+        }
+        ,
+        {
+            name: "Доступно",
+            showInLegend: true,
+            type: "line",
+            color: "#00ffff",
+            dataPoints: labeled_createPairs(memory_data_axis_x, memory_data_available, memory_time_data) // Initial data points
+        }   
+    ]
+});
+chart3.render(); // Render the chart initially
+
+
 // Start updates
 async function startUpdates() {
     while (true) {
@@ -161,6 +232,25 @@ async function startUpdates() {
         chart2.options.data[2].dataPoints = load_fifteen_graphdata;
         chart2.render();
 
+        memory_data_used.shift();
+        memory_data_free.shift();
+        memory_data_shared.shift();
+        memory_data_buff.shift();
+        memory_data_available.shift();
+        
+        memory_data_used.push(parseFloat(data.used));
+        memory_data_free.push(parseFloat(data.free));
+        memory_data_shared.push(parseFloat(data.shared));
+        memory_data_buff.push(parseFloat(data.buff));
+        memory_data_available.push(parseFloat(data.available));
+        
+        chart3.options.data[0].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_used,memory_time_data);
+        chart3.options.data[1].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_free,memory_time_data);
+        chart3.options.data[2].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_shared,memory_time_data);
+        chart3.options.data[3].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_buff,memory_time_data);
+        chart3.options.data[4].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_available,memory_time_data);
+
+        chart3.render();
 
         // Wait for the next update
         await new Promise(resolve => setTimeout(resolve, timeout));
