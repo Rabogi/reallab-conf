@@ -654,6 +654,9 @@ def ntp(data: dict = Body()):
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
 
+@app.post("/settings/host/staticIP")
+def static_ip(data: dict = Body()):
+    return {"status": "fail", "message":"fail"}
 
 if __name__ == "__main__":
     uvicorn.run(

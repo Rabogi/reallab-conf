@@ -111,3 +111,45 @@ def get_temps():
     return {
         "temp" : round(int(data)/1000,1)
     }
+    
+
+def parse_dhcpcd_conf(file_path):
+    interfaces = {}
+    current_interface = None
+    with open(file_path, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            if line.startswith('interface'):
+                current_interface = line.split()[1]
+                interfaces[current_interface] = {}
+            elif current_interface:
+                if line.startswith('static ip_address'):
+                    interfaces[current_interface]['ip_address'] = line.split('=')[1]
+                elif line.startswith('static routers'):
+                    interfaces[current_interface]['routers'] = line.split('=')[1]
+                elif line.startswith('static domain_name_servers'):
+                    interfaces[current_interface]['dns_servers'] = line.split('=')[1]
+
+    return interfaces
+
+def write_dhcpcd_conf(file_path, interfaces):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+    updated_lines = []
+    skip_until_bracket = False
+    for line in lines:
+        stripped_line = line.strip()
+        if stripped_line.startswith('[') and stripped_line.endswith(']'):
+            current_interface = stripped_line[1:-1]
+            if current_interface in interfaces:
+                skip_until_bracket = True
+            else:
+                updated_lines.append(line)
+        elif skip_until_bracket:
+            if stripped_line.startswith('[') or not stripped_line:
+                skip_until_bracket = False
+                updated_lines.append(line)
+        else:
+            updated_lines.append(line)

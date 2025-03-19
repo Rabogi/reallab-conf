@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            const response = await fetch('/changeIP', {
+            const response = await fetch('/settings/host/staticIP', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
