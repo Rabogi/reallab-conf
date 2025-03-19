@@ -244,8 +244,8 @@ async function startUpdates() {
         memory_data_buff.push(parseFloat(data.buff));
         memory_data_available.push(parseFloat(data.available));
         
-        chart3.options.data[0].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_used,memory_time_data);
-        chart3.options.data[1].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_free,memory_time_data);
+        chart3.options.data[0].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_free,memory_time_data);
+        chart3.options.data[1].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_used,memory_time_data);
         chart3.options.data[2].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_shared,memory_time_data);
         chart3.options.data[3].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_buff,memory_time_data);
         chart3.options.data[4].dataPoints = labeled_createPairs(memory_data_axis_x,memory_data_available,memory_time_data);

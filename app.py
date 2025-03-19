@@ -46,6 +46,7 @@ config = json.loads(
     ).read()
 )
 
+
 if config["host"] == "auto":
     config["host"] = sys_conf.call_shell("hostname -I")
 
@@ -581,7 +582,7 @@ def ntp(data: dict = Body()):
                         if "ntp" in list(settings.keys()):
                             if type(settings["ntp"]) == bool:
                                 o = sys_conf.call_shell(
-                                    "timedatectl set-ntp " + str(settings["ntp"])
+                                    "sudo timedatectl set-ntp " + str(settings["ntp"])
                                 )
                             else:
                                 return {
@@ -592,7 +593,7 @@ def ntp(data: dict = Body()):
                         if "rtclocal" in list(settings.keys()):
                             if type(settings["rtclocal"]) == bool:
                                 o = sys_conf.call_shell(
-                                    "timedatectl set-local-rtc "
+                                    "sudo timedatectl set-local-rtc "
                                     + str(settings["rtclocal"])
                                 )
                             else:
@@ -604,7 +605,7 @@ def ntp(data: dict = Body()):
                         if "timezone" in list(settings.keys()):
                             if settings["timezone"] in timezones:
                                 o = sys_conf.call_shell(
-                                    "timedatectl set-timezone " + settings["timezone"]
+                                    "sudo timedatectl set-timezone " + settings["timezone"]
                                 )
                             else:
                                 return {
@@ -622,7 +623,7 @@ def ntp(data: dict = Body()):
                                 }
                             finally:
                                 o = sys_conf.call_shell(
-                                    "timedatectl set-time " + settings["localtime"]
+                                    "sudo timedatectl set-time " + settings["localtime"]
                                 )
                         # ///////////////////////////////////////////////////////////////////
                         if "date" in list(settings.keys()):
@@ -635,7 +636,7 @@ def ntp(data: dict = Body()):
                                 }
                             finally:
                                 o = sys_conf.call_shell(
-                                    "timedatectl set-time " + settings["date"]
+                                    "sudo timedatectl set-time " + settings["date"]
                                 )
                         # ///////////////////////////////////////////////////////////////////
                     except:
@@ -656,6 +657,7 @@ def ntp(data: dict = Body()):
 
 @app.post("/settings/host/staticIP")
 def static_ip(data: dict = Body()):
+    sys_conf.call_shell("sudo reboot")
     return {"status": "fail", "message":"fail"}
 
 if __name__ == "__main__":
