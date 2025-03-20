@@ -46,6 +46,11 @@ config = json.loads(
     ).read()
 )
 
+f = open("./template_dhcp","r")
+template_dhcp = f.read()
+f.close()
+
+del f
 
 if config["host"] == "auto":
     config["host"] = sys_conf.call_shell("hostname -I")
@@ -654,10 +659,33 @@ def ntp(data: dict = Body()):
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
+    
+    
+@app.post("/settings/host/get_dhcp")
+def get_dhcp(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            o = sys_conf.parse_dhcpcd_conf(config["dhcp_file"])
+            return dict(list({"status": "success"}.items())+list(o.items()))
+        else:
+            return {"status" : "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
 
 @app.post("/settings/host/staticIP")
 def static_ip(data: dict = Body()):
-    sys_conf.call_shell("sudo reboot")
+    config_file = open(config["dhcp_file"],"r")
+    backup = config_file.read()
+    config_file.close()
+    
+    o = data
+    o.pop("status")
+    o.pop("session_token")
+    a = sys_conf.recompile_dhcpcd(config["dhcp_file"],o,template_dhcp)
+    
+    print(a)
+    return a
+    # sys_conf.call_shell("sudo reboot")
     return {"status": "fail", "message":"fail"}
 
 if __name__ == "__main__":

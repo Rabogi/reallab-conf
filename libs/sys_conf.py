@@ -41,6 +41,7 @@ def recreate_default_conf(path):
         "cert_file": "./ssl/cert.pem",
         "cert_key_file": "./ssl/key.pem",
         "session_lifetime": 30,
+        "dhcp_file":"/etc/dhcpcd.conf"
     }
     open(path, "w").write(json.dumps(conf))
 
@@ -153,3 +154,16 @@ def write_dhcpcd_conf(file_path, interfaces):
                 updated_lines.append(line)
         else:
             updated_lines.append(line)
+            
+            
+def recompile_dhcpcd(file_path, interfaces : dict, template):
+    o = template
+    for i_name in interfaces.keys():
+        o += "\n[" + i_name + "]"
+        o += "\ninterface " + i_name
+        o += "\nstatic ip_address=" + str(interfaces[i_name]["ip_address"])
+        o += "\nstatic routers=" + str(interfaces[i_name]["routers"])
+        o += "\nstatic domain_name_servers=" + str(interfaces[i_name]["dns_servers"])
+        o += "\n"
+    return o
+        
