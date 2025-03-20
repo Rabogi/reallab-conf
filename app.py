@@ -678,15 +678,20 @@ def static_ip(data: dict = Body()):
     backup = config_file.read()
     config_file.close()
     
+    config_file = open(config["dhcp_file"]+".bak","w")
+    config_file.write(backup)
+    config_file.close()
+    
     o = data
     o.pop("status")
     o.pop("session_token")
     a = sys_conf.recompile_dhcpcd(config["dhcp_file"],o,template_dhcp)
     
-    print(a)
-    return a
-    # sys_conf.call_shell("sudo reboot")
-    return {"status": "fail", "message":"fail"}
+    config_file = open(config["dhcp_file"],"w")
+    config_file.write(a)
+    config_file.close()
+
+    return {"status": "success", "message":"okay"}
 
 if __name__ == "__main__":
     uvicorn.run(
