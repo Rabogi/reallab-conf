@@ -1,0 +1,61 @@
+<style>
+    .table-container {
+        max-height: 40vh;
+        overflow-y: auto;
+        border: 1px solid white;
+        border-radius: 15px;
+        background: var(--sec-bg-color);
+    }
+
+    .table thead th {
+        color: white;
+        position: sticky;
+        top: 0;
+        background-color: var(--sec-bg-color);
+        z-index: 1;
+    }
+
+    .table td {
+        color: white;
+        background-color: var(--sec-bg-color);
+    }
+
+    .table-header {
+        border: 1px solid white;
+    }
+
+    .form-container {
+        margin-top: 20px;
+    }
+</style>
+
+
+<div class="table-container">
+    <table id="interfaceTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Interface</th>
+                <th>IP Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be populated by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<div class="form-container">
+    <h2>Change IP Address</h2>
+    <form id="changeIPForm">
+        <label for="interface">Interface:</label>
+        <input type="text" id="interface" name="interface" readonly required>
+        <br>
+        <label for="newIP">New IP Address:</label>
+        <input type="text" id="newIP" name="newIP" required>
+        <br>
+        <button type="submit">Change IP</button>
+    </form>
+</div>
+
+<script src="/content/js/hostpage.js"></script>

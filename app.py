@@ -673,7 +673,7 @@ def get_dhcp(data: dict = Body()):
         return {"status": "fail", "message": "Токен не предоставлен"}
 
 @app.post("/settings/host/staticIP")
-def static_ip(data: dict = Body()):
+async def static_ip(data: dict = Body()):
     config_file = open(config["dhcp_file"],"r")
     backup = config_file.read()
     config_file.close()
@@ -683,14 +683,18 @@ def static_ip(data: dict = Body()):
     config_file.close()
     
     o = data
-    o.pop("status")
+    if "status" in data.keys():
+        o.pop("status")
     o.pop("session_token")
     a = sys_conf.recompile_dhcpcd(config["dhcp_file"],o,template_dhcp)
     
     config_file = open(config["dhcp_file"],"w")
     config_file.write(a)
     config_file.close()
-
+    
+    for name in o.keys():
+        await sys_conf.reset_interface(name)
+    
     return {"status": "success", "message":"okay"}
 
 if __name__ == "__main__":

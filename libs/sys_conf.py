@@ -1,6 +1,7 @@
 import subprocess
 import json
 import os
+import time
 from datetime import datetime
 
 def get_pid():
@@ -166,4 +167,9 @@ def recompile_dhcpcd(file_path, interfaces : dict, template):
         o += "\nstatic domain_name_servers=" + str(interfaces[i_name]["dns_servers"])
         o += "\n"
     return o
-        
+
+async def reset_interface(interface):
+    call_shell("sudo ip link set " + interface + " down")
+    time.sleep(0.005)
+    call_shell("sudo ip link set " + interface + " up")
+    
