@@ -11,6 +11,10 @@ async function normal_fetch(method, url, headers, body) {
 var eth0_switch = document.getElementById("static-eth0");
 var eth1_switch = document.getElementById("static-eth1");
 
+var check_button = document.getElementById("button-check");
+var save_button = document.getElementById("button-save");
+var reset_button = document.getElementById("button-reset");
+
 var dhcp_flag_eth0 = false;
 var dhcp_flag_eth1 = false;
 
@@ -56,9 +60,33 @@ eth1_switch.addEventListener('click', async function () {
 
 async function check_ips() {
     if(dhcp_flag_eth0 == true) {
-        // eth0.ip.value 
+        let eth0_data = {
+            ip: eth0.ip.value,
+            router: eth0.router.value,
+            dns: eth0.dns.value,
+        }
+        let result = await normal_fetch("POST","/utils/check_ips",{'Content-Type': 'application/json'},{
+            ...eth0_data , ...{session_token: localStorage.getItem("real_lab_conf")}
+        });
+        console.log(result);
+        setRed(eth0.ip,result.ip)
+        setRed(eth0.router,result.router)
+        setRed(eth0.dns,result.dns)
     }
 }
+
+async function setRed(element,state){
+    if(state == false) {
+        element.style["background"] = "red";
+    }
+    else {
+        element.style["background"] = "";
+    }
+}
+
+check_button.addEventListener('click', async function () {
+    await check_ips();
+})
 
 async function start() {
     let dhcp_data = await normal_fetch("POST", "/settings/host/get_dhcp", {
