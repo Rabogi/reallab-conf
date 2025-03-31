@@ -54,3 +54,27 @@ def sha256(input: str):
 
 def sha512(input: str):
     return hashlib.sha512((input).encode("utf-8")).hexdigest()
+
+def check_ip_4(ip: str):
+    ip = ip.split("/")
+    address = ip[0].split(".")
+    
+    if len(ip) == 2:
+        mask = ip[1]
+        if mask.isdigit() == False:
+            return False
+        mask = int(mask)
+        if mask < 0 or mask > 32:
+            return False
+
+    if len(address) != 4:
+        return False
+    
+    for octet in address:
+        if octet.isdigit() == False:
+            return False
+        octet = int(octet)
+        if octet < 0 or octet > 255:
+            return False
+
+    return True

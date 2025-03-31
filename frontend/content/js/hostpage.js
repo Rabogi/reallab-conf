@@ -11,6 +11,9 @@ async function normal_fetch(method, url, headers, body) {
 var eth0_switch = document.getElementById("static-eth0");
 var eth1_switch = document.getElementById("static-eth1");
 
+var dhcp_flag_eth0 = false;
+var dhcp_flag_eth1 = false;
+
 var eth0 = {
     ip: document.getElementById("eth0-ip"),
     router: document.getElementById("eth0-router"),
@@ -28,10 +31,12 @@ eth0_switch.addEventListener('click', async function () {
         eth0.ip.disabled = false;
         eth0.router.disabled = false;
         eth0.dns.disabled = false;
+        dhcp_flag_eth0 = true;
     } else {
         eth0.ip.disabled = true;
         eth0.router.disabled = true;
         eth0.dns.disabled = true;
+        dhcp_flag_eth0 = false;
     }
 });
 
@@ -40,12 +45,20 @@ eth1_switch.addEventListener('click', async function () {
         eth1.ip.disabled = false;
         eth1.router.disabled = false;
         eth1.dns.disabled = false;
+        dhcp_flag_eth1 = true;
     } else {
         eth1.ip.disabled = true;
         eth1.router.disabled = true;
         eth1.dns.disabled = true;
+        dhcp_flag_eth1 = false;
     }
 });
+
+async function check_ips() {
+    if(dhcp_flag_eth0 == true) {
+        // eth0.ip.value 
+    }
+}
 
 async function start() {
     let dhcp_data = await normal_fetch("POST", "/settings/host/get_dhcp", {
@@ -56,6 +69,7 @@ async function start() {
 
     if (dhcp_data.eth0) {
         eth0_switch.checked = true;
+        dhcp_flag_eth0 = true;
 
         eth0.ip.value = dhcp_data.eth0.ip_address;
         eth0.router.value = dhcp_data.eth0.routers;
@@ -68,6 +82,7 @@ async function start() {
 
     if (dhcp_data.eth1) {
         eth1_switch.checked = true;
+        dhcp_flag_eth1 = true;
 
         eth1.ip.value = dhcp_data.eth1.ip_address;
         eth1.router.value = dhcp_data.eth1.routers;

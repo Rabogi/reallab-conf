@@ -46,7 +46,7 @@ config = json.loads(
     ).read()
 )
 
-f = open("./template_dhcp","r")
+f = open("./template_dhcp", "r")
 template_dhcp = f.read()
 f.close()
 
@@ -610,7 +610,8 @@ def ntp(data: dict = Body()):
                         if "timezone" in list(settings.keys()):
                             if settings["timezone"] in timezones:
                                 o = sys_conf.call_shell(
-                                    "sudo timedatectl set-timezone " + settings["timezone"]
+                                    "sudo timedatectl set-timezone "
+                                    + settings["timezone"]
                                 )
                             else:
                                 return {
@@ -659,43 +660,58 @@ def ntp(data: dict = Body()):
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
-    
-    
+
+
 @app.post("/settings/host/get_dhcp")
 def get_dhcp(data: dict = Body()):
     if "session_token" in list(data.keys()):
         if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
             o = sys_conf.parse_dhcpcd_conf(config["dhcp_file"])
-            return dict(list({"status": "success"}.items())+list(o.items()))
+            return dict(list({"status": "success"}.items()) + list(o.items()))
         else:
-            return {"status" : "fail", "message": "Сессия истекла"}
+            return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
 
+
 @app.post("/settings/host/staticIP")
 async def static_ip(data: dict = Body()):
-    config_file = open(config["dhcp_file"],"r")
+    config_file = open(config["dhcp_file"], "r")
     backup = config_file.read()
     config_file.close()
-    
-    config_file = open(config["dhcp_file"]+".bak","w")
+
+    config_file = open(config["dhcp_file"] + ".bak", "w")
     config_file.write(backup)
     config_file.close()
-    
+
     o = data
     if "status" in data.keys():
         o.pop("status")
     o.pop("session_token")
-    a = sys_conf.recompile_dhcpcd(config["dhcp_file"],o,template_dhcp)
-    
-    config_file = open(config["dhcp_file"],"w")
+    a = sys_conf.recompile_dhcpcd(config["dhcp_file"], o, template_dhcp)
+
+    config_file = open(config["dhcp_file"], "w")
     config_file.write(a)
     config_file.close()
-    
+
     for name in o.keys():
         await sys_conf.reset_interface(name)
-    
-    return {"status": "success", "message":"okay"}
+
+    return {"status": "success", "message": "okay"}
+
+@app.post("/utils/check_ips")
+def check_ips(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            data.pop("session_token")
+            output = dict()
+            for i in data.keys():
+                output[i] = utils.check_ip_4(data[i])
+            return output
+        else:
+            return {"status": "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
 
 if __name__ == "__main__":
     uvicorn.run(
@@ -706,5 +722,3 @@ if __name__ == "__main__":
         ssl_certfile=os.path.realpath(config["cert_file"]),
         reload=True,
     )
-    
-    

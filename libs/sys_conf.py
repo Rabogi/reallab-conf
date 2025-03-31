@@ -170,6 +170,6 @@ def recompile_dhcpcd(file_path, interfaces : dict, template):
 
 async def reset_interface(interface):
     call_shell("sudo ip link set " + interface + " down")
-    time.sleep(0.005)
+    time.sleep(2)
     call_shell("sudo ip link set " + interface + " up")
     
