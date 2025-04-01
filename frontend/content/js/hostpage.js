@@ -123,25 +123,28 @@ save_button.addEventListener("click", async function () {
         if (dhcp_flag_eth0 == true) {
             let eth0_data = {
                 eth0: {
-                    ip: eth0.ip.value,
-                    router: eth0.router.value,
-                    dns: eth0.dns.value,
+                    ip_address: eth0.ip.value,
+                    routers: eth0.router.value,
+                    dns_servers: eth0.dns.value,
                 }
             }
             ip_data = { ...ip_data, ...eth0_data }
         }
         if (dhcp_flag_eth1 == true) {
             let eth1_data = {
-                eth1: {
-                    ip: eth1.ip.value,
-                    router: eth1.router.value,
-                    dns: eth1.dns.value,
+                    eth1: {
+                    ip_address: eth1.ip.value,
+                    routers: eth1.router.value,
+                    dns_servers: eth1.dns.value,
                 }
             }
             ip_data = { ...ip_data, ...eth1_data }
         }
         ip_data = { ...ip_data, ...{ session_token: localStorage.getItem("real_lab_conf") } }
         console.log(ip_data)
+        normal_fetch("POST","/settings/host/staticIP",{
+            'Content-Type': 'application/json'
+        },ip_data)
     }
 })
 

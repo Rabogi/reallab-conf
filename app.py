@@ -75,6 +75,7 @@ permissions = {
     "edit_additional_info_fail": "Изменять доп. информацию запрещено с текущим уровнем доступа",
     #
     "time-change": 0,
+    "ip-change": 0,
 }
 
 forbidden_hashes = [
@@ -676,28 +677,40 @@ def get_dhcp(data: dict = Body()):
 
 @app.post("/settings/host/staticIP")
 async def static_ip(data: dict = Body()):
-    config_file = open(config["dhcp_file"], "r")
-    backup = config_file.read()
-    config_file.close()
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["ip-change"]
+            ):
+                config_file = open(config["dhcp_file"], "r")
+                backup = config_file.read()
+                config_file.close()
 
-    config_file = open(config["dhcp_file"] + ".bak", "w")
-    config_file.write(backup)
-    config_file.close()
+                config_file = open(config["dhcp_file"] + ".bak", "w")
+                config_file.write(backup)
+                config_file.close()
 
-    o = data
-    if "status" in data.keys():
-        o.pop("status")
-    o.pop("session_token")
-    a = sys_conf.recompile_dhcpcd(config["dhcp_file"], o, template_dhcp)
+                o = data
+                if "status" in data.keys():
+                    o.pop("status")
+                o.pop("session_token")
+                a = sys_conf.recompile_dhcpcd(config["dhcp_file"], o, template_dhcp)
 
-    config_file = open(config["dhcp_file"], "w")
-    config_file.write(a)
-    config_file.close()
+                config_file = open(config["dhcp_file"], "w")
+                config_file.write(a)
+                config_file.close()
 
-    for name in o.keys():
-        await sys_conf.reset_interface(name)
+                for name in o.keys():
+                    await sys_conf.reset_interface(name)
 
-    return {"status": "success", "message": "okay"}
+                return {"status": "success", "message": "okay"}
+            else:
+                return {"status": "fail","message":"Доступ запрещён"}
+        else:
+            return {"status": "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
 
 @app.post("/utils/check_ips")
 def check_ips(data: dict = Body()):
