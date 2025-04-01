@@ -59,33 +59,90 @@ eth1_switch.addEventListener('click', async function () {
 });
 
 async function check_ips() {
-    if(dhcp_flag_eth0 == true) {
+    let wrong = 0
+    if (dhcp_flag_eth0 == true) {
         let eth0_data = {
             ip: eth0.ip.value,
             router: eth0.router.value,
             dns: eth0.dns.value,
         }
-        let result = await normal_fetch("POST","/utils/check_ips",{'Content-Type': 'application/json'},{
-            ...eth0_data , ...{session_token: localStorage.getItem("real_lab_conf")}
+        let result = await normal_fetch("POST", "/utils/check_ips", { 'Content-Type': 'application/json' }, {
+            ...eth0_data, ...{ session_token: localStorage.getItem("real_lab_conf") }
         });
         console.log(result);
-        setRed(eth0.ip,result.ip)
-        setRed(eth0.router,result.router)
-        setRed(eth0.dns,result.dns)
+        wrong += Object.values(result).filter(val => val === false).length;
+        await setRed(eth0.ip, result.ip)
+        await setRed(eth0.router, result.router)
+        await setRed(eth0.dns, result.dns)
     }
+    if (dhcp_flag_eth1 == true) {
+        let eth1_data = {
+            ip: eth1.ip.value,
+            router: eth1.router.value,
+            dns: eth1.dns.value,
+        }
+        let result = await normal_fetch("POST", "/utils/check_ips", { 'Content-Type': 'application/json' }, {
+            ...eth1_data, ...{ session_token: localStorage.getItem("real_lab_conf") }
+        });
+        console.log(result);
+        wrong += Object.values(result).filter(val => val === false).length;
+        await setRed(eth1.ip, result.ip)
+        await setRed(eth1.router, result.router)
+        await setRed(eth1.dns, result.dns)
+    }
+    return wrong
 }
 
-async function setRed(element,state){
-    if(state == false) {
+async function setRed(element, state) {
+    if (state == false) {
         element.style["background"] = "red";
+        element.style["border"] = "var(--bs-border-width) solid black";
     }
     else {
         element.style["background"] = "";
+        element.style["border"] = "";
     }
 }
 
 check_button.addEventListener('click', async function () {
-    await check_ips();
+    let wrong = 0;
+    wrong = await check_ips();
+    if (wrong > 0) {
+        alert("Проверьте правильность данных в выделенных полях!")
+    }
+})
+
+save_button.addEventListener("click", async function () {
+    let wrong = 0;
+    wrong = await check_ips();
+    if (wrong > 0) {
+        alert("Проверьте правильность данных в выделенных полях!")
+    }
+    else if (wrong == 0) {
+        let ip_data = {}
+        if (dhcp_flag_eth0 == true) {
+            let eth0_data = {
+                eth0: {
+                    ip: eth0.ip.value,
+                    router: eth0.router.value,
+                    dns: eth0.dns.value,
+                }
+            }
+            ip_data = { ...ip_data, ...eth0_data }
+        }
+        if (dhcp_flag_eth1 == true) {
+            let eth1_data = {
+                eth1: {
+                    ip: eth1.ip.value,
+                    router: eth1.router.value,
+                    dns: eth1.dns.value,
+                }
+            }
+            ip_data = { ...ip_data, ...eth1_data }
+        }
+        ip_data = { ...ip_data, ...{ session_token: localStorage.getItem("real_lab_conf") } }
+        console.log(ip_data)
+    }
 })
 
 async function start() {
