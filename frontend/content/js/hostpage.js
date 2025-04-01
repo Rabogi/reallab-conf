@@ -142,9 +142,12 @@ save_button.addEventListener("click", async function () {
         }
         ip_data = { ...ip_data, ...{ session_token: localStorage.getItem("real_lab_conf") } }
         console.log(ip_data)
-        normal_fetch("POST","/settings/host/staticIP",{
+        let result = await normal_fetch("POST","/settings/host/staticIP",{
             'Content-Type': 'application/json'
         },ip_data)
+        if (result.status == "fail"){
+            alert("Ошибка : " + result.message)
+        }
     }
 })
 
