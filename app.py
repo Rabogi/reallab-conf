@@ -682,8 +682,9 @@ async def static_ip(data: dict = Body()):
             if (
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["ip-change"]
-            ):
+            ):  
                 config_file = open(config["dhcp_file"], "r")
+                settings = sys_conf.parse_dhcpcd_conf(config["dhcp_file"])
                 backup = config_file.read()
                 config_file.close()
 
@@ -695,14 +696,28 @@ async def static_ip(data: dict = Body()):
                 if "status" in data.keys():
                     o.pop("status")
                 o.pop("session_token")
-                a = sys_conf.recompile_dhcpcd(config["dhcp_file"], o, template_dhcp)
+                
+                a = sys_conf.recompile_dhcpcd(config["dhcp_file"], o, template_dhcp,config["interfaces"])
 
                 config_file = open(config["dhcp_file"], "w")
                 config_file.write(a)
                 config_file.close()
 
-                for name in o.keys():
-                    await sys_conf.reset_interface(name)
+                for i in config["interfaces"]:
+                    print(i)
+                    # static to static
+                    if i in settings.keys() and i in o.keys(): 
+                        if settings[i] != o[i]:
+                            await sys_conf.reset_interface(i)
+                            print("static - static")
+                    # dynamic to static
+                    elif i not in settings.keys() and i in o.keys():
+                        await sys_conf.reset_interface(i)
+                        print("dynamic - static")
+                    # static to dynamic
+                    elif i in settings.keys() and i not in o.keys():
+                        await sys_conf.reset_interface(i)
+                        print("static - dynamic")
 
                 return {"status": "success", "message": "okay"}
             else:
@@ -725,6 +740,10 @@ def check_ips(data: dict = Body()):
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
+    
+@app.get("/config")
+def conf():
+    return config
 
 if __name__ == "__main__":
     uvicorn.run(
