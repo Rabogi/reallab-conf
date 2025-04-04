@@ -160,10 +160,10 @@ def read_dashboard():
         content = f.read()
         f.close()
     page = utils.embed_in_template(page, content, "<!-- USERS  -->")
-    with open("frontend/content/pages/micropages/fetchdump.html") as f:
+    with open("frontend/content/pages/micropages/cons.html") as f:
         content = f.read()
         f.close()
-    page = utils.embed_in_template(page, content, "<!-- FETCH  -->")
+    page = utils.embed_in_template(page, content, "<!-- NLCON  -->")
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
@@ -257,6 +257,24 @@ def read_settings_time():
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
+# connections
+
+@app.get("/conn/nlcon")
+def read_connections_nlcon():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/page_template.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    page = utils.embed_in_template(page, "DCON", "<!-- PageNAME  -->")
+    with open("frontend/content/pages/nlcon.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
 
 # Content handlers
 
