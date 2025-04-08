@@ -8,7 +8,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     const usernameInput = document.querySelector('#username');
     const passwordInput = document.querySelector('#password');
     const messageElement = document.querySelector('#message');
-    
+
+    document.addEventListener("keydown", function (event) {
+        if (event.code === "Enter") {
+            loginButton.click();
+        }
+    });
 
     loginButton.addEventListener('click', async function () {
         const username = usernameInput.value;
@@ -19,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             return;
         }
 
-        await sha512(password).then(result => {hash = result})
+        await sha512(password).then(result => { hash = result })
 
         // Send a POST request to the server
         fetch('/auth', {
