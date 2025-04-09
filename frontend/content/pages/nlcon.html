@@ -13,7 +13,7 @@
         margin: 0.5rem;
     }
 
-    .inp{
+    .inp {
         min-width: 200px;
         max-width: 300px;
     }
@@ -50,7 +50,7 @@
         .host-box {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: 35vh;
+            grid-auto-rows: 15vh;
         }
 
         .write-box {
@@ -61,7 +61,7 @@
             grid-column-start: 1;
             grid-column-end: 1;
             grid-row-start: 1;
-            grid-row-end: 1;
+            grid-row-end: 2;
             height: auto;
             margin: .5rem !important;
         }
@@ -70,7 +70,7 @@
             grid-column-start: 1;
             grid-column-end: 1;
             grid-row-start: 2;
-            grid-row-end: 2;
+            grid-row-end: 4;
             height: auto;
             margin: .5rem !important;
         }
@@ -79,7 +79,7 @@
             grid-column-start: 2;
             grid-column-end: 3;
             grid-row-start: 1;
-            grid-row-end: 3;
+            grid-row-end: 4;
             height: auto;
             margin: .5rem !important;
         }
@@ -89,12 +89,16 @@
 
 <div class="host-box">
     <div class="indicator box1 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
-        <div style="margin: 0.5rem;">Ports
-            <div>Ports</div>
-            <div>Scan</div>
+        <div class="low-indicator" style="width: 100%;">
+            <span class="inp">Порт</span>
+            <input type="text" class="inp form-control">
+        </div>
+        <div class="low-indicator" style="width: 100%;">
+            <button type="button" class="btn btn-info" id="button-save-timezone"
+                style="width: 100%;">Сканировать</button>
         </div>
     </div>
-    <div class="indicator box2 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
+    <div class="indicator box2 p-2" style="display: flex; flex-direction: column; align-items: flSex-start;">
         <div style="width: 100%;">
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">ID (1-247)</span>
@@ -107,6 +111,12 @@
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Протокол</span>
                 <input type="text" class="inp form-control">
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <div class="low-indicator" style="width: 100%;">
+                <button type="button" class="btn btn-success" id="button-save-timezone" style="width: 100%;">Отправить
+                    параметры</button>
             </div>
         </div>
     </div>
@@ -165,6 +175,9 @@
             <div class="log">
                 <span class="m-2">txt</span>
             </div>
+        </div>
+        <div style="margin-top: 0.5rem;display: flex;width: 100%;flex-direction: row-reverse;">
+            <button type="button" class="btn btn-warning" id="button-save-timezone">Очистить</button>
         </div>
     </div>
 </div>
