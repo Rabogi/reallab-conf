@@ -3,8 +3,8 @@ Description=Reallab web configuration service
 After=network.target
 
 [Service]
-ExecStart=/bin/python3 /home/pi/gits/Reallab-conf/app.py
-WorkingDirectory=/home/pi/gits/Reallab-conf/
+ExecStart=/bin/python3 /home/pi/gits/reallab-conf/app.py
+WorkingDirectory=/home/pi/gits/reallab-conf/
 Restart=always
 User=pi
 

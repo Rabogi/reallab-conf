@@ -1,0 +1,4 @@
+fastapi==0.115.12
+pymodbus
+uvicorn==0.34.1
+

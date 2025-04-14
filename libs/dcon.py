@@ -1,9 +1,5 @@
-# from pymodbus.client import ModbusSerialClient
-# from pymodbus.exceptions import ModbusException
-# import serial
+from pymodbus.client import ModbusSerialClient
+from serial.tools.list_ports import comports
 
-# def list_ports():
-#     ports = serial.tools.list_ports.comports()
-#     if not ports:
-#         return []
-#     return ports
+def list_ports():
+    return [port.device for port in comports()]
