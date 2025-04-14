@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import datetime
 import pathlib
 import os
+import libs.dcon as dcon
 import uvicorn
 import json
 import libs.utils as utils
@@ -762,6 +763,11 @@ def check_ips(data: dict = Body()):
 @app.get("/config")
 def conf():
     return config
+
+# DCON
+@app.get("/dcon/getports")
+def dcon_get_port():
+    return dcon.list_ports()
 
 if __name__ == "__main__":
     uvicorn.run(

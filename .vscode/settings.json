@@ -6,5 +6,6 @@
         "redoc",
         "resinfo",
         "timedatectl"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "off"
 }
