@@ -12,6 +12,8 @@ import libs.utils as utils
 import libs.sys_conf as sys_conf
 import libs.db_handler as db_handler
 
+import libs.test as test
+
 # Init
 
 app = FastAPI(docs_url=None, redoc_url=None)
@@ -77,6 +79,7 @@ permissions = {
     #
     "time-change": 0,
     "ip-change": 0,
+    "dcon" : 0,
 }
 
 forbidden_hashes = [
@@ -258,7 +261,9 @@ def read_settings_time():
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
 
+
 # connections
+
 
 @app.get("/conn/nlcon")
 def read_connections_nlcon():
@@ -276,6 +281,7 @@ def read_connections_nlcon():
     page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
     response = responses.HTMLResponse(utils.replace_tags(page, config))
     return response
+
 
 # Content handlers
 
@@ -701,7 +707,7 @@ async def static_ip(data: dict = Body()):
             if (
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["ip-change"]
-            ):  
+            ):
                 config_file = open(config["dhcp_file"], "r")
                 settings = sys_conf.parse_dhcpcd_conf(config["dhcp_file"])
                 backup = config_file.read()
@@ -715,8 +721,10 @@ async def static_ip(data: dict = Body()):
                 if "status" in data.keys():
                     o.pop("status")
                 o.pop("session_token")
-                
-                a = sys_conf.recompile_dhcpcd(config["dhcp_file"], o, template_dhcp,config["interfaces"])
+
+                a = sys_conf.recompile_dhcpcd(
+                    config["dhcp_file"], o, template_dhcp, config["interfaces"]
+                )
 
                 config_file = open(config["dhcp_file"], "w")
                 config_file.write(a)
@@ -725,7 +733,7 @@ async def static_ip(data: dict = Body()):
                 for i in config["interfaces"]:
                     print(i)
                     # static to static
-                    if i in settings.keys() and i in o.keys(): 
+                    if i in settings.keys() and i in o.keys():
                         if settings[i] != o[i]:
                             await sys_conf.reset_interface(i)
                             print("static - static")
@@ -740,11 +748,12 @@ async def static_ip(data: dict = Body()):
 
                 return {"status": "success", "message": "okay"}
             else:
-                return {"status": "fail","message":"Доступ запрещён"}
+                return {"status": "fail", "message": "Доступ запрещён"}
         else:
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
+
 
 @app.post("/utils/check_ips")
 def check_ips(data: dict = Body()):
@@ -759,15 +768,43 @@ def check_ips(data: dict = Body()):
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
-    
+
+
 @app.get("/config")
 def conf():
     return config
 
+
 # DCON
-@app.get("/dcon/getports")
+@app.get("/dcon/get_ports")
 def dcon_get_port():
-    return dcon.list_ports()
+    return dcon.get_ports()
+
+
+@app.get("/dcon/scan")
+def dcon_get_scan():
+    return test.scan_dcon_devices(
+        port="/dev/ttyAMA0", baudrates=[9600, 19200, 38400, 57600, 115200]
+    )
+
+
+@app.post("/dcon/send_command")
+async def dcon_send_command(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["dcon"]
+            ):  
+                output = dcon.send_command("/dev/"+data["port"],data["baudrate"],dcon.format_command(data["cmd"]))
+                return {"status": "success", "message": output}
+            else:
+                return {"status": "fail", "message": "Доступ запрещён"}
+        else:
+            return {"status": "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
+
 
 if __name__ == "__main__":
     uvicorn.run(
