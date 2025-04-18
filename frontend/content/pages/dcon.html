@@ -14,8 +14,8 @@
     }
 
     .inp {
-        min-width: 200px;
-        max-width: 300px;
+        min-width: 50px;
+        max-width: 150px;
     }
 
     .log {
@@ -47,6 +47,11 @@
     }
 
     @media (min-width:1500px) {
+        .inp {
+        min-width: 300px;
+        max-width: 300px;
+    }
+
         .host-box {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -91,10 +96,13 @@
     <div class="indicator box1 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
         <div class="low-indicator" style="width: 100%;">
             <span class="inp">Порт</span>
-            <input type="text" class="inp form-control">
+            <div class="port-selector">
+                <input type="text" id="port-selector" class="inp form-control" value="serial0">
+                <div id="port-suggestions" class="dropdown-menu" style="min-width: 150px;"></div>
+            </div>
         </div>
         <div class="low-indicator" style="width: 100%;">
-            <button type="button" class="btn btn-info" id="button-save-timezone"
+            <button type="button" class="btn btn-info" id="dcon-scan"
                 style="width: 100%;">Сканировать</button>
         </div>
     </div>
@@ -102,20 +110,20 @@
         <div style="width: 100%;">
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">ID (1-247)</span>
-                <input type="text" class="inp form-control">
+                <input id="dcon-id" type="text" class="inp form-control">
             </div>
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Скорость (Боды)</span>
-                <input type="text" class="inp form-control">
+                <input id="dcon-baudrate" type="text" class="inp form-control">
             </div>
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Протокол</span>
-                <input type="text" class="inp form-control">
+                <input id="dcon-protocol" type="text" class="inp form-control">
             </div>
         </div>
         <div style="width: 100%;">
             <div class="low-indicator" style="width: 100%;">
-                <button type="button" class="btn btn-success" id="button-save-timezone" style="width: 100%;">Отправить
+                <button type="button" class="btn btn-success" id="dcon-send" style="width: 100%;">Отправить
                     параметры</button>
             </div>
         </div>

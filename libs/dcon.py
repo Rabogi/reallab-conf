@@ -49,6 +49,7 @@ def get_ports():
 # PORT = '/dev/serial0'
 # BAUDRATE = 9600
 # COMMAND = "$002\r"
+# "cmd": "~00P\r"
 
 def format_command(input : str):
     return "$" + input + "\r"

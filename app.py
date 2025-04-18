@@ -265,7 +265,7 @@ def read_settings_time():
 # connections
 
 
-@app.get("/conn/nlcon")
+@app.get("/conn/dcon")
 def read_connections_nlcon():
     root_page = open("frontend/index.html", "r")
     page = root_page.read()
@@ -275,7 +275,7 @@ def read_connections_nlcon():
         f.close()
     page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
     page = utils.embed_in_template(page, "DCON", "<!-- PageNAME  -->")
-    with open("frontend/content/pages/nlcon.html") as f:
+    with open("frontend/content/pages/dcon.html") as f:
         content = f.read()
         f.close()
     page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
@@ -780,14 +780,6 @@ def conf():
 def dcon_get_port():
     return dcon.get_ports()
 
-
-@app.get("/dcon/scan")
-def dcon_get_scan():
-    return test.scan_dcon_devices(
-        port="/dev/ttyAMA0", baudrates=[9600, 19200, 38400, 57600, 115200]
-    )
-
-
 @app.post("/dcon/send_command")
 async def dcon_send_command(data: dict = Body()):
     if "session_token" in list(data.keys()):
@@ -796,7 +788,7 @@ async def dcon_send_command(data: dict = Body()):
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["dcon"]
             ):  
-                output = dcon.send_command("/dev/"+data["port"],data["baudrate"],dcon.format_command(data["cmd"]))
+                output = dcon.send_command("/dev/"+data["port"],data["baudrate"],data["cmd"])
                 return {"status": "success", "message": output}
             else:
                 return {"status": "fail", "message": "Доступ запрещён"}
