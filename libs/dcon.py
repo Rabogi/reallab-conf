@@ -53,3 +53,35 @@ def get_ports():
 
 def format_command(input : str):
     return "$" + input + "\r"
+
+def find_closest(target, candidates):
+    return min(candidates, key=lambda x: abs(x - target))
+
+baudrate_codes = {
+    "03":1200,
+    "04":2400,
+    "05":4800,
+    "06":9600,
+    "07":19200,
+    "08":38400,
+    "09":57600,
+    "0a":115200,
+}
+
+def convert_code(input):
+    input = input.lower()
+    aa,tt,cc,ff = "","","",""
+    chunks = [input[i:i+2] for i in range(0, len(input), 2)]
+    aa = chunks[0]
+    tt = chunks[1]
+    cc = chunks[2]
+    ff = chunks[3]
+    
+    output = {
+        "id":int(aa,16),
+        "input":tt,
+        "baudrate":baudrate_codes[cc],
+        "format":ff,
+    }
+    
+    return output

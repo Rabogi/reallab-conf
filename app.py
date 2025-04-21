@@ -796,6 +796,29 @@ async def dcon_send_command(data: dict = Body()):
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
+    
+@app.post("/dcon/get_config")
+async def dcon_send_command(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["dcon"]
+            ):  
+                output = {} 
+                dcon_conf = dcon.send_command("/dev/"+data["port"],data["baudrate"],"$002\r")
+                if dcon_conf == "": 
+                    return {"status":"fail","message":"Ответ не получен"}
+                dcon_conf = dcon.convert_code(dcon_conf.split("!")[1])
+                output = dict(list(output.items()) + list(dcon_conf.items()))
+                output["status"] = "success"
+                return output
+            else:
+                return {"status": "fail", "message": "Доступ запрещён"}
+        else:
+            return {"status": "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
 
 
 if __name__ == "__main__":

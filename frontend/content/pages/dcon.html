@@ -48,9 +48,9 @@
 
     @media (min-width:1500px) {
         .inp {
-        min-width: 300px;
-        max-width: 300px;
-    }
+            min-width: 300px;
+            max-width: 300px;
+        }
 
         .host-box {
             display: grid;
@@ -102,8 +102,7 @@
             </div>
         </div>
         <div class="low-indicator" style="width: 100%;">
-            <button type="button" class="btn btn-info" id="dcon-scan"
-                style="width: 100%;">Сканировать</button>
+            <button type="button" class="btn btn-info" id="dcon-scan" style="width: 100%;">Сканировать</button>
         </div>
     </div>
     <div class="indicator box2 p-2" style="display: flex; flex-direction: column; align-items: flSex-start;">
@@ -114,7 +113,10 @@
             </div>
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Скорость (Боды)</span>
-                <input id="dcon-baudrate" type="text" class="inp form-control">
+                <div>
+                    <input id="dcon-baudrate" type="text" class="inp form-control">
+                    <div id="baud-suggestions" class="dropdown-menu" style="min-width: 150px;"></div>
+                </div>
             </div>
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Протокол</span>
