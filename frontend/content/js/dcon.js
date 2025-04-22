@@ -15,7 +15,7 @@ fetch('/dcon/get_ports')
     .then(data => suggestionsList = data)
     .catch(error => console.error('Error:', error));
 
-const baudrates = [1200,2400,4800,9600,19200,38400,57600,115200]
+const baudrates = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200]
 
 const portField = document.getElementById('port-selector');
 const idField = document.getElementById('dcon-id');
@@ -24,6 +24,7 @@ const protocolField = document.getElementById('dcon-protocol');
 
 const suggestionsContainer = document.getElementById('port-suggestions');
 const suggestionsContainer2 = document.getElementById('baud-suggestions');
+const suggestionsContainer3 = document.getElementById('protocol-suggestions');
 
 const scanButton = document.getElementById("dcon-scan");
 const sendButton = document.getElementById("dcon-send");
@@ -60,6 +61,22 @@ function showSuggestions2(suggestions) {
     suggestionsContainer2.style.maxHeight = '100px'
 };
 
+function showSuggestions3(suggestions) {
+    if (suggestions.length === 0) {
+        suggestionsContainer3.style.display = 'none';
+        return;
+    }
+
+    const suggestionsHTML = suggestions.map(item =>
+        `<div class="suggestion-item">${item}</div>`
+    ).join('');
+
+    suggestionsContainer3.innerHTML = suggestionsHTML;
+    suggestionsContainer3.style.display = 'block';
+    suggestionsContainer3.style.overflow = 'auto';
+    suggestionsContainer3.style.maxHeight = '100px'
+};
+
 function getSuggestions(input) {
     return suggestionsList.filter(item =>
         item.toLowerCase().startsWith(input.toLowerCase())
@@ -79,6 +96,12 @@ baudField.addEventListener('input', function () {
     showSuggestions2(filteredSuggestions);
 });
 
+protocolField.addEventListener('input', function () {
+    const userInput = portField.value;
+    const filteredSuggestions = ["Modbus", "DCON"];
+    showSuggestions3(filteredSuggestions);
+});
+
 // Event listener for clicking on a suggestion
 suggestionsContainer.addEventListener('click', function (e) {
     if (e.target.classList.contains('suggestion-item')) {
@@ -94,17 +117,41 @@ suggestionsContainer2.addEventListener('click', function (e) {
     }
 });
 
+suggestionsContainer3.addEventListener('click', function (e) {
+    if (e.target.classList.contains('suggestion-item')) {
+        protocolField.value = e.target.textContent;
+        suggestionsContainer3.style.display = 'none';
+    }
+});
+
 
 // Hide suggestions when clicking outside
 document.addEventListener('click', function (e) {
     if (e.target !== portField) {
         suggestionsContainer.style.display = 'none';
     }
-    if (e.target !== portField) {
+    if (e.target !== baudField) {
         suggestionsContainer2.style.display = 'none';
+    }
+    if (e.target !== protocolField) {
+        suggestionsContainer3.style.display = 'none';
     }
 });
 
 scanButton.addEventListener('click', async function () {
-    await normal_fetch("POST","/dcon/get_config");
+    let a = await normal_fetch("POST", "/dcon/get_config", { 'Content-Type': 'application/json' }, {
+        "session_token": localStorage.getItem("real_lab_conf"),
+        "port": portField.value,
+        "baudrate": 9600,
+        "id": 1
+    });
+    console.log(a);
+    if (a.status === "success") {
+        idField.value = a.id;
+        baudField.value = a.baudrate;
+        protocolField.value = a.protocol;
+    }
+    else if (a.status === "fail") {
+        alert(a.message);
+    }
 })

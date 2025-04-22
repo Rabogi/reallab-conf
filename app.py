@@ -811,6 +811,12 @@ async def dcon_send_command(data: dict = Body()):
                     return {"status":"fail","message":"Ответ не получен"}
                 dcon_conf = dcon.convert_code(dcon_conf.split("!")[1])
                 output = dict(list(output.items()) + list(dcon_conf.items()))
+                dcon_conf = dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P\r")
+                output["protocol"] = "failed"
+                if dcon_conf == "!001":
+                    output["protocol"] = "Modbus"
+                if dcon_conf == "!000":
+                    output["protocol"] = "DCON"
                 output["status"] = "success"
                 return output
             else:
