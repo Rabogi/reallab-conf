@@ -1,11 +1,15 @@
 <div class="text-white colors">
     <style>
         .wrapper {
-            padding: 1rem !important;
+            padding: 0.5rem !important;
+            padding-top: 1rem !important;
             display: flex;
             flex-direction: column;
             flex-wrap: nowrap;
             align-content: center;
+        }
+        .boxes{
+            margin-top: 0.5rem;
         }
 
         .box1 {
@@ -34,8 +38,11 @@
                 display: grid;
                 grid-template-columns: repeat(9, 1fr);
                 grid-auto-rows: 14vh;
-
             }
+
+            .boxes{
+            margin: .5rem !important;
+        }
 
             .box1 {
                 grid-column-start: 1;
@@ -79,23 +86,23 @@
         }
     </style>
     <div class="wrapper">
-        <div class="box1 m-2">
+        <div class="box1 boxes">
             <!-- TIME  -->
         </div>
         <!-- <hr class="hr" /> -->
-        <div class="box2 m-2">
+        <div class="box2 boxes">
             <!-- TEMPS  -->
         </div>
         <!-- <hr class="hr" /> -->
-        <div class="box3 m-2">
+        <div class="box3 boxes">
             <!-- HOST  -->
         </div>
         <!-- <hr class="hr" /> -->
-        <div class="box4 m-2">
+        <div class="box4 boxes">
             <!-- USERS  -->
         </div>
         <!-- <hr class="hr" /> -->
-        <div class="box5 m-2">
+        <div class="box5 boxes">
             <!-- NLCON  -->
         </div>
     </div>
