@@ -10,6 +10,34 @@ async function normal_fetch(method, url, headers, body) {
     return data;
 }
 
+async function flashGreen(elements) {
+    // Store original background colors
+    const originalColors = [];
+
+    // Set elements to green with smooth transition
+    elements.forEach((el, i) => {
+        originalColors[i] = el.style.backgroundColor || getComputedStyle(el).backgroundColor;
+        el.style.transition = 'background-color 0.5s ease';
+        el.style.backgroundColor ='rgb(27, 207, 123)';
+    });
+
+    // After 5 seconds, transition back to original colors
+    setTimeout(() => {
+        elements.forEach((el, i) => {
+            el.style.backgroundColor = originalColors[i];
+
+            // Remove transition after it's done to avoid affecting other style changes
+            setTimeout(() => {
+                el.style.transition = '';
+            }, 500);
+        });
+    }, 1000);
+}
+
+// Usage example: flash all elements with class 'flash-me'
+const elementsToFlash = document.querySelectorAll('.flash-me');
+flashGreen(elementsToFlash);
+
 fetch('/dcon/get_ports')
     .then(response => response.json())
     .then(data => suggestionsList = data)
@@ -150,6 +178,7 @@ scanButton.addEventListener('click', async function () {
         idField.value = a.id;
         baudField.value = a.baudrate;
         protocolField.value = a.protocol;
+        flashGreen([idField,baudField,protocolField])
     }
     else if (a.status === "fail") {
         alert(a.message);

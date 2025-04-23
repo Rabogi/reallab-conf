@@ -825,6 +825,32 @@ async def dcon_send_command(data: dict = Body()):
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
+    
+@app.post("/dcon/new_config")
+async def dcon_send_command(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["dcon"]
+            ):  
+                config = dcon.convert_code(dcon.send_command("/dev/"+data["port"],data["baudrate"],"$002\r").split("!")[1])
+                config["baudrate"] = dcon.find_closest_baudrate(data["new_baudrate"])
+                config["id"] = str(format(data["new_id"], '02X'))
+                if data["new_protocol"].lower() == "modbus":
+                    dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P1\r")
+                if data["new_protocol"].lower() == "dcon":
+                    dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P0\r")
+                output = {}
+                output["respounce"] = dcon.send_command("/dev/"+data["port"],data["baudrate"],dcon.build_config(config,"00")).split("!")[1]
+                output["status"] = "sent"
+                return output
+            else:
+                return {"status": "fail", "message": "Доступ запрещён"}
+        else:
+            return {"status": "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
 
 
 if __name__ == "__main__":

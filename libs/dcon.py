@@ -85,3 +85,18 @@ def convert_code(input):
     }
     
     return output
+
+def find_closest_baudrate(input_baudrate):
+    baudrate_items = [(code, baud) for code, baud in baudrate_codes.items()]
+    closest = min(baudrate_items, key=lambda item: abs(item[1] - input_baudrate))
+    
+    return closest[0]
+
+def build_config(config : dict,aa):
+    prefix = "%"
+    nn = config["id"]
+    tt = config["input"]
+    cc = config["baudrate"]
+    ff = config["format"]
+    
+    return prefix + aa + nn + tt + cc + ff + "\r" 
