@@ -233,7 +233,7 @@ sendButton.addEventListener("click", async function () {
             errorfields.push(baudField)
         }
 
-        if (config.new_protocol.toLowerCase == "modbus" || config.new_protocol.toLowerCase == "dcon"){
+        if (config.new_protocol.toLowerCase() == "modbus" || config.new_protocol.toLowerCase() == "dcon"){
             flash([protocolField],'#00fa9a',2000)
         }
         else {
@@ -244,6 +244,19 @@ sendButton.addEventListener("click", async function () {
         if (errorfields.length > 0){
             flash(errorfields,"#ff0000",5000)
             alert(errortext)
+            return
+        }
+
+        if (errorfields.length == 0){
+            let package = {
+                "session_token": localStorage.getItem("real_lab_conf"),
+                "port": "serial0",
+                "baudrate": 9600,
+                "id": 1,
+                "new_id":config.new_id,
+                "new_baudrate":config.new_baudrate,
+                "new_protocol":config.new_protocol
+            }
         }
     }   
     else{
