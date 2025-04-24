@@ -3,6 +3,8 @@ import time
 
 import libs.sys_conf as sys_conf
 
+allowed_ports = ["serial0","serial1"]
+
 def send_command(port, baudrate, command):
     """
     Send a DCON command and receive the response

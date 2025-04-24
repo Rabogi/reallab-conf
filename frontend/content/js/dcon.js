@@ -34,6 +34,30 @@ async function flashGreen(elements) {
     }, 1000);
 }
 
+async function flash(elements,color,time) {
+    // Store original background colors
+    const originalColors = [];
+
+    // Set elements to green with smooth transition
+    elements.forEach((el, i) => {
+        originalColors[i] = el.style.backgroundColor || getComputedStyle(el).backgroundColor;
+        el.style.transition = 'background-color 0.5s ease';
+        el.style.backgroundColor = color;
+    });
+
+    // After 5 seconds, transition back to original colors
+    setTimeout(() => {
+        elements.forEach((el, i) => {
+            el.style.backgroundColor = originalColors[i];
+
+            // Remove transition after it's done to avoid affecting other style changes
+            setTimeout(() => {
+                el.style.transition = '';
+            }, 500);
+        });
+    }, time);
+}
+
 // Usage example: flash all elements with class 'flash-me'
 const elementsToFlash = document.querySelectorAll('.flash-me');
 flashGreen(elementsToFlash);
@@ -182,5 +206,48 @@ scanButton.addEventListener('click', async function () {
     }
     else if (a.status === "fail") {
         alert(a.message);
+    }
+})
+
+sendButton.addEventListener("click", async function () {
+    let config = {}
+    config.new_id = parseInt(idField.value,10);
+    config.new_baudrate = parseInt(baudField.value,10);
+    config.new_protocol = protocolField.value;
+    if (config.new_id != "" && config.new_baudrate != "" && config.new_protocol != ""){
+        let errorfields = []
+        let errortext = "Ошибка, в полях ввода недопустимые данные."
+        if (config.new_id >= 1 && config.new_id <= 247){
+            flash([idField],'#00fa9a',2000)
+        }
+        else {
+            errortext += "\nID должно быть числом в пределах интервала 1-247"
+            errorfields.push(idField)
+        }
+
+        if (config.new_baudrate >= 1){
+            flash([baudField],'#00fa9a',2000)
+        }
+        else {
+            errortext += "\nСкорость должна быть числом больше нуля"
+            errorfields.push(baudField)
+        }
+
+        if (config.new_protocol.toLowerCase == "modbus" || config.new_protocol.toLowerCase == "dcon"){
+            flash([protocolField],'#00fa9a',2000)
+        }
+        else {
+            errortext += "\nВыбран недопустимый протокол"
+            errorfields.push(protocolField)
+        }
+
+        if (errorfields.length > 0){
+            flash(errorfields,"#ff0000",5000)
+            alert(errortext)
+        }
+    }   
+    else{
+        alert("Все поля должны быть заполнены");
+        return
     }
 })

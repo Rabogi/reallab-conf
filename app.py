@@ -805,6 +805,8 @@ async def dcon_send_command(data: dict = Body()):
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["dcon"]
             ):  
+                if data["port"] not in dcon.allowed_ports:
+                    return {"status":"fail", "message": "Недопустимый порт"}
                 output = {} 
                 dcon_conf = dcon.send_command("/dev/"+data["port"],data["baudrate"],"$002\r")
                 if dcon_conf == "": 
