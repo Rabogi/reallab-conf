@@ -31,7 +31,7 @@ async function flashGreen(elements) {
                 el.style.transition = '';
             }, 500);
         });
-    }, 1000);
+    }, 500);
 }
 
 async function flash(elements,color,time) {
@@ -214,11 +214,11 @@ sendButton.addEventListener("click", async function () {
     config.new_id = parseInt(idField.value,10);
     config.new_baudrate = parseInt(baudField.value,10);
     config.new_protocol = protocolField.value;
-    if (config.new_id != "" && config.new_baudrate != "" && config.new_protocol != ""){
+    if (config.new_id !== "" && config.new_baudrate !== "" && config.new_protocol !== ""){
         let errorfields = []
         let errortext = "Ошибка, в полях ввода недопустимые данные."
-        if (config.new_id >= 1 && config.new_id <= 247){
-            flash([idField],'#00fa9a',2000)
+        if (config.new_id >= 1 && config.new_id <= 247 && config.new_id != 0){
+            flash([idField],'#00fafa',500)
         }
         else {
             errortext += "\nID должно быть числом в пределах интервала 1-247"
@@ -226,7 +226,7 @@ sendButton.addEventListener("click", async function () {
         }
 
         if (config.new_baudrate >= 1){
-            flash([baudField],'#00fa9a',2000)
+            flash([baudField],'#00fafa',500)
         }
         else {
             errortext += "\nСкорость должна быть числом больше нуля"
@@ -234,7 +234,7 @@ sendButton.addEventListener("click", async function () {
         }
 
         if (config.new_protocol.toLowerCase() == "modbus" || config.new_protocol.toLowerCase() == "dcon"){
-            flash([protocolField],'#00fa9a',2000)
+            flash([protocolField],'#00fafa',500)
         }
         else {
             errortext += "\nВыбран недопустимый протокол"
@@ -242,8 +242,8 @@ sendButton.addEventListener("click", async function () {
         }
 
         if (errorfields.length > 0){
-            flash(errorfields,"#ff0000",5000)
             alert(errortext)
+            flash(errorfields,"#ff0000",500)
             return
         }
 
@@ -257,7 +257,11 @@ sendButton.addEventListener("click", async function () {
                 "new_baudrate":config.new_baudrate,
                 "new_protocol":config.new_protocol
             }
+            normal_fetch("POST","/dcon/new_config",{ 'Content-Type': 'application/json' },package)
+            await new Promise(r => setTimeout(r, 1000));
+            scanButton.click()
         }
+        return
     }   
     else{
         alert("Все поля должны быть заполнены");
