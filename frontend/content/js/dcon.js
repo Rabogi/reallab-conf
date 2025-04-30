@@ -18,7 +18,7 @@ async function flashGreen(elements) {
     elements.forEach((el, i) => {
         originalColors[i] = el.style.backgroundColor || getComputedStyle(el).backgroundColor;
         el.style.transition = 'background-color 0.5s ease';
-        el.style.backgroundColor ='rgb(27, 207, 123)';
+        el.style.backgroundColor = 'rgb(27, 207, 123)';
     });
 
     // After 5 seconds, transition back to original colors
@@ -34,7 +34,7 @@ async function flashGreen(elements) {
     }, 500);
 }
 
-async function flash(elements,color,time) {
+async function flash(elements, color, time) {
     // Store original background colors
     const originalColors = [];
 
@@ -80,6 +80,9 @@ const suggestionsContainer3 = document.getElementById('protocol-suggestions');
 
 const scanButton = document.getElementById("dcon-scan");
 const sendButton = document.getElementById("dcon-send");
+
+const historyContainer = document.getElementById("dcon-history");
+const historyClear = document.getElementById("dcon-history-clear");
 
 function showSuggestions(suggestions) {
     if (suggestions.length === 0) {
@@ -133,6 +136,10 @@ function getSuggestions(input) {
     return suggestionsList.filter(item =>
         item.toLowerCase().startsWith(input.toLowerCase())
     ).slice(0, 20);
+}
+
+async function addHistory(a, b) {
+    historyContainer.innerHTML += '<div class="log"><span class="m-2">Запрос: ' + a + '</span><span class="m-2">Ответ: ' + b + '</span></div>'
 }
 
 // Event listener for input field
@@ -202,7 +209,9 @@ scanButton.addEventListener('click', async function () {
         idField.value = a.id;
         baudField.value = a.baudrate;
         protocolField.value = a.protocol;
-        flashGreen([idField,baudField,protocolField])
+        flashGreen([idField, baudField, protocolField])
+        addHistory(a.request_string1, a.response_string1);
+        addHistory(a.request_string2, a.response_string2);
     }
     else if (a.status === "fail") {
         alert(a.message);
@@ -211,60 +220,65 @@ scanButton.addEventListener('click', async function () {
 
 sendButton.addEventListener("click", async function () {
     let config = {}
-    config.new_id = parseInt(idField.value,10);
-    config.new_baudrate = parseInt(baudField.value,10);
+    config.new_id = parseInt(idField.value, 10);
+    config.new_baudrate = parseInt(baudField.value, 10);
     config.new_protocol = protocolField.value;
-    if (config.new_id !== "" && config.new_baudrate !== "" && config.new_protocol !== ""){
+    if (config.new_id !== "" && config.new_baudrate !== "" && config.new_protocol !== "") {
         let errorfields = []
         let errortext = "Ошибка, в полях ввода недопустимые данные."
-        if (config.new_id >= 1 && config.new_id <= 247 && config.new_id != 0){
-            flash([idField],'#00fafa',500)
+        if (config.new_id >= 1 && config.new_id <= 247 && config.new_id != 0) {
+            flash([idField], '#00fafa', 500)
         }
         else {
             errortext += "\nID должно быть числом в пределах интервала 1-247"
             errorfields.push(idField)
         }
 
-        if (config.new_baudrate >= 1){
-            flash([baudField],'#00fafa',500)
+        if (config.new_baudrate >= 1) {
+            flash([baudField], '#00fafa', 500)
         }
         else {
             errortext += "\nСкорость должна быть числом больше нуля"
             errorfields.push(baudField)
         }
 
-        if (config.new_protocol.toLowerCase() == "modbus" || config.new_protocol.toLowerCase() == "dcon"){
-            flash([protocolField],'#00fafa',500)
+        if (config.new_protocol.toLowerCase() == "modbus" || config.new_protocol.toLowerCase() == "dcon") {
+            flash([protocolField], '#00fafa', 500)
         }
         else {
             errortext += "\nВыбран недопустимый протокол"
             errorfields.push(protocolField)
         }
 
-        if (errorfields.length > 0){
+        if (errorfields.length > 0) {
             alert(errortext)
-            flash(errorfields,"#ff0000",500)
+            flash(errorfields, "#ff0000", 500)
             return
         }
 
-        if (errorfields.length == 0){
+        if (errorfields.length == 0) {
             let package = {
                 "session_token": localStorage.getItem("real_lab_conf"),
                 "port": "serial0",
                 "baudrate": 9600,
                 "id": 1,
-                "new_id":config.new_id,
-                "new_baudrate":config.new_baudrate,
-                "new_protocol":config.new_protocol
+                "new_id": config.new_id,
+                "new_baudrate": config.new_baudrate,
+                "new_protocol": config.new_protocol
             }
-            normal_fetch("POST","/dcon/new_config",{ 'Content-Type': 'application/json' },package)
+            let a = await normal_fetch("POST", "/dcon/new_config", { 'Content-Type': 'application/json' }, package)
+            addHistory(a.request_string, a.response_string);
             await new Promise(r => setTimeout(r, 1000));
             scanButton.click()
         }
         return
-    }   
-    else{
+    }
+    else {
         alert("Все поля должны быть заполнены");
         return
     }
+})
+
+historyClear.addEventListener("click", async function () {
+    historyContainer.innerHTML = ""
 })

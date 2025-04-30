@@ -789,7 +789,7 @@ async def dcon_send_command(data: dict = Body()):
                 <= permissions["dcon"]
             ):  
                 output = dcon.send_command("/dev/"+data["port"],data["baudrate"],data["cmd"])
-                return {"status": "success", "message": output}
+                return {"status": "success", "message": output,"request_string":data["cmd"],"response_string":output}
             else:
                 return {"status": "fail", "message": "Доступ запрещён"}
         else:
@@ -808,9 +808,11 @@ async def dcon_send_command(data: dict = Body()):
                 if data["port"] not in dcon.allowed_ports:
                     return {"status":"fail", "message": "Недопустимый порт"}
                 output = {} 
+                output["request_string1"] = "$002\r"
                 dcon_conf = dcon.send_command("/dev/"+data["port"],data["baudrate"],"$002\r")
                 if dcon_conf == "": 
                     return {"status":"fail","message":"Ответ не получен"}
+                output["response_string1"] = dcon_conf
                 dcon_conf = dcon.convert_code(dcon_conf.split("!")[1])
                 output = dict(list(output.items()) + list(dcon_conf.items()))
                 dcon_conf = dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P\r")
@@ -820,6 +822,8 @@ async def dcon_send_command(data: dict = Body()):
                 if dcon_conf == "!000":
                     output["protocol"] = "DCON"
                 output["status"] = "success"
+                output["request_string2"] = "~00P\r"
+                output["response_string2"] = dcon_conf
                 return output
             else:
                 return {"status": "fail", "message": "Доступ запрещён"}
@@ -844,7 +848,11 @@ async def dcon_send_command(data: dict = Body()):
                 if data["new_protocol"].lower() == "dcon":
                     dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P0\r")
                 output = {}
-                output["respounce"] = dcon.send_command("/dev/"+data["port"],data["baudrate"],dcon.build_config(config,"00")).split("!")[1]
+                cmd = dcon.build_config(config,"00")
+                res = dcon.send_command("/dev/"+data["port"],data["baudrate"],cmd)
+                output["request_string"] = cmd
+                output["response_string"] = res
+                output["respounce"] = res.split("!")[1]
                 output["status"] = "sent"
                 return output
             else:

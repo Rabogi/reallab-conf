@@ -13,6 +13,10 @@
         margin: 0.5rem;
     }
 
+    #element::-webkit-scrollbar {
+    display: none;
+}
+
     .inp {
         min-width: 50px;
         max-width: 150px;
@@ -116,7 +120,7 @@
                     <option value="Chrome">
                     <option value="Opera">
                     <option value="Safari">
-                </datalist> 
+                </datalist>
             </div>
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Скорость (Боды)</span>
@@ -145,59 +149,14 @@
         <div>
             История
         </div>
-        <div
-            style="display: flex; flex-direction: column; align-items: flex-start;justify-content: flex-start; overflow: auto; scroll-behavior: smooth; width: 100%;">
+        <div id="dcon-history"
+            style="display: flex; flex-direction: column; align-items: flex-start;justify-content: flex-start; overflow: auto; scroll-behavior: smooth; width: 100%; height: 100%;">
             <!-- <div class="log">
                 <span class="m-2">txt</span>
             </div> -->
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
-            <div class="log">
-                <span class="m-2">txt</span>
-            </div>
         </div>
         <div style="margin-top: 0.5rem;display: flex;width: 100%;flex-direction: row-reverse;">
-            <button type="button" class="btn btn-warning" id="button-save-timezone">Очистить</button>
+            <button type="button" class="btn btn-warning" id="dcon-history-clear">Очистить</button>
         </div>
     </div>
 </div>
