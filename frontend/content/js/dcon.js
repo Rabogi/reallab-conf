@@ -24,7 +24,7 @@ async function flashGreen(elements) {
     // After 5 seconds, transition back to original colors
     setTimeout(() => {
         elements.forEach((el, i) => {
-            el.style.backgroundColor = originalColors[i];
+            el.style.backgroundColor = "white";
 
             // Remove transition after it's done to avoid affecting other style changes
             setTimeout(() => {
@@ -48,7 +48,7 @@ async function flash(elements, color, time) {
     // After 5 seconds, transition back to original colors
     setTimeout(() => {
         elements.forEach((el, i) => {
-            el.style.backgroundColor = originalColors[i];
+            el.style.backgroundColor = "white";
 
             // Remove transition after it's done to avoid affecting other style changes
             setTimeout(() => {

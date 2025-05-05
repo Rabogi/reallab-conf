@@ -10,8 +10,9 @@
     ;">
         <h1>NLcon</h1>
         <a class="btn btn-outline-light" type="button" style="    padding: unset;
-        border-radius: 45px; border-color: var(--main-bg-color);" href="/conn/dcon" title="Расширенные доп. информация"><img class="svg_inverse"
-                src="/content/icons/gear.svg" height="48" width="48"></a>
+        border-radius: 45px; border-color: var(--main-bg-color);" href="/conn/dcon"
+            title="Расширенные доп. информация"><img class="svg_inverse" src="/content/icons/gear.svg" height="48"
+                width="48"></a>
     </div>
     <style>
         .svg_inverse {
@@ -23,5 +24,42 @@
             /* safari 6.0 - 9.0 */
             filter: invert(0%);
         }
+
+        .con_but {
+            color: white;
+        }
+
+        .con_but :hover {
+            color: white;
+            border: 1vh;
+            border-color: white;
+
+        }
+
+        .con-indicator {
+            min-width: 100%;
+            display: flex;
+            background-color: var(--sec-bg-color);
+            border-radius: 15px;
+            color: white;
+            font-size: larger;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .concard-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
     </style>
+    <div class="concard-container p-2">
+        <a class="sec-color-bg con_but con-indicator btn btn-no-hover " style="width: 100%;"
+            href="/conn/dcon">NL-DCON</a>
+    </div>
 </div>
