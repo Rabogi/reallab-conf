@@ -79,7 +79,7 @@ permissions = {
     #
     "time-change": 0,
     "ip-change": 0,
-    "dcon" : 0,
+    "dcon": 0,
 }
 
 forbidden_hashes = [
@@ -276,6 +276,24 @@ def read_connections_nlcon():
     page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
     page = utils.embed_in_template(page, "DCON", "<!-- PageNAME  -->")
     with open("frontend/content/pages/dcon.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    response = responses.HTMLResponse(utils.replace_tags(page, config))
+    return response
+
+
+@app.get("/conn/modbus")
+def read_connections_nlcon():
+    root_page = open("frontend/index.html", "r")
+    page = root_page.read()
+    root_page.close()
+    with open("frontend/content/pages/page_template.html") as f:
+        content = f.read()
+        f.close()
+    page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
+    page = utils.embed_in_template(page, "MODBUS", "<!-- PageNAME  -->")
+    with open("frontend/content/pages/modbus.html") as f:
         content = f.read()
         f.close()
     page = utils.embed_in_template(page, content, "<!-- MAIN_CONTENT  -->")
@@ -780,6 +798,7 @@ def conf():
 def dcon_get_port():
     return dcon.get_ports()
 
+
 @app.post("/dcon/send_command")
 async def dcon_send_command(data: dict = Body()):
     if "session_token" in list(data.keys()):
@@ -787,16 +806,24 @@ async def dcon_send_command(data: dict = Body()):
             if (
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["dcon"]
-            ):  
-                output = dcon.send_command("/dev/"+data["port"],data["baudrate"],data["cmd"])
-                return {"status": "success", "message": output,"request_string":data["cmd"],"response_string":output}
+            ):
+                output = dcon.send_command(
+                    "/dev/" + data["port"], data["baudrate"], data["cmd"]
+                )
+                return {
+                    "status": "success",
+                    "message": output,
+                    "request_string": data["cmd"],
+                    "response_string": output,
+                }
             else:
                 return {"status": "fail", "message": "Доступ запрещён"}
         else:
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
-    
+
+
 @app.post("/dcon/get_config")
 async def dcon_send_command(data: dict = Body()):
     if "session_token" in list(data.keys()):
@@ -804,18 +831,22 @@ async def dcon_send_command(data: dict = Body()):
             if (
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["dcon"]
-            ):  
+            ):
                 if data["port"] not in dcon.allowed_ports:
-                    return {"status":"fail", "message": "Недопустимый порт"}
-                output = {} 
+                    return {"status": "fail", "message": "Недопустимый порт"}
+                output = {}
                 output["request_string1"] = "$002\r"
-                dcon_conf = dcon.send_command("/dev/"+data["port"],data["baudrate"],"$002\r")
-                if dcon_conf == "": 
-                    return {"status":"fail","message":"Ответ не получен"}
+                dcon_conf = dcon.send_command(
+                    "/dev/" + data["port"], data["baudrate"], "$002\r"
+                )
+                if dcon_conf == "":
+                    return {"status": "fail", "message": "Ответ не получен"}
                 output["response_string1"] = dcon_conf
                 dcon_conf = dcon.convert_code(dcon_conf.split("!")[1])
                 output = dict(list(output.items()) + list(dcon_conf.items()))
-                dcon_conf = dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P\r")
+                dcon_conf = dcon.send_command(
+                    "/dev/" + data["port"], data["baudrate"], "~00P\r"
+                )
                 output["protocol"] = "failed"
                 if dcon_conf == "!001":
                     output["protocol"] = "Modbus"
@@ -831,7 +862,8 @@ async def dcon_send_command(data: dict = Body()):
             return {"status": "fail", "message": "Сессия истекла"}
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
-    
+
+
 @app.post("/dcon/new_config")
 async def dcon_send_command(data: dict = Body()):
     if "session_token" in list(data.keys()):
@@ -839,17 +871,25 @@ async def dcon_send_command(data: dict = Body()):
             if (
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["dcon"]
-            ):  
-                config = dcon.convert_code(dcon.send_command("/dev/"+data["port"],data["baudrate"],"$002\r").split("!")[1])
+            ):
+                config = dcon.convert_code(
+                    dcon.send_command(
+                        "/dev/" + data["port"], data["baudrate"], "$002\r"
+                    ).split("!")[1]
+                )
                 config["baudrate"] = dcon.find_closest_baudrate(data["new_baudrate"])
-                config["id"] = str(format(data["new_id"], '02X'))
+                config["id"] = str(format(data["new_id"], "02X"))
                 if data["new_protocol"].lower() == "modbus":
-                    dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P1\r")
+                    dcon.send_command(
+                        "/dev/" + data["port"], data["baudrate"], "~00P1\r"
+                    )
                 if data["new_protocol"].lower() == "dcon":
-                    dcon.send_command("/dev/"+data["port"],data["baudrate"],"~00P0\r")
+                    dcon.send_command(
+                        "/dev/" + data["port"], data["baudrate"], "~00P0\r"
+                    )
                 output = {}
-                cmd = dcon.build_config(config,"00")
-                res = dcon.send_command("/dev/"+data["port"],data["baudrate"],cmd)
+                cmd = dcon.build_config(config, "00")
+                res = dcon.send_command("/dev/" + data["port"], data["baudrate"], cmd)
                 output["request_string"] = cmd
                 output["response_string"] = res
                 output["respounce"] = res.split("!")[1]

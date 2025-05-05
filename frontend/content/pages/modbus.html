@@ -1,0 +1,224 @@
+<style>
+    .indicator {
+        display: flex;
+        background-color: var(--sec-bg-color);
+        border-radius: 15px;
+        color: white;
+        font-size: larger;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 60px;
+        margin: 0.5rem;
+    }
+
+    #element::-webkit-scrollbar {
+        display: none;
+    }
+
+    .inp {
+        min-width: 50px;
+        max-width: 150px;
+    }
+
+    .log {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        border-radius: 10px;
+        background-color: var(--main-color-bg-50);
+        /* padding: 5px; */
+        /* margin: 0.5rem; */
+        margin-top: 0.5rem;
+    }
+
+    .low-indicator {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        border-radius: 10px;
+    }
+
+    .low-indicator2 {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        border-radius: 10px;
+        width: 100%;
+    }
+
+    .write-box {
+        max-height: 400px;
+    }
+
+    .inputs {
+        min-width: 200px;
+        max-width: 200px;
+    }
+
+    @media (min-width:1500px) {
+        .inp {
+            min-width: 300px;
+            max-width: 300px;
+        }
+
+        .low-indicator2 {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            border-radius: 10px;
+            width: 49%;
+        }
+
+        .host-box {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 15vh;
+        }
+
+        .write-box {
+            max-height: none;
+        }
+
+        .box1 {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 2;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box2 {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            grid-row-start: 2;
+            grid-row-end: 4;
+            height: auto;
+            margin: .5rem !important;
+        }
+
+        .box3 {
+            grid-column-start: 2;
+            grid-column-end: 3;
+            grid-row-start: 1;
+            grid-row-end: 2;
+            height: auto;
+            margin: .5rem !important;
+        }
+    }
+</style>
+
+<!-- <div class="low-indicator" style="width: 100%;">
+    <span class="inp">ID (1-247)</span>
+    <input id="dcon-id" type="number" class="inp form-control">
+</div> -->
+
+
+<div class="host-box">
+    <div class="indicator box1 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
+        <div class="low-indicator" style="width: 100%;">
+            <span class="inp">Порт</span>
+            <select class="form-select" style="width: 55%;">
+                <option selected>serial0</option>
+                <option>serial1</option>
+            </select>
+        </div>
+        <div class="low-indicator" style="width: 100%;">
+            <button type="button" class="btn btn-info" id="dcon-scan" style="width: 100%;">Сканировать</button>
+        </div>
+    </div>
+
+    <div class="indicator box3 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
+        <div class="low-indicator" style="width: 100%;">
+            <select class="form-select" style="width: 55%;">
+                <option value="1" selected>Modbus TCP-RTU</option>
+                <option value="2">Modbus RTU-TCP</option>
+                <option value="3">Modbus universal</option>
+            </select>
+            <button type="button" class="btn btn-warning" id="modbus-reload" style="width: 44%;">Перезагрузить</button>
+        </div>
+        <div class="low-indicator" style="width: 100%;">
+            <button type="button" class="btn btn-success" id="modbus-submit" style="width: 100%;">Записать
+                параметры</button>
+        </div>
+    </div>
+
+    <div class="indicator box2 p-2" style="
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-content: space-between;
+    ">
+        <div class="low-indicator2">
+            <span class="inp">MAC</span>
+            <input id="modbus-mac" type="text" class="inp form-control" value="00:00:00:00:00:00" readonly>
+        </div>
+
+        <div class="low-indicator2">
+            <span class="inp">IP</span>
+            <input id="modbus-ip" type="text" class="inp form-control">
+        </div>
+
+        <div class="low-indicator2">
+            <span class="inp">Маска подсети</span>
+            <input id="modbus-ip-mask" type="text" class="inp form-control">
+        </div>
+
+        <div class="low-indicator2">
+            <span class="inp">IP-адрес шлюза</span>
+            <input id="modbus-ip-router" type="text" class="inp form-control">
+        </div>
+
+        <div class="low-indicator2">
+            <span class="inp">TCP порт</span>
+            <input id="modbus-tcp-port" type="text" class="inp form-control" placeholder="(502,10000-65535)">
+        </div>
+
+        <div class="low-indicator2">
+            <span class="inp">Паритет</span>
+            <select class="form-select inp" id="modbus-parity">
+                <option disabled selected value style="display: none;"></option>
+                <option value="1">Без паритета</option>
+                <option value="2">Контроль нечетности</option>
+                <option value="3">Контроль четности</option>
+            </select>
+        </div>
+
+        <div class="low-indicator2">
+            <span class="inp">Скорость RS485</span>
+            <select class="form-select inp" id="modbus-baudrate">
+                <option disabled selected value style="display: none;"></option>
+                <option>1200</option>
+                <option>2400</option>
+                <option>4800</option>
+                <option>9600</option>
+                <option>19200</option>
+                <option>38400</option>
+                <option>57600</option>
+                <option>115200</option>
+                <option>128000</option>
+                <option>256000</option>
+            </select>
+        </div>
+
+        <div class="low-indicator2">
+            <span class="inp">Кол-во стоп бит</span>
+            <select class="form-select inp" id="modbus-stopbits">
+                <option disabled selected value style="display: none;"></option>
+                <option>1</option>
+                <option>2</option>
+            </select>
+        </div>
+
+        
+    </div>
+</div>
+
+<script src="/content/js/dcon.js"></script>
