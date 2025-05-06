@@ -7,10 +7,11 @@
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="/content/css/color.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
+    <link href="/content/css/color.css" rel="stylesheet">
+    <script src="/bootstrap/bootstrap.bundle.min.js"></script>
 
     <style>
         body {
@@ -57,8 +58,8 @@
         style="border-radius: 10px; border-bottom: inset; border-bottom-color: var(--main-shadow);">
         <div class="container-fluid">
             <div class="btn-group navbar-brand text-white">
-                <a type="button" class="btn sec-color-bg text-white btn-no-hover" href="/dashboard">Reallab конфигуратор<img
-                        src="/content/images/cat.jpg" alt="Your Logo" style="border-radius: 45px;"></a>
+                <a type="button" class="btn sec-color-bg text-white btn-no-hover" href="/dashboard">Reallab
+                    конфигуратор<img src="/content/images/cat.jpg" alt="Your Logo" style="border-radius: 45px;"></a>
                 <button type="button" class="btn sec-color-bg dropdown-toggle dropdown-toggle-split btn-no-hover"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
@@ -72,10 +73,11 @@
                     <li><a class="dropdown-item" href="/settings/load">Ресурсы</a></li>
                     <li><a class="dropdown-item" href="/settings/host">Сеть</a></li>
                     <li><a class="dropdown-item" href="/settings/dump">Доп. Инфо</a></li>
-                    <li  id="navbar-username-divider" style="display: none;">
+                    <li id="navbar-username-divider" style="display: none;">
                         <hr class="dropdown-divider">
                     </li>
-                    <li><span class="dropdown-header" id="navbar-username-header" style="display: none;">Текущий пользователь</span></li>
+                    <li><span class="dropdown-header" id="navbar-username-header" style="display: none;">Текущий
+                            пользователь</span></li>
                     <li><a class="dropdown-item" href="/users" id="navbar-username" style="display: none;"></a></li>
                     <li><a class="dropdown-item" href="/" id="navbar-logout" style="display: none;">Выйти</a></li>
                 </ul>
@@ -92,25 +94,25 @@
             <a id="cur-time" style="padding: 0.2rem;">Loading time</a>
             <a id="address" style="padding: 0.2rem;">Loading address</a>
 
-<script src="/content/js/token.js"></script>
-<script src="/content/js/localtime.js"> </script>
-<script src="/content/js/address.js"> </script>
-<script>
-    let lastScrollTop = 0;
-    const navbar = document.querySelector('.navbar');
+            <script src="/content/js/token.js"></script>
+            <script src="/content/js/localtime.js"> </script>
+            <script src="/content/js/address.js"> </script>
+            <script>
+                let lastScrollTop = 0;
+                const navbar = document.querySelector('.navbar');
 
-    window.addEventListener('scroll', function () {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                window.addEventListener('scroll', function () {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        if (scrollTop > lastScrollTop) {
-            // Scrolling down
-            navbar.style.top = '-73px'; // Hide the navbar (adjust height if needed)
-        } else {
-            // Scrolling up
-            navbar.style.top = '0'; // Show the navbar
-        }
+                    if (scrollTop > lastScrollTop) {
+                        // Scrolling down
+                        navbar.style.top = '-73px'; // Hide the navbar (adjust height if needed)
+                    } else {
+                        // Scrolling up
+                        navbar.style.top = '0'; // Show the navbar
+                    }
 
-        lastScrollTop = scrollTop;
-    });
-</script>
-<!-- SCRIPTS -->
+                    lastScrollTop = scrollTop;
+                });
+            </script>
+            <!-- SCRIPTS -->

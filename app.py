@@ -318,6 +318,14 @@ async def get_content(item_name: str):
 async def get_content(item_name: str):
     return responses.FileResponse(config["content_folder"] + "/js/" + item_name)
 
+@app.get("/bootstrap/bootstrap.bundle.min.js")
+async def get_content():
+    return responses.FileResponse(config["content_folder"] + "/js/bootstrap/bootstrap.bundle.min.js")
+
+@app.get("/bootstrap/bootstrap.min.css")
+async def get_content():
+    return responses.FileResponse(config["content_folder"] + "/css/bootstrap/bootstrap.min.css")
+
 
 @app.get("/content/icons/{item_name}")
 async def get_content(item_name: str):
