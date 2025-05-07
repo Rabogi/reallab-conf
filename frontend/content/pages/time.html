@@ -144,7 +144,7 @@
     </div>
     <div class="box2">
         <div class="indicator p-2">
-            <span>Часовой пояс :  </span>
+            <span>Часовой пояс : </span>
             <span id="local-TZ">Europe/Moscow</span>
         </div>
     </div>
@@ -153,10 +153,13 @@
             <span>Смена часового пояса</span>
             <div>
                 <div style="display: flex;">
-                    <button type="button" class="btn btn-success" id="button-save-timezone" disabled="true">Сохранить</button>
+                    <button type="button" class="btn btn-success" id="button-save-timezone"
+                        disabled="true">Сохранить</button>
                     <div class=" clock-belt">
-                        <input type="text" id="timezone-change-field" placeholder="Часовой пояс" class="form-control" value="" disabled="true">
-                        <div id="suggestions" class="dropdown-menu" style="min-width: 200px;"></div>
+                        <input type="text" id="timezone-change-field" list="suggestions" placeholder="Часовой пояс"
+                            class="form-control" value="" disabled="true">
+                        <datalist id="suggestions">
+                        </datalist>
                     </div>
                 </div>
                 <span id="timezone-change-message" style="display: none;"></span>
@@ -187,7 +190,8 @@
             <span>Изменение местного времени</span>
             <div>
                 <div style="display: flex;">
-                    <button type="button" class="btn btn-success" id="button-save-localtime" disabled="true">Сохранить</button>
+                    <button type="button" class="btn btn-success" id="button-save-localtime"
+                        disabled="true">Сохранить</button>
                     <div class=" clock-belt">
                         <input type="text" id="time-change-field" placeholder="ЧЧ:ММ" class="form-control"
                             disabled="true">
@@ -201,7 +205,8 @@
             <span>Изменение даты</span>
             <div>
                 <div style="display: flex;">
-                    <button type="button" class="btn btn-success" id="button-save-date" disabled="true">Сохранить</button>
+                    <button type="button" class="btn btn-success" id="button-save-date"
+                        disabled="true">Сохранить</button>
                     <div class=" clock-belt">
                         <input type="text" id="date-change-field" placeholder="ГГГГ-ММ-ДД" class="form-control"
                             disabled="true">
@@ -236,8 +241,8 @@
     </div>
     <div class="box12">
         <div class="indicator p-2">
-                <span>Статус синхронизации : </span>
-                <span id="sync-status" disabled="true">Да</span>
+            <span>Статус синхронизации : </span>
+            <span id="sync-status" disabled="true">Да</span>
         </div>
     </div>
 </div>

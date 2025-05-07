@@ -18,47 +18,60 @@ const rtclocal_switch = document.getElementById('local-rtc');
 function getSuggestions(input) {
     return suggestionsList.filter(item =>
         item.toLowerCase().startsWith(input.toLowerCase())
-    ).slice(0, 20);
+    ).slice(0, 5);
 }
 
-// Function to display suggestions
-function showSuggestions(suggestions) {
-    if (suggestions.length === 0) {
-        suggestionsContainer.style.display = 'none';
-        return;
+timezonechangefield.addEventListener("input", () => {
+    let options = getSuggestions(timezonechangefield.value);
+    if (options.length > 0) {
+        suggestionsContainer.innerHTML = '';
+        options.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item;
+            suggestionsContainer.appendChild(option);
+        });
     }
+})
 
-    const suggestionsHTML = suggestions.map(item =>
-        `<div class="suggestion-item">${item}</div>`
-    ).join('');
 
-    suggestionsContainer.innerHTML = suggestionsHTML;
-    suggestionsContainer.style.display = 'block';
-    suggestionsContainer.style.overflow = 'auto';
-    suggestionsContainer.style.maxHeight = '200px'
-}
+// // Function to display suggestions
+// function showSuggestions(suggestions) {
+//     if (suggestions.length === 0) {
+//         suggestionsContainer.style.display = 'none';
+//         return;
+//     }
 
-// Event listener for input field
-timezonechangefield.addEventListener('input', function () {
-    const userInput = timezonechangefield.value;
-    const filteredSuggestions = getSuggestions(userInput);
-    showSuggestions(filteredSuggestions);
-});
+//     const suggestionsHTML = suggestions.map(item =>
+//         `<div class="suggestion-item">${item}</div>`
+//     ).join('');
 
-// Event listener for clicking on a suggestion
-suggestionsContainer.addEventListener('click', function (e) {
-    if (e.target.classList.contains('suggestion-item')) {
-        timezonechangefield.value = e.target.textContent;
-        suggestionsContainer.style.display = 'none';
-    }
-});
+//     suggestionsContainer.innerHTML = suggestionsHTML;
+//     suggestionsContainer.style.display = 'block';
+//     suggestionsContainer.style.overflow = 'auto';
+//     suggestionsContainer.style.maxHeight = '200px'
+// }
 
-// Hide suggestions when clicking outside
-document.addEventListener('click', function (e) {
-    if (e.target !== timezonechangefield) {
-        suggestionsContainer.style.display = 'none';
-    }
-});
+// // Event listener for input field
+// timezonechangefield.addEventListener('input', function () {
+//     const userInput = timezonechangefield.value;
+//     const filteredSuggestions = getSuggestions(userInput);
+//     showSuggestions(filteredSuggestions);
+// });
+
+// // Event listener for clicking on a suggestion
+// suggestionsContainer.addEventListener('click', function (e) {
+//     if (e.target.classList.contains('suggestion-item')) {
+//         timezonechangefield.value = e.target.textContent;
+//         suggestionsContainer.style.display = 'none';
+//     }
+// });
+
+// // Hide suggestions when clicking outside
+// document.addEventListener('click', function (e) {
+//     if (e.target !== timezonechangefield) {
+//         suggestionsContainer.style.display = 'none';
+//     }
+// });
 
 function update_time(time) {
     let timeParts = time.split(':');
