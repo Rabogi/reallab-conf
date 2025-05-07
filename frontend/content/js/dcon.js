@@ -84,118 +84,118 @@ const sendButton = document.getElementById("dcon-send");
 const historyContainer = document.getElementById("dcon-history");
 const historyClear = document.getElementById("dcon-history-clear");
 
-function showSuggestions(suggestions) {
-    if (suggestions.length === 0) {
-        suggestionsContainer.style.display = 'none';
-        return;
-    }
+// function showSuggestions(suggestions) {
+//     if (suggestions.length === 0) {
+//         suggestionsContainer.style.display = 'none';
+//         return;
+//     }
 
-    const suggestionsHTML = suggestions.map(item =>
-        `<div class="suggestion-item">${item}</div>`
-    ).join('');
+//     const suggestionsHTML = suggestions.map(item =>
+//         `<div class="suggestion-item">${item}</div>`
+//     ).join('');
 
-    suggestionsContainer.innerHTML = suggestionsHTML;
-    suggestionsContainer.style.display = 'block';
-    suggestionsContainer.style.overflow = 'auto';
-    suggestionsContainer.style.maxHeight = '100px'
-};
+//     suggestionsContainer.innerHTML = suggestionsHTML;
+//     suggestionsContainer.style.display = 'block';
+//     suggestionsContainer.style.overflow = 'auto';
+//     suggestionsContainer.style.maxHeight = '100px'
+// };
 
-function showSuggestions2(suggestions) {
-    if (suggestions.length === 0) {
-        suggestionsContainer2.style.display = 'none';
-        return;
-    }
+// function showSuggestions2(suggestions) {
+//     if (suggestions.length === 0) {
+//         suggestionsContainer2.style.display = 'none';
+//         return;
+//     }
 
-    const suggestionsHTML = suggestions.map(item =>
-        `<div class="suggestion-item">${item}</div>`
-    ).join('');
+//     const suggestionsHTML = suggestions.map(item =>
+//         `<div class="suggestion-item">${item}</div>`
+//     ).join('');
 
-    suggestionsContainer2.innerHTML = suggestionsHTML;
-    suggestionsContainer2.style.display = 'block';
-    suggestionsContainer2.style.overflow = 'auto';
-    suggestionsContainer2.style.maxHeight = '100px'
-};
+//     suggestionsContainer2.innerHTML = suggestionsHTML;
+//     suggestionsContainer2.style.display = 'block';
+//     suggestionsContainer2.style.overflow = 'auto';
+//     suggestionsContainer2.style.maxHeight = '100px'
+// };
 
-function showSuggestions3(suggestions) {
-    if (suggestions.length === 0) {
-        suggestionsContainer3.style.display = 'none';
-        return;
-    }
+// function showSuggestions3(suggestions) {
+//     if (suggestions.length === 0) {
+//         suggestionsContainer3.style.display = 'none';
+//         return;
+//     }
 
-    const suggestionsHTML = suggestions.map(item =>
-        `<div class="suggestion-item">${item}</div>`
-    ).join('');
+//     const suggestionsHTML = suggestions.map(item =>
+//         `<div class="suggestion-item">${item}</div>`
+//     ).join('');
 
-    suggestionsContainer3.innerHTML = suggestionsHTML;
-    suggestionsContainer3.style.display = 'block';
-    suggestionsContainer3.style.overflow = 'auto';
-    suggestionsContainer3.style.maxHeight = '100px'
-};
+//     suggestionsContainer3.innerHTML = suggestionsHTML;
+//     suggestionsContainer3.style.display = 'block';
+//     suggestionsContainer3.style.overflow = 'auto';
+//     suggestionsContainer3.style.maxHeight = '100px'
+// };
 
-function getSuggestions(input) {
-    return suggestionsList.filter(item =>
-        item.toLowerCase().startsWith(input.toLowerCase())
-    ).slice(0, 20);
-}
+// function getSuggestions(input) {
+//     return suggestionsList.filter(item =>
+//         item.toLowerCase().startsWith(input.toLowerCase())
+//     ).slice(0, 20);
+// }
 
 async function addHistory(a, b) {
     historyContainer.innerHTML += '<div class="log"><span class="m-2">Запрос: ' + a + '</span><span class="m-2">Ответ: ' + b + '</span></div>'
 }
 
 // Event listener for input field
-portField.addEventListener('input', function () {
-    const userInput = portField.value;
-    const filteredSuggestions = getSuggestions(userInput);
-    showSuggestions(filteredSuggestions);
-});
+// portField.addEventListener('input', function () {
+//     const userInput = portField.value;
+//     const filteredSuggestions = getSuggestions(userInput);
+//     showSuggestions(filteredSuggestions);
+// });
 
-baudField.addEventListener('input', function () {
-    const userInput = portField.value;
-    const filteredSuggestions = baudrates;
-    showSuggestions2(filteredSuggestions);
-});
+// baudField.addEventListener('input', function () {
+//     const userInput = portField.value;
+//     const filteredSuggestions = baudrates;
+//     showSuggestions2(filteredSuggestions);
+// });
 
-protocolField.addEventListener('input', function () {
-    const userInput = portField.value;
-    const filteredSuggestions = ["Modbus", "DCON"];
-    showSuggestions3(filteredSuggestions);
-});
+// protocolField.addEventListener('input', function () {
+//     const userInput = portField.value;
+//     const filteredSuggestions = ["Modbus", "DCON"];
+//     showSuggestions3(filteredSuggestions);
+// });
 
 // Event listener for clicking on a suggestion
-suggestionsContainer.addEventListener('click', function (e) {
-    if (e.target.classList.contains('suggestion-item')) {
-        portField.value = e.target.textContent;
-        suggestionsContainer.style.display = 'none';
-    }
-});
+// suggestionsContainer.addEventListener('click', function (e) {
+//     if (e.target.classList.contains('suggestion-item')) {
+//         portField.value = e.target.textContent;
+//         suggestionsContainer.style.display = 'none';
+//     }
+// });
 
-suggestionsContainer2.addEventListener('click', function (e) {
-    if (e.target.classList.contains('suggestion-item')) {
-        baudField.value = e.target.textContent;
-        suggestionsContainer2.style.display = 'none';
-    }
-});
+// suggestionsContainer2.addEventListener('click', function (e) {
+//     if (e.target.classList.contains('suggestion-item')) {
+//         baudField.value = e.target.textContent;
+//         suggestionsContainer2.style.display = 'none';
+//     }
+// });
 
-suggestionsContainer3.addEventListener('click', function (e) {
-    if (e.target.classList.contains('suggestion-item')) {
-        protocolField.value = e.target.textContent;
-        suggestionsContainer3.style.display = 'none';
-    }
-});
+// suggestionsContainer3.addEventListener('click', function (e) {
+//     if (e.target.classList.contains('suggestion-item')) {
+//         protocolField.value = e.target.textContent;
+//         suggestionsContainer3.style.display = 'none';
+//     }
+// });
 
 
 // Hide suggestions when clicking outside
-document.addEventListener('click', function (e) {
-    if (e.target !== portField) {
-        suggestionsContainer.style.display = 'none';
-    }
-    if (e.target !== baudField) {
-        suggestionsContainer2.style.display = 'none';
-    }
-    if (e.target !== protocolField) {
-        suggestionsContainer3.style.display = 'none';
-    }
-});
+// document.addEventListener('click', function (e) {
+//     if (e.target !== portField) {
+//         suggestionsContainer.style.display = 'none';
+//     }
+//     if (e.target !== baudField) {
+//         suggestionsContainer2.style.display = 'none';
+//     }
+//     if (e.target !== protocolField) {
+//         suggestionsContainer3.style.display = 'none';
+//     }
+// });
 
 scanButton.addEventListener('click', async function () {
     let a = await normal_fetch("POST", "/dcon/get_config", { 'Content-Type': 'application/json' }, {

@@ -36,18 +36,70 @@
         max-width: 160px;
         width: 160px;
     }
+    .box-m{
+            margin-top: 0.5rem;
+        }
+
+    @media (min-width:1500px) {
+        .wrapper2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 6vh;
+        }
+
+        .box1 {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 1;
+            height: auto;
+            width: auto;
+        }
+
+        .box2 {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 2;
+            grid-row-end: 2;
+            height: auto;
+            width: auto;
+        }
+
+        .box3 {
+            grid-column-start: 2;
+            grid-column-end: 3;
+            grid-row-start: 1;
+            grid-row-end: 3;
+            height: auto;
+            width: auto;
+        }
+
+        .box4 {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            grid-row-start: 3;
+            grid-row-end: 3;
+            height: auto;
+            width: auto;
+        }
+
+        .box-m{
+            margin: 0.5rem;
+        }
+    }
 </style>
 
 
 <div class="mt-4">
     <div class="mb-3">
-        <div>
-            <input type="text" id="username" class="form-control" placeholder="Имя пользователя">
-            <input type="password" id="password" class="form-control mt-2" placeholder="Пароль">
-            <input type="text" id="additional_info" class="form-control mt-2" placeholder="Доп.данные в JSON (Обязан иметь поле level)"
-                value='{"level":0}'>
+        <div class="wrapper2">
+            <input type="text" id="username" class="form-control box1 box-m" placeholder="Имя пользователя">
+            <input type="password" id="password" class="form-control box2 box-m" placeholder="Пароль">
+            <input type="text" id="additional_info" class="form-control  box3 box-m"
+                placeholder="Доп.данные в JSON (Обязан иметь поле level)" value='{"level":0}'>
+            <button class="btn btn-dark box4 box-m" onclick="addUser()">Добавить</button>
+
         </div>
-        <button class="btn btn-dark mt-2" onclick="addUser()">Добавить</button>
         <div id="server-response-block" class="alert"></div>
     </div>
 

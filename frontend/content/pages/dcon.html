@@ -14,8 +14,8 @@
     }
 
     #element::-webkit-scrollbar {
-    display: none;
-}
+        display: none;
+    }
 
     .inp {
         min-width: 50px;
@@ -100,10 +100,10 @@
     <div class="indicator box1 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
         <div class="low-indicator" style="width: 100%;">
             <span class="inp">Порт</span>
-            <div class="port-selector">
-                <input type="text" id="port-selector" class="inp form-control" value="serial0">
-                <div id="port-suggestions" class="dropdown-menu" style="min-width: 150px;"></div>
-            </div>
+            <select id="port-selector" class="form-select inp">
+                <option selected>serial0</option>
+                <option>serial1</option>
+            </select>
         </div>
         <div class="low-indicator" style="width: 100%;">
             <button type="button" class="btn btn-info" id="dcon-scan" style="width: 100%;">Сканировать</button>
@@ -117,17 +117,27 @@
             </div>
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Скорость (Боды)</span>
-                <div>
-                    <input id="dcon-baudrate" type="number" class="inp form-control">
-                    <div id="baud-suggestions" class="dropdown-menu" style="min-width: 150px;"></div>
-                </div>
+                <select class="form-select inp" id="dcon-baudrate">
+                    <option disabled selected value style="display: none;"></option>
+                    <option>1200</option>
+                    <option>2400</option>
+                    <option>4800</option>
+                    <option>9600</option>
+                    <option>19200</option>
+                    <option>38400</option>
+                    <option>57600</option>
+                    <option>115200</option>
+                    <option>128000</option>
+                    <option>256000</option>
+                </select>
             </div>
             <div class="low-indicator" style="width: 100%;">
                 <span class="inp">Протокол</span>
-                <div>
-                    <input id="dcon-protocol" type="text" class="inp form-control">
-                    <div id="protocol-suggestions" class="dropdown-menu" style="min-width: 150px;"></div>
-                </div>
+                <select class="form-select inp" id="dcon-protocol">
+                    <option disabled selected value style="display: none;"></option>
+                    <option>Modbus</option>
+                    <option>DCON</option>
+                </select>
             </div>
         </div>
         <div style="width: 100%;">
