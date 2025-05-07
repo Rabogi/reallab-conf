@@ -1,10 +1,10 @@
 var suggestionsList;
 
+
 fetch('/timezones')
     .then(response => response.json())
     .then(data => suggestionsList = data)
     .catch(error => console.error('Error:', error));
-
 
 // Get references to the input field and suggestions container
 const timezonechangefield = document.getElementById('timezone-change-field');
@@ -154,7 +154,7 @@ function get_timedatectl() {
                 document.getElementById("local-date").textContent = data.day + "." + data.month + "." + data.year;
                 document.getElementById("timezone-change-field").value = data.timezone;
                 document.getElementById("sync-status").textContent = data.sys_clock_sync;
-                
+
 
                 update_settings(data);
 
@@ -184,8 +184,7 @@ function update_settings(data) {
     if (time_settings["rtclocal"] == false & time_settings["ntp"] == true) {
         recommended_switch.checked = true;
     }
-    else
-    {
+    else {
         recommended_switch.checked = false;
     }
 }
@@ -194,7 +193,7 @@ const timezone_button = document.getElementById("button-save-timezone")
 const save_time_button = document.getElementById("button-save-localtime")
 const save_date_button = document.getElementById("button-save-date")
 
-timezone_button.addEventListener('click',async function () {
+timezone_button.addEventListener('click', async function () {
     var input = document.getElementById("timezone-change-field").value;
     await send_settings({
         timezone: input,
@@ -202,7 +201,7 @@ timezone_button.addEventListener('click',async function () {
     get_timedatectl()
 });
 
-save_time_button.addEventListener('click',async function () {
+save_time_button.addEventListener('click', async function () {
     var input = document.getElementById("time-change-field").value;
     await send_settings({
         localtime: input,
@@ -210,7 +209,7 @@ save_time_button.addEventListener('click',async function () {
     get_timedatectl()
 });
 
-save_date_button.addEventListener('click',async function () {
+save_date_button.addEventListener('click', async function () {
     var input = document.getElementById("date-change-field").value;
     await send_settings({
         date: input,
@@ -236,12 +235,14 @@ ntp_sync_switch.addEventListener('click', async function () {
     if (ntp_sync_switch.checked) {
         time_settings["ntp"] = true;
         await send_settings({
-            ntp: time_settings["ntp"],});
+            ntp: time_settings["ntp"],
+        });
         get_timedatectl()
     } else {
         time_settings["ntp"] = false;
         await send_settings({
-            ntp: time_settings["ntp"],});
+            ntp: time_settings["ntp"],
+        });
         get_timedatectl()
     }
 });
@@ -271,7 +272,7 @@ async function send_settings(data) {
         },
         body: JSON.stringify({
             session_token: session_token,
-            data : JSON.stringify(data)
+            data: JSON.stringify(data)
         }),
     }).then(response => {
         if (!response.ok) {
