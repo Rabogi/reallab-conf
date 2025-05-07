@@ -59,6 +59,16 @@
         max-width: 200px;
     }
 
+    .common {}
+
+    .rtu-tcp {}
+
+    .universal {}
+
+    .hidden {
+        display: none !important;
+    }
+
     @media (min-width:1500px) {
         .inp {
             min-width: 300px;
@@ -135,7 +145,7 @@
 
     <div class="indicator box3 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
         <div class="low-indicator" style="width: 100%;">
-            <select class="form-select" style="width: 55%;">
+            <select class="form-select" style="width: 55%;" id="modbus-work-mode">
                 <option value="1" selected>Modbus TCP-RTU</option>
                 <option value="2">Modbus RTU-TCP</option>
                 <option value="3">Modbus universal</option>
@@ -155,45 +165,45 @@
         flex-wrap: wrap;
         justify-content: flex-start;
         align-content: space-between;
-    ">  
-        <div class="low-indicator2">
+    ">
+        <div class="low-indicator2 universal hidden">
             <span class="inp">Режим работы</span>
-            <select class="form-select inp" id="modbus-parity">
+            <select class="form-select inp" id="modbus-mode">
                 <option disabled selected value style="display: none;"></option>
                 <option value="1">Сервер TCP</option>
                 <option value="2">Клиент TCP</option>
             </select>
         </div>
-        <div class="low-indicator2">
+        <div class="low-indicator2 universal hidden">
             <span class="inp">Версия</span>
-            <input id="modbus-mac" type="text" class="inp form-control" readonly>
+            <input id="modbus-version" type="text" class="inp form-control" readonly>
         </div>
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">MAC</span>
             <input id="modbus-mac" type="text" class="inp form-control" value="00:00:00:00:00:00" readonly>
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">IP</span>
             <input id="modbus-ip" type="text" class="inp form-control">
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">Маска подсети</span>
             <input id="modbus-ip-mask" type="text" class="inp form-control">
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">IP-адрес шлюза</span>
             <input id="modbus-ip-router" type="text" class="inp form-control">
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">TCP порт</span>
             <input id="modbus-tcp-port" type="text" class="inp form-control" placeholder="(502,10000-65535)">
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">Паритет</span>
             <select class="form-select inp" id="modbus-parity">
                 <option disabled selected value style="display: none;"></option>
@@ -203,7 +213,7 @@
             </select>
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">Скорость RS485</span>
             <select class="form-select inp" id="modbus-baudrate">
                 <option disabled selected value style="display: none;"></option>
@@ -220,7 +230,7 @@
             </select>
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 common">
             <span class="inp">Кол-во стоп бит</span>
             <select class="form-select inp" id="modbus-stopbits">
                 <option disabled selected value style="display: none;"></option>
@@ -229,30 +239,30 @@
             </select>
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 universal hidden">
             <span class="inp">Таймаут</span>
-            <input id="modbus-tcp-port" type="number" class="inp form-control" placeholder="100-60000 мс">
+            <input id="modbus-timeout" type="number" class="inp form-control" placeholder="100-60000 мс">
         </div>
-        
-        <div class="low-indicator2">
+
+        <div class="low-indicator2 rtu-tcp universal hidden">
             <span class="inp">IP сервера TCP</span>
             <input id="modbus-tcp-port" type="text" class="inp form-control">
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 rtu-tcp universal hidden">
             <span class="inp">Таймаут TCP</span>
             <input id="modbus-tcp-port" type="number" class="inp form-control" placeholder="5-240 с">
         </div>
 
-        <div class="low-indicator2">
+        <div class="low-indicator2 universal hidden">
             <span class="inp">ID в сети RTU</span>
             <input id="modbus-tcp-port" type="number" class="inp form-control" placeholder="1-247">
         </div>
-        <div class="low-indicator2">
+        <div class="low-indicator2 universal hidden">
             <span class="inp">ID в сервера</span>
             <input id="modbus-tcp-port" type="number" class="inp form-control" placeholder="1-255">
         </div>
     </div>
 </div>
 
-<script src="/content/js/dcon.js"></script>
+<script src="/content/js/modbus.js"></script>
