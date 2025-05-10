@@ -72,7 +72,7 @@
     @media (min-width:1500px) {
         .inp {
             min-width: 300px;
-            max-width: 300px;
+            max-width: 400px;
         }
 
         .low-indicator2 {
@@ -133,7 +133,7 @@
     <div class="indicator box1 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
         <div class="low-indicator" style="width: 100%;">
             <span class="inp">Порт</span>
-            <select class="form-select" style="width: 55%;">
+            <select class="form-select inp" style="width: 55%;">
                 <option selected>serial0</option>
                 <option>serial1</option>
             </select>
@@ -246,21 +246,21 @@
 
         <div class="low-indicator2 rtu-tcp universal hidden">
             <span class="inp">IP сервера TCP</span>
-            <input id="modbus-tcp-port" type="text" class="inp form-control">
+            <input id="modbus-tcp-ip" type="text" class="inp form-control">
         </div>
 
         <div class="low-indicator2 rtu-tcp universal hidden">
             <span class="inp">Таймаут TCP</span>
-            <input id="modbus-tcp-port" type="number" class="inp form-control" placeholder="5-240 с">
+            <input id="modbus-tcp-timeout" type="number" class="inp form-control" placeholder="5-240 с">
         </div>
 
         <div class="low-indicator2 universal hidden">
             <span class="inp">ID в сети RTU</span>
-            <input id="modbus-tcp-port" type="number" class="inp form-control" placeholder="1-247">
+            <input id="modbus-tcp-ID" type="number" class="inp form-control" placeholder="1-247">
         </div>
         <div class="low-indicator2 universal hidden">
-            <span class="inp">ID в сервера</span>
-            <input id="modbus-tcp-port" type="number" class="inp form-control" placeholder="1-255">
+            <span class="inp">ID сервера</span>
+            <input id="modbus-server-id" type="number" class="inp form-control" placeholder="1-255">
         </div>
     </div>
 </div>
