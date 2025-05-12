@@ -19,7 +19,8 @@ const modbus_tcp_ip = document.getElementById("modbus-tcp-ip")
 const modbus_tcp_timeout = document.getElementById("modbus-tcp-timeout")
 const modbus_tcp_ID = document.getElementById("modbus-tcp-ID")
 const modbus_server_id = document.getElementById("modbus-server-id")
-const allowed_baudrates = [1200,2400,4800,9600,19200,38400,57600,115200,128000,256000]
+const modbus_mode = document.getElementById("modbus-mode")
+const allowed_baudrates = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 128000, 256000]
 
 let mode = 1
 
@@ -130,7 +131,7 @@ modbus_button_submit.addEventListener("click", () => {
 
     el = modbus_tcp_port
     if (el.value.trim().length !== 0) {
-        if (el.value !== 502 && (el.value < 10000 || el.value > 65535)) {
+        if (el.value != 502 && (el.value < 10000 || el.value > 65535)) {
             errors.push(el);
             error_message += "\nПроверьте TCP порт."
         }
@@ -174,6 +175,83 @@ modbus_button_submit.addEventListener("click", () => {
     else {
         errors.push(el);
         error_message += "\nВыберете количество стоп бит."
+    }
+
+    if (mode == 2 || mode == 3) {
+        el = modbus_tcp_ip
+        if (el.value.trim().length !== 0) {
+            if (isValidIPv4(el.value) == false) {
+                errors.push(el);
+                error_message += "\nПроверьте IP адрес TCP сервера."
+            }
+        }
+        else {
+            errors.push(el);
+            error_message += "\nВведите IP адрес TCP сервера."
+        }
+
+        el = modbus_tcp_timeout
+        if (el.value.trim().length !== 0) {
+            if (el.value < 5 || el.value > 240) {
+                errors.push(el);
+                error_message += "\nТаймаут для TCP сервера должен быть в интервале [5-240] сек."
+            }
+        }
+        else {
+            errors.push(el);
+            error_message += "\nВведите таймаут для TCP сервера."
+        }
+    }
+
+    if (mode == 3) {
+        el = modbus_mode
+        if (el.value.trim().length !== 0) {
+            if (el.value < 1 || el.value > 2) {
+                errors.push(el);
+                error_message += "\nПроверьте режим работы."
+            }
+        }
+        else {
+            errors.push(el);
+            error_message += "\nВведите режим работы."
+        }
+
+        el = modbus_timeout
+        if (el.value.trim().length !== 0) {
+            if (el.value < 100 || el.value > 60000) {
+                errors.push(el);
+                error_message += "\nТаймаут должен быть в интервале [100-60000] мс."
+            }
+        }
+        else {
+            errors.push(el);
+            error_message += "\nВведите таймаут."
+        }
+
+
+        el = modbus_tcp_ID
+        if (el.value.trim().length !== 0) {
+            if (el.value < 1 || el.value > 247) {
+                errors.push(el);
+                error_message += "\nID в сети RTU должен быть в интервале [1-247]."
+            }
+        }
+        else {
+            errors.push(el);
+            error_message += "\nВведите ID в сети RTU."
+        }
+
+        el = modbus_server_id
+        if (el.value.trim().length !== 0) {
+            if (el.value < 1 || el.value > 255) {
+                errors.push(el);
+                error_message += "\nID сервера должен быть в интервале [1-255]."
+            }
+        }
+        else {
+            errors.push(el);
+            error_message += "\nВведите ID сервера."
+        }
     }
 
     if (errors.length > 0) {
