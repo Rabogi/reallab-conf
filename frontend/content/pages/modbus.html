@@ -133,13 +133,12 @@
     <div class="indicator box1 p-2" style="display: flex; flex-direction: column; align-items: flex-start;">
         <div class="low-indicator" style="width: 100%;">
             <span class="inp">Порт</span>
-            <select class="form-select inp" style="width: 55%;">
-                <option selected>serial0</option>
-                <option>serial1</option>
+            <select class="form-select inp" style="width: 55%;" id="modbus-device">
+                <option disabled selected value style="display: none;"></option>
             </select>
         </div>
         <div class="low-indicator" style="width: 100%;">
-            <button type="button" class="btn btn-info" id="dcon-scan" style="width: 100%;">Сканировать</button>
+            <button type="button" class="btn btn-info" id="modbus-scan" style="width: 100%;">Сканировать</button>
         </div>
     </div>
 
@@ -190,7 +189,7 @@
 
         <div class="low-indicator2 common">
             <span class="inp">Маска подсети</span>
-            <input id="modbus-ip-mask" type="number" class="inp form-control">
+            <input id="modbus-ip-mask" type="text" class="inp form-control">
         </div>
 
         <div class="low-indicator2 common">
@@ -207,9 +206,9 @@
             <span class="inp">Паритет</span>
             <select class="form-select inp" id="modbus-parity">
                 <option disabled selected value style="display: none;"></option>
-                <option value="1">Без паритета</option>
-                <option value="2">Контроль нечетности</option>
-                <option value="3">Контроль четности</option>
+                <option value="none">Без паритета</option>
+                <option value="odd">Контроль нечетности</option>
+                <option value="even">Контроль четности</option>
             </select>
         </div>
 

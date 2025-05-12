@@ -3,6 +3,8 @@ const rtutcp_elements = document.querySelectorAll('.rtu-tcp');
 const universal_elements = document.querySelectorAll('.universal');
 
 const mode_switch = document.getElementById("modbus-work-mode")
+const modbus_device = document.getElementById("modbus-device")
+const modbus_button_scan = document.getElementById("modbus-scan")
 const modbus_button_reload = document.getElementById("modbus-reload")
 const modbus_button_submit = document.getElementById("modbus-submit")
 const modbus_version = document.getElementById("modbus-version")
@@ -23,6 +25,16 @@ const modbus_mode = document.getElementById("modbus-mode")
 const allowed_baudrates = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 128000, 256000]
 
 let mode = 1
+
+async function normal_fetch(method, url, headers, body) {
+    let response = await fetch(url, {
+        method: method,
+        headers: headers,
+        body: JSON.stringify(body)
+    });
+    let data = await response.json(); // Add await here
+    return data;
+}
 
 async function flash(elements, color, time) {
     // Store original background colors
@@ -47,6 +59,14 @@ async function flash(elements, color, time) {
         });
     }, time);
 }
+
+document.addEventListener("DOMContentLoaded", async () => {
+    let devices = await normal_fetch("GET", "/modbus/get_ports", { 'Content-Type': 'application/json' })
+    modbus_device.innerHTML = '<option disabled selected value style="display: none;"></option>'
+    devices.forEach((device) => {
+        modbus_device.innerHTML += '<option>' + device + '</option>'
+    })
+})
 
 mode_switch.addEventListener("change", () => {
     if (mode_switch.value == 1) {
@@ -257,5 +277,51 @@ modbus_button_submit.addEventListener("click", () => {
     if (errors.length > 0) {
         alert(error_message)
         flash(errors, "red", 1000)
+    }
+})
+
+async function send_command(command, device) {
+    return await normal_fetch("POST", "/modbus/send_command", { 'Content-Type': 'application/json' }, {
+        "session_token": localStorage.getItem("real_lab_conf"),
+        "port": device,
+        "baudrate": 9600,
+        "cmd": command,
+    })
+}
+
+
+
+async function set_field(element, value, flash_color, flash_time) {
+    if (value != null) {
+        element.value = value
+    }
+    flash([element], flash_color, flash_time)
+}
+
+async function fetch_and_set(field, command, device) {
+    let data = await send_command(command, device)
+    data = data.response_string.split(":")[1]
+    if (data.length > 0 && data !== undefined) {
+        set_field(field, data, 'rgb(27, 207, 123)', 1000)
+        return true
+    }
+    else {
+        set_field(field, null, "red", 1000)
+        return false
+    }
+}
+
+
+modbus_button_scan.addEventListener("click", async function () {
+    let selected_device = modbus_device.value
+    if (selected_device != "") {
+        fetch_and_set(modbus_mac, "mac", selected_device)
+        fetch_and_set(modbus_ip, "ip", selected_device)
+        fetch_and_set(modbus_ip_mask, "mask", selected_device)
+        fetch_and_set(modbus_ip_router, "gateway", selected_device)
+        fetch_and_set(modbus_tcp_port, "port tcp", selected_device)
+        fetch_and_set(modbus_parity, "parity", selected_device)
+        fetch_and_set(modbus_baudrate, "speed rs485", selected_device)
+        fetch_and_set(modbus_stopbits, "stop bit", selected_device)
     }
 })

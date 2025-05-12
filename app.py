@@ -6,6 +6,7 @@ import datetime
 import pathlib
 import os
 import libs.dcon as dcon
+import libs.modbus as modbus
 import uvicorn
 import json
 import libs.utils as utils
@@ -80,6 +81,7 @@ permissions = {
     "time-change": 0,
     "ip-change": 0,
     "dcon": 0,
+    "modbus":0,
 }
 
 forbidden_hashes = [
@@ -910,6 +912,33 @@ async def dcon_send_command(data: dict = Body()):
     else:
         return {"status": "fail", "message": "Токен не предоставлен"}
 
+@app.get("/modbus/get_ports")
+def modbus_get_port():
+    return modbus.get_ports()
+
+@app.post("/modbus/send_command")
+async def modbus_send_command(data: dict = Body()):
+    if "session_token" in list(data.keys()):
+        if db_handler.auth_db_login(db, data["session_token"], session_lifetime):
+            if (
+                db_handler.auth_db_return_session(db, data["session_token"])["level"]
+                <= permissions["modbus"]
+            ):
+                output = modbus.send_command(
+                    "/dev/" + data["port"], data["baudrate"], data["cmd"]
+                )
+                return {
+                    "status": "success",
+                    "message": output,
+                    "request_string": data["cmd"],
+                    "response_string": output,
+                }
+            else:
+                return {"status": "fail", "message": "Доступ запрещён"}
+        else:
+            return {"status": "fail", "message": "Сессия истекла"}
+    else:
+        return {"status": "fail", "message": "Токен не предоставлен"}
 
 if __name__ == "__main__":
     uvicorn.run(
