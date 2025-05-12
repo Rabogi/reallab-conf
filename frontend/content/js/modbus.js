@@ -4,7 +4,7 @@ const universal_elements = document.querySelectorAll('.universal');
 
 const mode_switch = document.getElementById("modbus-work-mode")
 const modbus_button_reload = document.getElementById("modbus-reload")
-const modbus_button_submit = document.getElementById("submit-reload")
+const modbus_button_submit = document.getElementById("modbus-submit")
 const modbus_version = document.getElementById("modbus-version")
 const modbus_mac = document.getElementById("modbus_mac")
 const modbus_ip = document.getElementById("modbus-ip")
@@ -77,7 +77,29 @@ mode_switch.addEventListener("change", () => {
     }
 })
 
+function isValidIPv4(ip) {
+    const segments = ip.split('.');
+    if (segments.length !== 4) return false;
+
+    return segments.every(segment => {
+        const num = parseInt(segment, 10);
+        return num >= 0 && num <= 255 && String(num) === segment;
+    });
+}
+
 modbus_button_submit.addEventListener("click", () => {
     // Проверка IP,Маски, роутера, TCP порта, Паритета, баудрейта и стоп бита происходит всегда
-    
+    let errors = [];
+    let error_message = "Ошибка, в полях ввода недопустимые данные.";
+    if (isValidIPv4(modbus_ip.value) == false) {
+        errors.push(modbus_ip);
+        error_message+= "\nПроверьте IP адрес."
+    }
+    if (modbus_ip_mask.value << 0 || modbus_ip_mask.value >> 33) {
+        errors.push(modbus_ip_mask)
+        error_message+= "\nПроверьте маску IP адреса."
+    }
+
+    alert(error_message)
+    flash(errors, "red", 5000)
 })
