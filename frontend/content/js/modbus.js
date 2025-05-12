@@ -9,7 +9,7 @@ const modbus_version = document.getElementById("modbus-version")
 const modbus_mac = document.getElementById("modbus_mac")
 const modbus_ip = document.getElementById("modbus-ip")
 const modbus_ip_mask = document.getElementById("modbus-ip-mask")
-const modbus_ip_router = document.getElementById("modbus-router")
+const modbus_ip_router = document.getElementById("modbus-ip-router")
 const modbus_tcp_port = document.getElementById("modbus-tcp-port")
 const modbus_parity = document.getElementById("modbus-parity")
 const modbus_baudrate = document.getElementById("modbus-baudrate")
@@ -19,7 +19,7 @@ const modbus_tcp_ip = document.getElementById("modbus-tcp-ip")
 const modbus_tcp_timeout = document.getElementById("modbus-tcp-timeout")
 const modbus_tcp_ID = document.getElementById("modbus-tcp-ID")
 const modbus_server_id = document.getElementById("modbus-server-id")
-
+const allowed_baudrates = [1200,2400,4800,9600,19200,38400,57600,115200,128000,256000]
 
 let mode = 1
 
@@ -91,15 +91,93 @@ modbus_button_submit.addEventListener("click", () => {
     // Проверка IP,Маски, роутера, TCP порта, Паритета, баудрейта и стоп бита происходит всегда
     let errors = [];
     let error_message = "Ошибка, в полях ввода недопустимые данные.";
-    if (isValidIPv4(modbus_ip.value) == false) {
-        errors.push(modbus_ip);
-        error_message+= "\nПроверьте IP адрес."
+
+    let el = modbus_ip
+    if (el.value.trim().length !== 0) {
+        if (isValidIPv4(el.value) == false) {
+            errors.push(el);
+            error_message += "\nПроверьте IP адрес."
+        }
     }
-    if (modbus_ip_mask.value << 0 || modbus_ip_mask.value >> 33) {
-        errors.push(modbus_ip_mask)
-        error_message+= "\nПроверьте маску IP адреса."
+    else {
+        errors.push(el);
+        error_message += "\nВведите IP адрес."
     }
 
-    alert(error_message)
-    flash(errors, "red", 5000)
+    el = modbus_ip_mask
+    if (el.value.trim().length !== 0) {
+        if (el.value < 0 || el.value > 33) {
+            errors.push(el)
+            error_message += "\nМаска IP адреса должна быть в интервале [0-32]."
+        }
+    }
+    else {
+        errors.push(el)
+        error_message += "\nВведите маску IP адреса."
+    }
+
+    el = modbus_ip_router
+    if (el.value.trim().length !== 0) {
+        if (isValidIPv4(el.value) == false) {
+            errors.push(el);
+            error_message += "\nПроверьте IP адрес шлюза."
+        }
+    }
+    else {
+        errors.push(el);
+        error_message += "\nВведите IP адрес шлюза."
+    }
+
+    el = modbus_tcp_port
+    if (el.value.trim().length !== 0) {
+        if (el.value !== 502 && (el.value < 10000 || el.value > 65535)) {
+            errors.push(el);
+            error_message += "\nПроверьте TCP порт."
+        }
+    }
+    else {
+        errors.push(el);
+        error_message += "\nВведите TCP порт."
+    }
+
+    el = modbus_parity
+    if (el.value.trim().length !== 0) {
+        if (el.value < 1 || el.value > 3) {
+            errors.push(el);
+            error_message += "\nПроверьте настройку паритета."
+        }
+    }
+    else {
+        errors.push(el);
+        error_message += "\nВыберете режим паритета."
+    }
+
+    el = modbus_baudrate
+    if (el.value.trim().length !== 0) {
+        if (allowed_baudrates.includes(Number(el.value)) == false) {
+            errors.push(el);
+            error_message += "\nПроверьте скорость RS-485."
+        }
+    }
+    else {
+        errors.push(el);
+        error_message += "\nВыберете скорость RS-485."
+    }
+
+    el = modbus_stopbits
+    if (el.value.trim().length !== 0) {
+        if (el.value < 1 || el.value > 2) {
+            errors.push(el);
+            error_message += "\nПроверьте настройку количества стоп бит."
+        }
+    }
+    else {
+        errors.push(el);
+        error_message += "\nВыберете количество стоп бит."
+    }
+
+    if (errors.length > 0) {
+        alert(error_message)
+        flash(errors, "red", 1000)
+    }
 })
