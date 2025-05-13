@@ -19,7 +19,7 @@
 
     .inp {
         min-width: 50px;
-        max-width: 150px;
+        max-width: 160px;
     }
 
     .log {
@@ -55,8 +55,8 @@
     }
 
     .inputs {
-        min-width: 250px;
-        max-width: 250px;
+        min-width: 280px;
+        max-width: 280px;
     }
 
     .common {}
@@ -169,8 +169,8 @@
             <span class="inp">Режим работы</span>
             <select class="form-select inp" id="modbus-mode">
                 <option disabled selected value style="display: none;"></option>
-                <option value="1">Сервер TCP</option>
-                <option value="2">Клиент TCP</option>
+                <option value="client">Сервер TCP</option>
+                <option value="server">Клиент TCP</option>
             </select>
         </div>
         <div class="low-indicator2 universal hidden">
@@ -179,7 +179,7 @@
         </div>
         <div class="low-indicator2 common">
             <span class="inp">MAC</span>
-            <input id="modbus-mac" type="text" class="inp form-control" value="00:00:00:00:00:00" readonly>
+            <input id="modbus-mac" type="text" class="inp form-control" value="00.00.00.00.00.00" readonly>
         </div>
 
         <div class="low-indicator2 common">
@@ -191,7 +191,6 @@
             <span class="inp">Маска подсети</span>
             <input id="modbus-ip-mask" type="text" class="inp form-control">
         </div>
-
         <div class="low-indicator2 common">
             <span class="inp">IP-адрес шлюза</span>
             <input id="modbus-ip-router" type="text" class="inp form-control">
@@ -259,7 +258,7 @@
         </div>
         <div class="low-indicator2 universal hidden">
             <span class="inp">ID сервера</span>
-            <input id="modbus-server-id" type="number" class="inp form-control" placeholder="1-255">
+            <input id="modbus-server-id" type="text" class="inp form-control" placeholder="1-255,off">
         </div>
     </div>
 </div>

@@ -26,7 +26,7 @@ def send_command(port, baudrate, command):
         
         ser.write(command.encode('ascii'))
         
-        time.sleep(0.1)
+        time.sleep(0.2)
         
         response = ser.read(ser.in_waiting).decode('ascii').strip()
         

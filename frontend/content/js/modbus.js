@@ -8,7 +8,7 @@ const modbus_button_scan = document.getElementById("modbus-scan")
 const modbus_button_reload = document.getElementById("modbus-reload")
 const modbus_button_submit = document.getElementById("modbus-submit")
 const modbus_version = document.getElementById("modbus-version")
-const modbus_mac = document.getElementById("modbus_mac")
+const modbus_mac = document.getElementById("modbus-mac")
 const modbus_ip = document.getElementById("modbus-ip")
 const modbus_ip_mask = document.getElementById("modbus-ip-mask")
 const modbus_ip_router = document.getElementById("modbus-ip-router")
@@ -263,9 +263,9 @@ modbus_button_submit.addEventListener("click", () => {
 
         el = modbus_server_id
         if (el.value.trim().length !== 0) {
-            if (el.value < 1 || el.value > 255) {
+            if (el.value < 1 || el.value > 255 || (isNaN(el.value) && el.value !== "off")) {
                 errors.push(el);
-                error_message += "\nID сервера должен быть в интервале [1-255]."
+                error_message += "\nID сервера должен быть в интервале [1-255] или off."
             }
         }
         else {
@@ -273,6 +273,7 @@ modbus_button_submit.addEventListener("click", () => {
             error_message += "\nВведите ID сервера."
         }
     }
+
 
     if (errors.length > 0) {
         alert(error_message)
@@ -300,10 +301,15 @@ async function set_field(element, value, flash_color, flash_time) {
 
 async function fetch_and_set(field, command, device) {
     let data = await send_command(command, device)
-    data = data.response_string.split(":")[1]
-    if (data.length > 0 && data !== undefined) {
-        set_field(field, data, 'rgb(27, 207, 123)', 1000)
-        return true
+    if (data.response_string !== '') {
+        console.log(data)
+        data = data.response_string.split(":")[1]
+        if (data.length > 0 && data !== undefined) {
+            set_field(field, data, 'rgb(27, 207, 123)', 1000)
+            return true
+        }
+        set_field(field, null, "red", 1000)
+        return false
     }
     else {
         set_field(field, null, "red", 1000)
@@ -315,6 +321,10 @@ async function fetch_and_set(field, command, device) {
 modbus_button_scan.addEventListener("click", async function () {
     let selected_device = modbus_device.value
     if (selected_device != "") {
+        if (mode == "3") {
+            fetch_and_set(modbus_mode, "mode tcp", selected_device)
+            fetch_and_set(modbus_version, "version", selected_device)
+        }
         fetch_and_set(modbus_mac, "mac", selected_device)
         fetch_and_set(modbus_ip, "ip", selected_device)
         fetch_and_set(modbus_ip_mask, "mask", selected_device)
@@ -323,5 +333,19 @@ modbus_button_scan.addEventListener("click", async function () {
         fetch_and_set(modbus_parity, "parity", selected_device)
         fetch_and_set(modbus_baudrate, "speed rs485", selected_device)
         fetch_and_set(modbus_stopbits, "stop bit", selected_device)
+        if (mode == "2") {
+            fetch_and_set(modbus_tcp_ip, "ip server tcp", selected_device)
+            fetch_and_set(modbus_tcp_timeout, "timeout tcp", selected_device)
+        }
+        if (mode == "3") {
+            fetch_and_set(modbus_timeout, "timeout response", selected_device)
+            fetch_and_set(modbus_tcp_ip, "ip server tcp", selected_device)
+            fetch_and_set(modbus_tcp_timeout, "timeout tcp", selected_device)
+            fetch_and_set(modbus_tcp_ID, "rtu virtual id", selected_device)
+            fetch_and_set(modbus_server_id, "tcp slave id", selected_device)
+        }
+    }
+    else {
+        alert("Необходимо выбрать устройство!")
     }
 })
