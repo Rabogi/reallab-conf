@@ -4,6 +4,7 @@ const universal_elements = document.querySelectorAll('.universal');
 
 const mode_switch = document.getElementById("modbus-work-mode")
 const modbus_device = document.getElementById("modbus-device")
+const modbus_port_reload = document.getElementById("modbus-port-reload")
 const modbus_button_scan = document.getElementById("modbus-scan")
 const modbus_button_reload = document.getElementById("modbus-reload")
 const modbus_button_submit = document.getElementById("modbus-submit")
@@ -60,6 +61,14 @@ async function flash(elements, color, time) {
     }, time);
 }
 
+modbus_port_reload.addEventListener("click", async () => {
+    let devices = await normal_fetch("GET", "/modbus/get_ports", { 'Content-Type': 'application/json' })
+    modbus_device.innerHTML = '<option disabled selected value style="display: none;"></option>'
+    devices.forEach((device) => {
+        modbus_device.innerHTML += '<option>' + device + '</option>'
+    })
+})
+
 document.addEventListener("DOMContentLoaded", async () => {
     let devices = await normal_fetch("GET", "/modbus/get_ports", { 'Content-Type': 'application/json' })
     modbus_device.innerHTML = '<option disabled selected value style="display: none;"></option>'
@@ -106,6 +115,20 @@ function isValidIPv4(ip) {
         const num = parseInt(segment, 10);
         return num >= 0 && num <= 255 && String(num) === segment;
     });
+}
+
+async function send_settings(fields, device) {
+    for (const field in fields) {
+        // flash(field[0], "blue", 1000)
+        let res = await set_and_fetch(field[0], "change " + field[1] + ":*", field[1], device)
+        if (res == true) {
+            // flash(field[0], "green", 1000);
+        }
+        else {
+            // flash(field[0], "red", 1000);
+            throw new Error("Ошибка при записи поля " + field[0].name);
+        }
+    }
 }
 
 modbus_button_submit.addEventListener("click", () => {
@@ -279,6 +302,39 @@ modbus_button_submit.addEventListener("click", () => {
         alert(error_message)
         flash(errors, "red", 1000)
     }
+    else {
+        try {
+            let fields = []
+            if (mode == 3) {
+                fields = [[modbus_mode, "mode tcp"]]
+                send_settings(fields)
+            }
+            fields = [[modbus_ip, "ip"],
+            [modbus_ip_mask, "mask"],
+            [modbus_ip_router, "gateway"],
+            [modbus_tcp_port, "port tcp"],
+            [modbus_parity, "parity"],
+            [modbus_baudrate, "speed rs485"],
+            [modbus_stopbits, "stop bit"]]
+            send_settings(fields)
+            if (mode == 2) {
+                fields = [[modbus_tcp_ip, "ip server tcp"],
+                [modbus_tcp_timeout, "timeout tcp"]]
+                send_settings(fields)
+            }
+            if (mode == 3) {
+                fields = [[modbus_timeout, "timeout response"],
+                [modbus_tcp_ip, "ip server tcp"],
+                [modbus_tcp_timeout, "timeout tcp"],
+                [modbus_tcp_ID, "rtu virtual id"],
+                [modbus_server_id, "tcp slave id"]]
+                send_settings(fields)
+            }
+        } catch (error) {
+            alert("Ошибка при записи!")
+        }
+
+    }
 })
 
 async function send_command(command, device) {
@@ -313,6 +369,27 @@ async function fetch_and_set(field, command, device) {
     }
     else {
         set_field(field, null, "red", 1000)
+        return false
+    }
+}
+
+async function set_and_fetch(field, change_command, fetch_command, device) {
+    let current_value = field.value
+    let data = await send_command(change_command.replace("*", current_value), device)
+    console.log("sent")
+    console.log(data)
+    data = await send_command(fetch_command, device)
+    console.log("fetch")
+    console.log(data)
+    data = data.response_string.split(":")[1]
+    if (data.length > 0 && data !== undefined) {
+        if (data == current_value) {
+            return true;
+        }
+        else {
+            return false
+        }
+    } else {
         return false
     }
 }
