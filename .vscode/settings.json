@@ -5,7 +5,8 @@
         "loadinfo",
         "redoc",
         "resinfo",
-        "timedatectl"
+        "timedatectl",
+        "привелерованного"
     ],
     "python.analysis.typeCheckingMode": "off"
 }
