@@ -13,6 +13,7 @@ openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
 3)Полученые файлы перенести в папку новую папку SSL:
 
 mkdir ssl
+
 mv *.pem ./ssl
 
 4)Изменить файл сервиса reallab.service:
@@ -32,6 +33,7 @@ sudo systemctl daemon-reload
 7)Запуск сервера
 
 sudo systemctl enable reallab.service
+
 sudo systemctl start reallab.service
 
 8)Сервер будет запущен на 8000 порту и доступен для всех в локальной сети. При доступе к сайту браузер будет ругаться что сертификат недействителен. Необходимо проигнорировать это предупреждение.
