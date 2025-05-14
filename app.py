@@ -923,7 +923,8 @@ async def modbus_send_command(data: dict = Body()):
             if (
                 db_handler.auth_db_return_session(db, data["session_token"])["level"]
                 <= permissions["modbus"]
-            ):
+            ):  
+
                 output = modbus.send_command(
                     "/dev/" + data["port"], data["baudrate"], data["cmd"]
                 )

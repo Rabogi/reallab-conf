@@ -25,6 +25,8 @@ const modbus_server_id = document.getElementById("modbus-server-id")
 const modbus_mode = document.getElementById("modbus-mode")
 const allowed_baudrates = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 128000, 256000]
 
+const green = 'rgb(27, 207, 123)'
+
 let mode = 1
 
 async function normal_fetch(method, url, headers, body) {
@@ -117,21 +119,30 @@ function isValidIPv4(ip) {
     });
 }
 
-async function send_settings(fields, device) {
-    for (const field in fields) {
-        // flash(field[0], "blue", 1000)
-        let res = await set_and_fetch(field[0], "change " + field[1] + ":*", field[1], device)
-        if (res == true) {
-            // flash(field[0], "green", 1000);
-        }
-        else {
-            // flash(field[0], "red", 1000);
-            throw new Error("Ошибка при записи поля " + field[0].name);
-        }
+async function send_setting(field,cmd,device){
+    let cur_val = field.value
+    flash([field],"blue",400)
+    let command = "change " + cmd + ":" + cur_val
+    let data = await send_command(command, device)
+    if (data.response_string == "?"){
+        flash([field],"red",2000)
+        throw new Error("Ошибка записи с командой: " + command);
     }
-}
+    data = await send_command(cmd, device)
+    if (data.response_string == "?"){
+        flash([field],"red",2000)
+        throw new Error("Ошибка проверки настройки: " + cmd) 
+    }
+    if (data.response_string.split(":")[1] == cur_val){
+        flash([field],green,1000)
+    }
+    else{
+        flash([field],"red",2000)
+        throw new Error("Ошибка проверки настройки: " + cmd) 
+    }
+} 
 
-modbus_button_submit.addEventListener("click", () => {
+modbus_button_submit.addEventListener("click", async () => {
     // Проверка IP,Маски, роутера, TCP порта, Паритета, баудрейта и стоп бита происходит всегда
     let errors = [];
     let error_message = "Ошибка, в полях ввода недопустимые данные.";
@@ -304,34 +315,30 @@ modbus_button_submit.addEventListener("click", () => {
     }
     else {
         try {
-            let fields = []
-            if (mode == 3) {
-                fields = [[modbus_mode, "mode tcp"]]
-                send_settings(fields)
+            let selected_device = modbus_device.value
+            if (mode == "3") {
+                await send_setting(modbus_mode, "mode tcp", selected_device)
             }
-            fields = [[modbus_ip, "ip"],
-            [modbus_ip_mask, "mask"],
-            [modbus_ip_router, "gateway"],
-            [modbus_tcp_port, "port tcp"],
-            [modbus_parity, "parity"],
-            [modbus_baudrate, "speed rs485"],
-            [modbus_stopbits, "stop bit"]]
-            send_settings(fields)
-            if (mode == 2) {
-                fields = [[modbus_tcp_ip, "ip server tcp"],
-                [modbus_tcp_timeout, "timeout tcp"]]
-                send_settings(fields)
+            await send_setting(modbus_ip, "ip", selected_device)
+            await send_setting(modbus_ip_mask, "mask", selected_device)
+            await send_setting(modbus_ip_router, "gateway", selected_device)
+            await send_setting(modbus_tcp_port, "port tcp", selected_device)
+            await send_setting(modbus_parity, "parity", selected_device)
+            await send_setting(modbus_baudrate, "speed rs485", selected_device)
+            await send_setting(modbus_stopbits, "stop bit", selected_device)
+            if (mode == "2") {
+                await send_setting(modbus_tcp_ip, "ip server tcp", selected_device)
+                await send_setting(modbus_tcp_timeout, "timeout tcp", selected_device)
             }
-            if (mode == 3) {
-                fields = [[modbus_timeout, "timeout response"],
-                [modbus_tcp_ip, "ip server tcp"],
-                [modbus_tcp_timeout, "timeout tcp"],
-                [modbus_tcp_ID, "rtu virtual id"],
-                [modbus_server_id, "tcp slave id"]]
-                send_settings(fields)
+            if (mode == "3") {
+                await send_setting(modbus_timeout, "timeout response", selected_device)
+                await send_setting(modbus_tcp_ip, "ip server tcp", selected_device)
+                await send_setting(modbus_tcp_timeout, "timeout tcp", selected_device)
+                await send_setting(modbus_tcp_ID, "rtu virtual id", selected_device)
+                await send_setting(modbus_server_id, "tcp slave id", selected_device)
             }
         } catch (error) {
-            alert("Ошибка при записи!")
+            alert(error)
         }
 
     }
@@ -347,7 +354,6 @@ async function send_command(command, device) {
 }
 
 
-
 async function set_field(element, value, flash_color, flash_time) {
     if (value != null) {
         element.value = value
@@ -361,7 +367,7 @@ async function fetch_and_set(field, command, device) {
         console.log(data)
         data = data.response_string.split(":")[1]
         if (data.length > 0 && data !== undefined) {
-            set_field(field, data, 'rgb(27, 207, 123)', 1000)
+            set_field(field, data, green, 1000)
             return true
         }
         set_field(field, null, "red", 1000)
@@ -372,28 +378,6 @@ async function fetch_and_set(field, command, device) {
         return false
     }
 }
-
-async function set_and_fetch(field, change_command, fetch_command, device) {
-    let current_value = field.value
-    let data = await send_command(change_command.replace("*", current_value), device)
-    console.log("sent")
-    console.log(data)
-    data = await send_command(fetch_command, device)
-    console.log("fetch")
-    console.log(data)
-    data = data.response_string.split(":")[1]
-    if (data.length > 0 && data !== undefined) {
-        if (data == current_value) {
-            return true;
-        }
-        else {
-            return false
-        }
-    } else {
-        return false
-    }
-}
-
 
 modbus_button_scan.addEventListener("click", async function () {
     let selected_device = modbus_device.value
